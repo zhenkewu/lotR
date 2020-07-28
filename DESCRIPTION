@@ -1,0 +1,38 @@
+Package: lotR
+Type: Package
+Title: Latent class analysis with Observed Trees in R (lotR)
+Version: 0.4.0
+Date: 2020-07-27
+Authors@R: c(
+     person("Zhenke", "Wu", email="zhenkewu@umich.edu",role=c("cre","aut"),
+     comment = c(ORCID = "0000-0001-7582-669X"))
+     )
+Maintainer: Zhenke Wu <zhenkewu@umich.edu>
+Description: This package implements fast algorithms to fit latent class models
+    for integrating given tree-information that specifies the relatedness among
+    the observations. 
+Depends:
+    R(>= 3.5.0)
+Imports:
+    matrixStats(>= 0.52.2),
+    Rcpp(>= 0.12.15),
+    stats(>= 3.4.1),
+    graphics(>= 3.4.1),
+    grDevices(>= 3.4.1),
+    BayesLCA(>= 1.9)
+Suggests:
+    knitr,
+    testthat,
+    bibtex,
+    knitcitations,
+    rmarkdown,
+    ars(>= 0.5),
+    RcppArmadillo(>= 0.8.300.1.0)
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+VignetteBuilder: knitr
+RoxygenNote: 7.1.0
+URL: https://github.com/zhenkewu/lotR
+BugReports: https://github.com/zhenkewu/lotR/issues
+LinkingTo: Rcpp, RcppArmadillo
