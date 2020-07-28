@@ -41,6 +41,9 @@ Examples
 * _lotR_ is self-adaptive: leaves close in the tree means they are more likely to be grouped together.
 ![](inst/example_figure/lotR_self_adaptive.png)
 
+* _lotR_ produces similar results as `BayesLCA` on fully collapsed tree (ignoring tree information)
+![](inst/example_figure/comparison_with_std.pdf)
+
 
 
 
