@@ -13,7 +13,7 @@
 #' be equal to the unique elements of outcomes. The vertices of \code{mytree}, \code{V(mytree)}, may have
 #' an attribute \code{levels} containing integer values from 1 to \code{max(V(mytree)$levels)}.
 #' In this case, the levels attribute specifies groups of nodes that share common
-#' hyperparameters \code{rho[f]}, \code{tau_1[f,]}, and \code{tau_2[f,]}. If \code{V(mytree)$levels} is \code{NULL},
+#' hyperparameters \code{rho[f]}, \code{tau_1[f]}, and \code{tau_2[f]}. If \code{V(mytree)$levels} is \code{NULL},
 #' the default is two levels of hyperparameters: one for all leaf nodes, and one
 #' for all internal nodes. NB: this needs to be checked in the \code{\link{design_tree}}
 #' @param ci_level A number between 0 and 1 giving the desired credible interval.
@@ -30,7 +30,10 @@
 #' a and b, both numeric vectors of length \code{L}, representing the
 #' parameters of the beta prior on rho for each level, where \code{L} is the
 #' number of levels.
-#' Default is \code{list(a = rep(1, L), b = rep(1, L))} (uniform hyperprior)
+#' Default is \code{list(a = rep(1, L), b = rep(1, L), tau_update_levels = c(1,2))} (uniform hyperprior)
+#' Other options include specifying includedd or excluded nodes via
+#' e.g., \code{s_u_zeroset = (1:265)[-c(1)],s_u_oneset = c(1))} to fit a single
+#' big LCM (collapsing all nodes except the root node, the first node)
 #' @param tol Convergence tolerance for the objective function.
 #' Default is \code{1E-8}.
 #' @param tol_hyper The convergence tolerance for the objective function between
@@ -100,21 +103,15 @@
 #' \code{u} will then be transformed back to the probability scale.}
 #' }
 #'
-#'
-#'
 #' @param allow_continue logical, TRUE to save results so can continue running the VI
 #' updates with the last iteration from the old results.
 #'
 #' @examples vignette('lotR')
 #'
-#'
 #' @return a list also of class "lcm_tree"
 #'
 #' \describe{
-#'   res <- make_list(mod,   # <--- need to add other estimates.
-#'      mod_restarts,mytree,dsgn,
-#'      prob_est,est_ad_hoc) # <-- should mytree in dsgn?
-#'
+#'   res <- make_list(mod,mod_restarts,mytree,dsgn,prob_est,est_ad_hoc)
 #'      class(res) <- c("lcm_tree","list")
 #'    }
 #'
@@ -127,12 +124,12 @@ lcm_tree <- function(Y,outcomes,mytree,# may have unordered nodes.
                      weighted_edge = TRUE,
                      ci_level = 0.95,
                      get_lcm_by_group = TRUE,
-                     update_hyper_freq = 5,
-                     print_freq = 1,
+                     update_hyper_freq = 50,
+                     print_freq = 10,
                      hyper_fixed = list(K=3), # <-- modify default?
                      tol = 1E-8,
                      tol_hyper = 1E-4,
-                     max_iter = 11,
+                     max_iter = 5000,
                      nrestarts = 3,
                      keep_restarts = TRUE,
                      parallel = TRUE,
@@ -149,16 +146,16 @@ lcm_tree <- function(Y,outcomes,mytree,# may have unordered nodes.
                                              u_sd_frac = 0.2),
                      allow_continue = FALSE
 ){
-  # compatibility checks:
+  # compatibility checks (NB: not done yet as of July 28, 2020):
 
   # logs
   log_dir <- sub("/$", "", log_dir)
-  if (log_restarts) message("[]Algorithm progress for restart i will be printed to ",
+  if (log_restarts) message("[lotR] Algorithm progress for restart i will be printed to ",
                             log_dir, "/restart_i_log.txt\n", sep = "")
 
   # Fill in some arguments
   if (nrestarts > 1 & !random_init) {
-    message("[]Setting 'random_init = TRUE' since nrestarts > 1\n")
+    message("[lotR] Setting 'random_init = TRUE' since nrestarts > 1\n")
     random_init <- TRUE
   }
   if (nrestarts == 1) parallel <- FALSE
@@ -171,11 +168,11 @@ lcm_tree <- function(Y,outcomes,mytree,# may have unordered nodes.
     L             <- max(dsgn$levels)
     hyper_fixed   <- append(hyper_fixed,list(a = rep(1, L)))
     hyper_fixed$b <- rep(1, L)
-    warning("[] No fixed hyperparameters supplied; we set a_l=b_l=1 for all levels of hyperparameters.")
+    warning("[lotR] No fixed hyperparameters supplied; we set a_l=b_l=1 for all levels of hyperparameters.")
   }
 
   if (is.null(hyper_fixed$K)) {
-    warning("[] No fixed # of classes supplied; supply a named element `K` in the list 'hyper_fixed'.")
+    warning("[lotR] No fixed # of classes supplied; supply a named element `K` in the list 'hyper_fixed'.")
   }
 
   # Setting up parallelization
@@ -248,9 +245,8 @@ lcm_tree <- function(Y,outcomes,mytree,# may have unordered nodes.
     return(res)
   }
 
-  res <- make_list(mod,   # <--- need to add other estimates.
-                   mod_restarts,mytree,dsgn,
-                   prob_est,est_ad_hoc) # <-- should mytree in dsgn?
+  res <- make_list(mod,mod_restarts,mytree,dsgn, # is mytree redundant, check dsgn.
+                   prob_est,est_ad_hoc)
 
   class(res) <- c("lcm_tree","list")
   res
@@ -300,9 +296,7 @@ continue_lcm_tree <- function(old_mod,
                          log_dir=log_dir,
                          random_init=random_init,
                          allow_continue=allow_continue,
-
                          args = old_mod)
-
   class(res) <- c("lcm_tree","list")
   res
 }

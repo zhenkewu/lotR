@@ -12,12 +12,12 @@ lcm_tree(
   weighted_edge = TRUE,
   ci_level = 0.95,
   get_lcm_by_group = TRUE,
-  update_hyper_freq = 5,
-  print_freq = 1,
+  update_hyper_freq = 50,
+  print_freq = 10,
   hyper_fixed = list(K = 3),
   tol = 1e-08,
   tol_hyper = 1e-04,
-  max_iter = 11,
+  max_iter = 5000,
   nrestarts = 3,
   keep_restarts = TRUE,
   parallel = TRUE,
@@ -47,7 +47,7 @@ of mytree must have unique names as given by \code{names(V(mytree))}. The names 
 be equal to the unique elements of outcomes. The vertices of \code{mytree}, \code{V(mytree)}, may have
 an attribute \code{levels} containing integer values from 1 to \code{max(V(mytree)$levels)}.
 In this case, the levels attribute specifies groups of nodes that share common
-hyperparameters \code{rho[f]}, \code{tau_1[f,]}, and \code{tau_2[f,]}. If \code{V(mytree)$levels} is \code{NULL},
+hyperparameters \code{rho[f]}, \code{tau_1[f]}, and \code{tau_2[f]}. If \code{V(mytree)$levels} is \code{NULL},
 the default is two levels of hyperparameters: one for all leaf nodes, and one
 for all internal nodes. NB: this needs to be checked in the \code{\link{design_tree}}}
 
@@ -69,7 +69,10 @@ This should be a list with two elements:
 a and b, both numeric vectors of length \code{L}, representing the
 parameters of the beta prior on rho for each level, where \code{L} is the
 number of levels.
-Default is \code{list(a = rep(1, L), b = rep(1, L))} (uniform hyperprior)}
+Default is \code{list(a = rep(1, L), b = rep(1, L), tau_update_levels = c(1,2))} (uniform hyperprior)
+Other options include specifying includedd or excluded nodes via
+e.g., \code{s_u_zeroset = (1:265)[-c(1)],s_u_oneset = c(1))} to fit a single
+big LCM (collapsing all nodes except the root node, the first node)}
 
 \item{tol}{Convergence tolerance for the objective function.
 Default is \code{1E-8}.}
@@ -156,10 +159,7 @@ updates with the last iteration from the old results.}
 a list also of class "lcm_tree"
 
 \describe{
-  res <- make_list(mod,   # <--- need to add other estimates.
-     mod_restarts,mytree,dsgn,
-     prob_est,est_ad_hoc) # <-- should mytree in dsgn?
-
+  res <- make_list(mod,mod_restarts,mytree,dsgn,prob_est,est_ad_hoc)
      class(res) <- c("lcm_tree","list")
    }
 }
@@ -168,7 +168,6 @@ wrapper function for fitting and summaries
 }
 \examples{
 vignette('lotR')
-
 
 }
 \concept{lcm_tree functions}

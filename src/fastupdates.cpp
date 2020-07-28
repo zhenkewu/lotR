@@ -6,9 +6,77 @@ using namespace Rcpp;
 using namespace arma;
 using namespace R;
 
-//' Get all moments that need update when iterating over a total of p internal and leaf nodes
+
+// utility functions;
+
+//' xlogx
 //'
-//' This is slower than the skinny version (\code{\link{get_moments_cpp}})
+//' utility function
+//'
+//' @useDynLib lotR
+//' @importFrom Rcpp sourceCpp
+//' @export
+// [[Rcpp::export]]
+double xlogx(double x){
+  double res=0.0;
+  if (x!=0.0){
+    res = x*log(x);
+  }
+  return(res);
+}
+
+// [[Rcpp::export]]
+double logsumexp(arma::vec logv_arma)
+{
+  //int n = logv.size();
+  //if(n<=1)
+  //	cout<<"Warning in logsumexp"<<endl;
+  double max = logv_arma.max();
+  double answer = 0.0;
+  // log(sum(exp(logf)) 	= log(sum(exp(logf - max(logf) + max(logf)))
+  //			= max(logf) + log(sum(exp(logf - max(logf)))
+  answer = max + log(sum(exp(logv_arma-max)));
+  return answer;
+}
+
+//' logexpit to avoid numerical underflow
+//'
+//'
+//' @useDynLib lotR
+//' @importFrom Rcpp sourceCpp
+//' @export
+// [[Rcpp::export]]
+double logexpit_cpp(double x)
+{
+  arma::vec tmp(2);tmp.zeros();
+  tmp(1) = -x;
+  return(-logsumexp(tmp));
+}
+
+
+// [[Rcpp::export]]
+double logsumexp_row(arma::rowvec logv_arma)
+{
+  //int n = logv.size();
+  //if(n<=1)
+  //	cout<<"Warning in logsumexp"<<endl;
+  double max = logv_arma.max();
+  double answer = 0.0;
+  // log(sum(exp(logf)) 	= log(sum(exp(logf - max(logf) + max(logf)))
+  //			= max(logf) + log(sum(exp(logf - max(logf)))
+  answer = max + log(sum(exp(logv_arma-max)));
+  return answer;
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+//' Get all moments that need update when iterating over a total of p internal and leaf nodes
 //'
 //' @param prob variational probabilities for \code{s_u}; length p
 //' @param mu_gamma variational Gaussian means (for \code{s_u=1} component) for J*K
@@ -43,7 +111,6 @@ using namespace R;
 //'
 //' @useDynLib lotR
 //' @importFrom Rcpp sourceCpp
-//' @export
 // [[Rcpp::export]]
 List get_moments_cpp(arma::vec prob,
                      arma::cube mu_gamma,//J by K by p
@@ -54,137 +121,44 @@ List get_moments_cpp(arma::vec prob,
                      arma::vec cardanc // length pL; integers
 ){
   int pL = cardanc.size();
-  int J = sigma_gamma.n_rows;
-  int K = sigma_gamma.n_cols;
-  int p = sigma_gamma.n_slices;
-  arma::cube E_zeta(J,K,p);E_zeta.zeros();
-  arma::cube sigma_zeta_u(J,K,p);sigma_zeta_u.zeros();
-  arma::cube E_beta(J,K,pL);E_beta.zeros();// leaf level
-  arma::cube E_beta_sq(J,K,pL);E_beta_sq.zeros(); // leaf level
-
-  arma::mat  E_xi(p,K-1);E_xi.zeros();
-  arma::mat  Sigma_xi_u(p,K-1);Sigma_xi_u.zeros();
+  int J = mu_gamma.n_rows;
+  int K = mu_gamma.n_cols;
+  int p = mu_gamma.n_slices;
   arma::mat  E_eta(pL,K-1);E_eta.zeros(); // leaf level
+  arma::mat  Sigma_xi_u(p,K-1);Sigma_xi_u.zeros();
   arma::mat  E_eta_sq(pL,K-1);E_eta_sq.zeros();// leaf level
+  arma::cube E_beta(J,K,pL);E_beta.zeros();// leaf level
+  arma::cube sigma_zeta_u(J,K,p);sigma_zeta_u.zeros();
+  arma::cube E_beta_sq(J,K,pL);E_beta_sq.zeros(); // leaf level
 
   int n_anc=0;
   int uu=0;
-  for (int u=0;u<p;u++){
-    // response probabilities:
-    E_zeta.slice(u) =  0.0+prob(u)*mu_gamma.slice(u);
-    sigma_zeta_u.slice(u) = 0.0+prob(u)*(sigma_gamma.slice(u)+(1.0-prob(u))*pow(mu_gamma.slice(u),2.0));
-
-    // class probabilities:
-    E_xi.row(u)           = 0.0+prob(u)*mu_alpha.row(u);
-    Sigma_xi_u.row(u)     = 0.0+prob(u)*(Sigma_alpha.row(u)+(1.0-prob(u))*pow(mu_alpha.row(u),2.0));
-  }
   for (int v=0;v<pL;v++){
     arma::vec curr_anc = anc[v];
     n_anc = (int) cardanc(v);
     for (int u=0;u<n_anc;u++){
       uu =  (int) curr_anc(u)-1;
-      // Rcout << "ancectors: " << uu << std::endl;
-      E_beta.slice(v)    += 0.0+E_zeta.slice(uu);
-      E_beta_sq.slice(v) += 0.0+sigma_zeta_u.slice(uu); //not yet.
+      E_beta.slice(v)    += prob(uu)*mu_gamma.slice(uu);
+      E_beta_sq.slice(v) += prob(uu)*(sigma_gamma.slice(uu)+(1.0-prob(uu))*pow(mu_gamma.slice(uu),2.0)); //not yet.
 
-      E_eta.row(v)        += 0.0+E_xi.row(uu);
-      E_eta_sq.row(v)     += 0.0+Sigma_xi_u.row(uu);
+      E_eta.row(v)        += prob(uu)*mu_alpha.row(uu);
+      E_eta_sq.row(v)     += prob(uu)*(Sigma_alpha.row(uu)+(1.0-prob(uu))*pow(mu_alpha.row(uu),2.0));
     }
-    E_beta_sq.slice(v)     += 0.0+pow(E_beta.slice(v),2.0);
-    E_eta_sq.row(v)        += 0.0+pow(E_eta.row(v),2.0);
+    E_beta_sq.slice(v)     += pow(E_beta.slice(v),2.0);
+    E_eta_sq.row(v)        += pow(E_eta.row(v),2.0);
   }
 
   // return results:
   return List::create(Named("E_beta")=E_beta,
-                      Named("E_zeta")=E_zeta,
                       Named("E_beta_sq")=E_beta_sq,
-                      Named("E_xi")=E_xi,
                       Named("E_eta")=E_eta,
                       Named("E_eta_sq")=E_eta_sq
   );
 }
 
-
-//' get moments that need update when iterating over u (except for \code{rmat})
-//'
-//'
-//' (skinny version of \code{\link{get_moments_cpp}})
-//'
-//'
-//' @param prob variational probabilities for \code{s_u}; length p
-//' @param mu_gamma variational Gaussian means (for \code{s_u=1} component) for J*K
-//' logit(class-specific response probabilities); (J,K,p) array; In R, we used a list of p (J,K) matrices
-//' @param mu_alpha variational Gaussian mean vectors (for \code{s_u=1} component) -
-//' this is a p by K-1 matrix; in R, we used a list of p vectors (each of length K-1)
-//' @param anc a list of pL vectors, each vector has the node ids of the ancestors;
-//' lengths may differ. The ancestors include the node concerned.
-//' @param cardanc a numeric vector of length pL; integers. The number
-//' of ancestors for each leaf node
-//'
-//' @return a List
-//'
-//' \describe{
-//' Named("E_beta")=E_beta,
-//' Named("E_zeta")=E_zeta,
-//' # Named("E_beta_sq")=E_beta_sq,
-//' Named("E_xi")=E_xi,
-//' Named("E_eta")=E_eta,
-//' Named("E_xi_diff")=E_xi_diff,
-//' Named("E_eta_diff")=E_eta_diff,
-//' # Named("E_eta_diff_sq")=E_eta_diff_sq
-//' }
-//'
-//'
-//' @useDynLib lotR
-//' @importFrom Rcpp sourceCpp
-//' @export
-// [[Rcpp::export]]
-List get_moments_cpp_skinny(arma::vec prob,
-                            arma::cube mu_gamma,//J by K by p
-                            arma::mat mu_alpha, // p by K-1
-                            List anc, // length pL; each element is a vector.
-                            arma::vec cardanc // length pL; integers
-){
-  int pL = anc.size();
-  int J = mu_gamma.n_rows;
-  int K = mu_gamma.n_cols;
-  int p = mu_gamma.n_slices;
-  arma::cube E_zeta(J,K,p);E_zeta.zeros();
-  arma::cube E_beta(J,K,pL);E_beta.zeros();// leaf level
-
-  arma::mat  E_xi(p,K-1);E_xi.zeros();
-  arma::mat  E_eta(pL,K-1);E_eta.zeros(); // leaf level
-
-  int n_anc=0;
-  int uu=0;
-  NumericVector curr_anc(p);
-  for (int u=0;u<p;u++){
-    E_zeta.slice(u) = 0.0+prob(u)*mu_gamma.slice(u);
-    E_xi.row(u) = 0.0+prob(u)*mu_alpha.row(u);
-  }
-  for (int v=0;v<pL;v++){
-    curr_anc = anc[v];
-    n_anc = cardanc(v);
-    for (int u=0;u<n_anc;u++){
-      uu = (int) curr_anc(u)-1;
-      E_beta.slice(v)     += 0.0+E_zeta.slice(uu);
-      E_eta.row(v)        += 0.0+E_xi.row(uu);
-    }
-  }
-
-  // return results:
-  return List::create(Named("E_beta")=E_beta,
-                      Named("E_zeta")=E_zeta,
-                      Named("E_xi")=E_xi,
-                      Named("E_eta")=E_eta);
-}
-
-
 //' update only selected moments that need update when iterating over u (except for \code{rmat})
 //'
-//'
-//' (skinny version of \code{\link{get_moments_cpp}})
-//'
+//' (one-node version of \code{\link{get_moments_cpp}})
 //'
 //' @param prob variational probabilities for \code{s_u}; length p
 //' @param mu_gamma variational Gaussian means (for \code{s_u=1} component) for J*K
@@ -212,7 +186,6 @@ List get_moments_cpp_skinny(arma::vec prob,
 //'
 //' @useDynLib lotR
 //' @importFrom Rcpp sourceCpp
-//' @export
 // [[Rcpp::export]]
 List get_moments_cpp_eco(arma::vec leaves_u,
                          arma::cube E_beta,// leaf level
@@ -291,9 +264,7 @@ List get_moments_cpp_eco(arma::vec leaves_u,
 //' Named("eta_cil")=eta_cil,
 //' Named("eta_ciu")=eta_ciu
 //'
-//'
 //' }
-
 // [[Rcpp::export]]
 List get_est_cpp(arma::vec node_select,
                  arma::cube mu_gamma,//J by K by p
@@ -350,96 +321,31 @@ List get_est_cpp(arma::vec node_select,
   );
 }
 
-//' xlogx
+//' Update the variational probabilities of each observation in one of K classes
 //'
-//' utility function
+//' This function updates the N by K matrix \code{rmat} in the package
 //'
-//' @useDynLib lotR
-//' @importFrom Rcpp sourceCpp
-//' @export
-// [[Rcpp::export]]
-double xlogx(double x){
-  double res=0.0;
-  if (x!=0.0){
-    res = x*log(x);
-  }
-  return(res);
-}
-
-// [[Rcpp::export]]
-double logsumexp(arma::vec logv_arma)
-{
-  //int n = logv.size();
-  //if(n<=1)
-  //	cout<<"Warning in logsumexp"<<endl;
-  double max = logv_arma.max();
-  double answer = 0.0;
-  // log(sum(exp(logf)) 	= log(sum(exp(logf - max(logf) + max(logf)))
-  //			= max(logf) + log(sum(exp(logf - max(logf)))
-  answer = max + log(sum(exp(logv_arma-max)));
-  return answer;
-}
-
-
-//' logexpit to avoid numerical underflow
-//'
-//'
-//' @useDynLib lotR
-//' @importFrom Rcpp sourceCpp
-//' @export
-// [[Rcpp::export]]
-double logexpit_cpp(double x)
-{
-  arma::vec tmp(2);tmp.zeros();
-  tmp(1) = -x;
-  return(-logsumexp(tmp));
-}
-
-
-
-// [[Rcpp::export]]
-double logsumexp_row(arma::rowvec logv_arma)
-{
-  //int n = logv.size();
-  //if(n<=1)
-  //	cout<<"Warning in logsumexp"<<endl;
-  double max = logv_arma.max();
-  double answer = 0.0;
-  // log(sum(exp(logf)) 	= log(sum(exp(logf - max(logf) + max(logf)))
-  //			= max(logf) + log(sum(exp(logf - max(logf)))
-  answer = max + log(sum(exp(logv_arma-max)));
-  return answer;
-}
-
-
-//' Z rmat update
-//'
-//' @param psi, g_psi, phi, g_phi local variational parameters
+//' @param psi,g_psi,phi,g_phi local variational parameters
 //' @param X transformed data: 2Y-1
-//' @param E_beta, E_eta_diff, E_beta_sq, E_eta_diff_sq
-//' intermediate moment updates produced by \code{\link{get_moments_cpp}}
-//' @param v_lookup a vector of length equal to the total number of rows in X;
+//' @param E_beta,E_eta,E_beta_sq,E_eta_sq moment updates produced by \code{\link{get_moments_cpp}}
+//' @param v_lookup a vector of length equal to the total number of rows in \code{X};
 //' each element is an integer, indicating which leaf does the observation belong to.
-//' @param idnotk utility matrix; column k indicates the indices that are not k
 //'
-//' @return  n by K variational multinomial probabilities; row sums are 1s.
-//'
+//' @return  N by K variational multinomial probabilities; row sums are 1s.
 //'
 //' @useDynLib lotR
 //' @importFrom Rcpp sourceCpp
 //' @export
 // [[Rcpp::export]]
-arma::mat update_rZ(arma::cube psi, arma::cube g_psi,
-                    arma::mat phi, arma::mat g_phi,
-                    arma::mat X, arma::cube E_beta,
-                    arma::mat E_eta, arma::cube E_beta_sq,
-                    arma::mat E_eta_sq,arma::vec v_lookup){
+arma::mat update_rmat(arma::cube psi, arma::cube g_psi,arma::mat phi, arma::mat g_phi,
+                    arma::mat X,
+                    arma::cube E_beta,arma::mat E_eta, arma::cube E_beta_sq,arma::mat E_eta_sq,
+                    arma::vec v_lookup){
   int n = X.n_rows, J = psi.n_cols, K = psi.n_slices;
   int v = 0;
   X = X+0.0;
   arma::mat res(n,K);res.zeros();
   arma::vec tmp(n);tmp.zeros();
-  //arma::vec incre(2);incre.zeros();
   for (int i=0;i<n;i++){
     v = v_lookup(i)-1;// get leaf id.
     for (int k=0;k<K;k++){
@@ -461,15 +367,7 @@ arma::mat update_rZ(arma::cube psi, arma::cube g_psi,
     }
     tmp(i) = logsumexp_row(res.row(i));
   }
-  // for (int i=0;i<n;i++){
-  //   incre(0) = log(1e-10)+tmp(i); // log scale
-  //   for (int k=0;k<K;k++){
-  //   incre(1) = res(i,k); // log scale
-  //     res(i,k) = logsumexp(incre);
-  //   }
-  // }
   for (int i=0;i<n;i++){
-    //tmp(i) = logsumexp_row(res.row(i));
     for (int k=0;k<K;k++){
       res(i,k) = exp(res(i,k)-tmp(i));
     }
@@ -479,88 +377,7 @@ arma::mat update_rZ(arma::cube psi, arma::cube g_psi,
 
 
 
-//' Update the variational mean and variance for logit of
-//' class-specific response probabilities (for the \code{s_u=1} component)
-//'
-//' @param u node id
-//' @param psi a (pL,J,K) array of local variational parameters for approximating
-//' the \code{expit(X^v_ij * beta^v_jk)}
-//' @param g_psi g transformed psi
-//' @param rmat a matrix of variational probabilities of all observations
-//' belong to K classes; N by K; each row sums to 1
-//' @param tau_2_t variational Gaussian variances for gamma; array, dimension:(J,K,p)
-//' @param h_pau a numeric vector of length p indicating the branch length
-//' between a node and its parent
-//' @param levels a vector of possibly repeating integers from 1 to Fg, or L,
-//' where L indicates the number of node subsets, each of which share the hyperparameters
-//' \code{rho} - the prior probability of \code{s_u=1}, \code{tau_1[l,]} - K-1, \code{tau_2[l,,]}, J by K,
-//' the prior variances for alpha and gamma.
-//' @param E_beta, E_zeta the moments obtained from \code{\link{get_moments_cpp}};
-//' E_beta are sums of ancestral elements of E_zeta
-//' @param X transformed data: 2Y-1
-//' @param subject_ids the ids of subjects in the leaf descendants of node u
-//' @param v_lookup a vector of length equal to the total number of rows in X;
-//' each element is an integer, indicating which leaf does the observation belong to.
-//'
-//'
-//' @return  a list
-//' \describe{
-//' Named("resMu")=resMu, J by K
-//'
-//' Named("resSigma")=resSigma, J by K
-//'
-//' }
-//'
-//' @useDynLib lotR
-//' @importFrom Rcpp sourceCpp
-//' @export
-// [[Rcpp::export]]
-List update_gamma_subid(int u,
-                        arma::cube g_psi,
-                        arma::mat rmat,
-                        double tau_2_t_u,
-                        arma::vec h_pau,
-                        arma::vec levels,
-                        arma::cube E_beta,
-                        arma::mat E_zeta_u, // J by K
-                        arma::mat X,
-                        arma::vec subject_ids, //subjects that are in the one of leaf descendants of node u.
-                        arma::vec v_lookup){
-  int n = subject_ids.size(), J = g_psi.n_cols, K = g_psi.n_slices;
-  int p = h_pau.size(), pL = g_psi.n_rows;
-  int ii = 0;
-  int vv = 0;
-  u = (int) u-1;
-  X = X+0.0;
-  arma::mat resA(J,K);resA.zeros();
-  arma::mat resB(J,K);resB.zeros();
-  arma::mat resBsqA(J,K);resBsqA.zeros();
-  arma::vec pre_resA(2);pre_resA.zeros();
-  for (int j=0;j<J;j++){
-    for (int k=0;k<K;k++){
-      resA(j,k) = -log(tau_2_t_u)-log(h_pau(u));
-      for (int i=0;i<n;i++){
-        ii = (int) subject_ids(i)-1;
-        vv = (int) v_lookup(ii)-1;
-        pre_resA(0) = resA(j,k);
-        pre_resA(1) = log(2.0) + log(rmat(ii,k)) + log(g_psi(vv,j,k));
-        resA(j,k)  = logsumexp(pre_resA);
-        //resA(j,k) += 2.0*rmat(ii,k)*g_psi(vv,j,k);
-
-        resB(j,k) += rmat(ii,k)*(X(ii,j)*0.5- 2.0*g_psi(vv,j,k)*(E_beta(j,k,vv)-E_zeta_u(j,k)));
-        //Rcout<<E_beta(j,k,vv)-E_zeta(j,k,u)<<std::endl;
-      }
-      resBsqA(j,k) = 2.0*log(abs(resB(j,k)))-resA(j,k);
-      resA(j,k) = exp(-resA(j,k));
-      //resA(j,k) += pow(tau_2_t_u(j,k)*h_pau(u),-1.0);
-    }
-  }
-  return List::create(Named("resA")=resA,
-                      Named("resB")=resB,
-                      Named("resBsqA")=resBsqA);
-}
-
-//' Update the variational mean and variance for logit of
+//' [update gamma and alpha together.]Update the variational mean and variance for logit of
 //' class-specific response probabilities (for the \code{s_u=1} component)
 //'
 //' @param u node id
@@ -591,47 +408,76 @@ List update_gamma_subid(int u,
 //' @importFrom Rcpp sourceCpp
 //' @export
 // [[Rcpp::export]]
-List update_alpha_subid(int u, arma::mat g_phi,
-                        arma::mat rmat, double tau_1_t_u,//K-1
-                        arma::vec h_pau,
-                        arma::vec levels,
-                        arma::mat E_eta, arma::vec E_xi_u,
-                        arma::vec subject_ids,
-                        arma::vec v_lookup
+List update_gamma_alpha_subid(int u,
+                              arma::cube g_psi,arma::mat g_phi,
+                              double tau_2_t_u,double tau_1_t_u,
+                              arma::cube E_beta,arma::mat E_zeta_u,arma::mat X,
+                              arma::mat E_eta, arma::vec E_xi_u,
+                              arma::mat rmat,arma::vec h_pau,arma::vec levels,
+                              arma::vec subject_ids,
+                              arma::vec v_lookup
 ){
-  int n = subject_ids.size(), K = rmat.n_cols;
-  int p = h_pau.size(), pL = g_phi.n_rows;
-  arma::vec pre_resC(2);pre_resC.zeros();
+  int n = subject_ids.size(), J = g_psi.n_cols, K = g_psi.n_slices;
+  int p = h_pau.size(), pL = g_psi.n_rows;
   int ii = 0;
   int vv = 0;
-  int uu= (int) u-1; // the index in Rcpp is one smaller than the actual index.
-  arma::vec resC(K-1);resC.zeros();
-  arma::vec resD(K-1);resD.zeros();
-  arma::vec resDsqC(K-1);resDsqC.zeros();
+  int uu = (int) u-1;
+  X = X+0.0;
+  arma::mat resA(J,K);resA.zeros(); // inv A, or variance
+  arma::mat resB(J,K);resB.zeros();
+  arma::mat logresBsq_o_A(J,K);logresBsq_o_A.zeros();
+  arma::vec pre_resA(2);pre_resA.zeros();
 
-  for (int k=0;k<K-1;k++){ // iterate over K-1 alpha's.
-    resC(k) = -log(tau_1_t_u)-log(h_pau(uu));
-    for (int i=0;i<n;i++){
-      ii = (int) subject_ids(i)-1;
-      vv = (int) v_lookup(ii)-1;
-      for (int m=k;m<K;m++){ // currently does not deal with K=2 case. NB: need fixing.
-        pre_resC(0) = resC(k);
-        pre_resC(1) = log(2.0)+log(rmat(ii,m))+log(g_phi(vv,k));
-        resC(k) =  logsumexp(pre_resC);
-        if (m<k+1){
-          resD(k) += rmat(ii,m)*0.5-2.0*rmat(ii,m)*g_phi(vv,k)*(E_eta(vv,k)-E_xi_u(k));
-        }else{
-          resD(k) += -rmat(ii,m)*0.5-2.0*rmat(ii,m)*g_phi(vv,k)*(E_eta(vv,k)-E_xi_u(k));
+  arma::vec resC(K-1);resC.zeros(); // inv C, or variance
+  arma::vec resD(K-1);resD.zeros();
+  arma::vec logresDsq_o_C(K-1);logresDsq_o_C.zeros();
+  arma::vec pre_resC(2);pre_resC.zeros();
+
+  for (int k=0;k<K;k++){
+    if (k<(K-1)){ resC(k) = -log(tau_1_t_u)-log(h_pau(uu));}
+    for (int j=0;j<J;j++){
+      resA(j,k) = -log(tau_2_t_u)-log(h_pau(uu));
+      for (int i=0;i<n;i++){
+        ii = (int) subject_ids(i)-1;
+        vv = (int) v_lookup(ii)-1;
+        // update gamma:
+        pre_resA(0) = resA(j,k);
+        pre_resA(1) = log(2.0) + log(rmat(ii,k)) + log(g_psi(vv,j,k));
+        resA(j,k)   = logsumexp(pre_resA);
+        // resA(j,k) += 2.0*rmat(ii,k)*g_psi(vv,j,k);
+        resB(j,k) += rmat(ii,k)*(X(ii,j)*0.5- 2.0*g_psi(vv,j,k)*(E_beta(j,k,vv)-E_zeta_u(j,k)));
+
+        if (j<1 && k<(K-1)){// only do it once.
+          // update alpha:
+          for (int m=k;m<K;m++){ // currently does not deal with K=2 case. NB: need fixing.
+            pre_resC(0) = resC(k);
+            pre_resC(1) = log(2.0)+log(rmat(ii,m))+log(g_phi(vv,k));
+            resC(k) =  logsumexp(pre_resC);
+            if (m<k+1){
+              resD(k) += rmat(ii,m)*0.5-2.0*rmat(ii,m)*g_phi(vv,k)*(E_eta(vv,k)-E_xi_u(k));
+            }else{
+              resD(k) += -rmat(ii,m)*0.5-2.0*rmat(ii,m)*g_phi(vv,k)*(E_eta(vv,k)-E_xi_u(k));
+            }
+          }
         }
       }
+      logresBsq_o_A(j,k) = 2.0*log(abs(resB(j,k)))-resA(j,k);
+      resA(j,k) = exp(-resA(j,k));
+      // resA(j,k) += pow(tau_2_t_u*h_pau(uu),-1.0);
     }
-    resDsqC(k) = 2.0*log(abs(resD(k)))-resC(k);
-    resC(k) = exp(-resC(k));
-    //resC(k) += pow(tau_1_t_u(k)*h_pau(uu),-1.0);
+    if ( k<(K-1)){// only do it once.
+      logresDsq_o_C(k) = 2.0*log(abs(resD(k)))-resC(k);
+      resC(k) = exp(-resC(k));
+      // resC(k) += pow(tau_1_t_u*h_pau(uu),-1.0);
+    }
   }
-  return List::create(Named("resC")=resC,
-                      Named("resDsqC")=resDsqC,
-                      Named("resD")=resD);
+  return List::create(Named("resA")=resA,
+                      Named("resB")=resB,
+                      Named("logresBsq_o_A")=logresBsq_o_A,
+                      Named("resC")=resC,
+                      Named("resD")=resD,
+                      Named("logresDsq_o_C")=logresDsq_o_C);
+
 }
 
 //' @useDynLib lotR
@@ -714,7 +560,7 @@ List get_line1_2_subid(arma::cube psi, arma::cube g_psi,
       } else if (k< K-1){ // not the first, not the last.
         for (int m=0;m<k-1;m++){
           res2  += -rmat(ii,k)*log(1.0+exp(-phi(v,m)))+rmat(ii,k)*(-E_eta(v,m)-phi(v,m))*0.5-rmat(ii,k)*g_phi(v,m)*(E_eta_sq(v,m)-pow(phi(v,m),2.0));
-        // Rcout<<"term in res2 "<<rmat(ii,k)*g_phi(v,m)*(E_eta_sq(v,m)-pow(phi(v,m),2.0))<<std::endl;
+          // Rcout<<"term in res2 "<<rmat(ii,k)*g_phi(v,m)*(E_eta_sq(v,m)-pow(phi(v,m),2.0))<<std::endl;
 
         }
         res2  += -rmat(ii,k)*log(1.0+exp(-phi(v,k)))+rmat(ii,k)*(E_eta(v,k)-phi(v,k))*0.5-rmat(ii,k)*g_phi(v,k)*(E_eta_sq(v,k)-pow(phi(v,k),2.0));
@@ -733,45 +579,5 @@ List get_line1_2_subid(arma::cube psi, arma::cube g_psi,
                       Named("res3")=res3);
 }
 
-// //' calculate line 8
-// //' @return ELBO value; negative
-// //'
-// //' @useDynLib lotR
-// //' @importFrom Rcpp sourceCpp
-// //' @export
-// // [[Rcpp::export]]
-// List get_line7_8(arma::vec prob, List tau_2_t, arma::vec h_pau,arma::cube sigma_gamma,int J, int K){
-//   double res7 = (J+0.0)*(K+0.0)*sum(prob)*0.5;
-//   double res8 = (J+0.0)*(K+0.0)*sum(1-prob)*0.5;
-//   int p = prob.size();
-//   static const double pi = 3.14159265;
-//   for (int u=0; u<p; u++){
-//     arma::mat curr_tau_2_t = tau_2_t[u];
-//     for (int j=0; j<J; j++){
-//       for (int k=0; k<K; k++){
-//         res7 += prob(u)*log(2*pi*sigma_gamma(u,j,k))*0.5;
-//         res8 += (1-prob(u))*log(2*pi*curr_tau_2_t(j,k))*0.5;
-//       }
-//     }
-//   }
-//   return List::create(Named("res7")=res7,
-//                       Named("res8")=res8);
-// }
-
-//get_line7_8(J*K*sum(prob)*(1+log(2*pi))+sum(sapply(1:p,function(u) sum(prob[u]*log(sigma_gamma[u,,])))))/2
-
-// #J*K*sum(1-prob)/2 + sum(mapply(FUN=function(pp,mat,hh){sum(pp*log(2*pi*mat*hh))},pp=1-prob,mat=tau_2_t,hh=h_pau))/2
 
 
-//
-// // [[Rcpp::export]]
-// double gcpp(double eta){
-//   double res;
-//   if (abs(eta)<1e-6) {
-//     res = 0.125;
-//   } else{
-//     res = (1/(2*eta))*(1/(1+exp(-eta))-0.5);
-//   }
-//   return res;
-// }
-//

@@ -2,7 +2,8 @@
 % Please edit documentation in R/update.R
 \name{update_hyperparams}
 \alias{update_hyperparams}
-\title{update hyperparameters}
+\title{update hyperparameters in the latent class model with observations organized in
+a tree}
 \usage{
 update_hyperparams(
   Y,
@@ -47,54 +48,64 @@ update_hyperparams(
 }
 \arguments{
 \item{Y}{outputs from
-\code{design_tree()}}
+\code{\link{design_tree}}, which reorders the nodes by internal and leaf nodes; the observations are also
+ordered from low- to high-indexed leaf nodes.}
 
 \item{A}{outputs from
-\code{design_tree()}}
+\code{\link{design_tree}}, which reorders the nodes by internal and leaf nodes; the observations are also
+ordered from low- to high-indexed leaf nodes.}
 
 \item{outcomes_units}{outputs from
-\code{design_tree()}}
+\code{\link{design_tree}}, which reorders the nodes by internal and leaf nodes; the observations are also
+ordered from low- to high-indexed leaf nodes.}
 
 \item{ancestors}{outputs from
-\code{design_tree()}}
+\code{\link{design_tree}}, which reorders the nodes by internal and leaf nodes; the observations are also
+ordered from low- to high-indexed leaf nodes.}
 
 \item{h_pau}{outputs from
-\code{design_tree()}}
+\code{\link{design_tree}}, which reorders the nodes by internal and leaf nodes; the observations are also
+ordered from low- to high-indexed leaf nodes.}
 
 \item{levels}{outputs from
-\code{design_tree()}}
+\code{\link{design_tree}}, which reorders the nodes by internal and leaf nodes; the observations are also
+ordered from low- to high-indexed leaf nodes.}
 
-\item{X}{computed from the data by \code{lcm_tree()}}
+\item{v_units}{outputs from
+\code{\link{design_tree}}, which reorders the nodes by internal and leaf nodes; the observations are also
+ordered from low- to high-indexed leaf nodes.}
 
-\item{n}{computed from the data by \code{lcm_tree()}}
+\item{X}{computed from the data by \code{\link{lcm_tree}} at the beginning before the VI updates}
 
-\item{J}{computed from the data by \code{lcm_tree()}}
+\item{n}{computed from the data by \code{\link{lcm_tree}} at the beginning before the VI updates}
 
-\item{p}{computed from the data by \code{lcm_tree()}}
+\item{J}{computed from the data by \code{\link{lcm_tree}} at the beginning before the VI updates}
 
-\item{pL}{computed from the data by \code{lcm_tree()}}
+\item{p}{computed from the data by \code{\link{lcm_tree}} at the beginning before the VI updates}
 
-\item{Fg}{computed from the data by \code{lcm_tree()}}
+\item{pL}{computed from the data by \code{\link{lcm_tree}} at the beginning before the VI updates}
 
-\item{prob}{variational parameters updated by \code{update_vi_params()}}
+\item{Fg}{computed from the data by \code{\link{lcm_tree}} at the beginning before the VI updates}
 
-\item{mu_gamma}{variational parameters updated by \code{update_vi_params()}}
+\item{prob}{variational parameters updated by \code{\link{update_vi_params}}}
 
-\item{mu_alpha}{variational parameters updated by \code{update_vi_params()}}
+\item{mu_gamma}{variational parameters updated by \code{\link{update_vi_params}}}
 
-\item{rmat}{variational parameters updated by \code{update_vi_params()}}
+\item{mu_alpha}{variational parameters updated by \code{\link{update_vi_params}}}
 
-\item{sigma_gamma}{variational parameters updated by \code{update_vi_params()}}
+\item{rmat}{variational parameters updated by \code{\link{update_vi_params}}}
 
-\item{Sigma_alpha}{variational parameters updated by \code{update_vi_params()}}
+\item{sigma_gamma}{variational parameters updated by \code{\link{update_vi_params}}}
 
-\item{tau_1_t}{variational parameters updated by \code{update_vi_params()}}
+\item{Sigma_alpha}{variational parameters updated by \code{\link{update_vi_params}}}
 
-\item{tau_2_t}{variational parameters updated by \code{update_vi_params()}}
+\item{tau_1_t}{variational parameters updated by \code{\link{update_vi_params}}}
 
-\item{a_t}{variational parameters updated by \code{update_vi_params()}}
+\item{tau_2_t}{variational parameters updated by \code{\link{update_vi_params}}}
 
-\item{b_t}{variational parameters updated by \code{update_vi_params()}}
+\item{a_t}{variational parameters updated by \code{\link{update_vi_params}}}
+
+\item{b_t}{variational parameters updated by \code{\link{update_vi_params}}}
 
 \item{psi}{parameters updated by \code{update_hyperparams()}}
 
@@ -108,18 +119,21 @@ update_hyperparams(
 
 \item{tau_2}{parameters updated by \code{update_hyperparams()}}
 
-\item{a}{fixed hyperparameters}
+\item{a}{fixed hyperparameters not to be updated.}
 
-\item{b}{fixed hyperparameters}
+\item{b}{fixed hyperparameters not to be updated.}
 
-\item{K}{computed from the data by \code{lcm_tree()}}
+\item{K}{computed from the data by \code{\link{lcm_tree}} at the beginning before the VI updates}
 
-\item{update_hyper}{Logical, \code{TRUE} or \code{FALSE} to indicate}
+\item{update_hyper}{Logical, \code{TRUE} or \code{FALSE} to indicate
+whether to update \code{tau_1} and \code{tau_2}. This is computed at every iteration
+in \code{\link{fit_lcm}}}
 }
 \value{
 a list of updated hyperparameters: tau_1,tau_2,psi,g_psi,phi,g_phi,
 along with a new ELBO value.
 }
 \description{
-update hyperparameters
+update hyperparameters in the latent class model with observations organized in
+a tree
 }

@@ -2,7 +2,8 @@
 % Please edit documentation in R/fit.R
 \name{fit_lcm_tree}
 \alias{fit_lcm_tree}
-\title{fit the tree-shrinkage latent class models (this function largely follows \code{moretrees})}
+\title{Fit latent class model with tree-structured shrinkage over the observations
+(this function largely follows Thomas, E. \code{moretrees})}
 \usage{
 fit_lcm_tree(
   dsgn,
@@ -19,12 +20,14 @@ fit_lcm_tree(
 )
 }
 \arguments{
-\item{vi_params_init, hyperparams_init, random_init, random_init_vals, tol, tol_hyper, max_iter, print_freq, update_hyper_freq, hyper_fixed}{initial values and updating protocols. Explained more in the wrapper function.}
+\item{dsgn}{a list of data and other information organized according to the tree}
 
-\item{dat_tree}{a list of data and other information organized according to the tree}
+\item{vi_params_init, hyperparams_init, random_init, random_init_vals, tol, tol_hyper, max_iter, print_freq, update_hyper_freq, hyper_fixed}{initial values and updating protocols. Explained more in the wrapper function \code{\link{lcm_tree}}}
 }
 \value{
-a list with model updates
+a list with model updates; because the variational posterior
+is comprised of familiar distributional forms that can be  determined
+by the moments, the returned values are moments:
 
 \describe{
 \item{\code{vi_params}}{named list of final variational parameter estimates}
@@ -35,6 +38,7 @@ a list with model updates
 }
 }
 \description{
-Returns the variational parameters (mostly moments of relevant unknown quantities)
+Fit latent class model with tree-structured shrinkage over the observations
+(this function largely follows Thomas, E. \code{moretrees})
 }
 \concept{internal VI functions}

@@ -2,7 +2,8 @@
 % Please edit documentation in R/update.R
 \name{update_vi_params}
 \alias{update_vi_params}
-\title{update variational parameters (core internal function)}
+\title{update variational parameters in the latent class models with observations
+organized in a tree}
 \usage{
 update_vi_params(
   Y,
@@ -14,13 +15,13 @@ update_vi_params(
   v_units,
   h_pau,
   levels,
+  subject_id_list,
   X,
   n,
   J,
   p,
   pL,
   Fg,
-  subject_id_list,
   prob,
   mu_gamma,
   mu_alpha,
@@ -45,18 +46,20 @@ update_vi_params(
 )
 }
 \arguments{
-\item{Y, A, outcomes_units, outcomes_nodes, h_pau, ancestors, levels}{outputs from
-\code{design_tree()}}
+\item{Y, A, outcomes_units, outcomes_nodes, ancestors, cardanc, v_units, h_pau, ancestors, levels, subject_id_list}{outputs from
+\code{\link{design_tree}}, which reorders the nodes by internal and leaf nodes; the observations are also
+ordered from low- to high-indexed leaf nodes.}
 
-\item{X, n, J, p, pL, Fg, K, }{computed from the data by \code{lcm_tree()}}
+\item{X, n, J, p, pL, Fg, K}{computed from the data by \code{\link{lcm_tree}} at the beginning before the VI updates}
 
-\item{prob, mu_gamma, mu_alpha, rmat, sigma_gamma, Sigma_alpha, tau_1_t, tau_2_t, a_t, b_t, }{variational parameters updated by \code{update_vi_params()}}
+\item{prob, mu_gamma, mu_alpha, rmat, sigma_gamma, Sigma_alpha, tau_1_t, tau_2_t, a_t, b_t, }{variational parameters updated by \code{\link{update_vi_params}}}
 
 \item{psi, g_psi, phi, g_phi, tau_1, tau_2, }{parameters updated by \code{update_hyperparams()}}
 
-\item{a, b, K}{fixed hyperparameters}
+\item{a, b, K, s_u_zeroset, s_u_oneset}{fixed hyperparameters not to be updated.}
 }
 \description{
-NB: needs speed up for multiplications over multiple arrays/lists of matrices.
+Used by \code{\link{fit_lcm_tree}}, which also invoke \code{\link{update_hyperparams}}
+to update hyperparameters and calculate evidence lower bound (ELBO)
 }
 \concept{Internal VI functions}

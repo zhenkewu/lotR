@@ -49,5 +49,5 @@ Named("E_eta_diff")=E_eta_diff,
 }
 }
 \description{
-(skinny version of \code{\link{get_moments_cpp}})
+(one-node version of \code{\link{get_moments_cpp}})
 }

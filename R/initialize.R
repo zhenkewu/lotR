@@ -162,7 +162,6 @@ initialize_tree_lcm <- function(Y,A,
     if (!check) stop("[] incompatible initial value for 'mu_gamma'.")
   }
   if (random_init){
-    cat("\n\n ha\n\n")
     vi_params$mu_gamma <- lapply(vi_params$mu_gamma,
                                  function(mu) matrix(mu+rnorm(J*K,sd = c(abs(mu))*random_init_vals$mu_gamma_sd_frac),nrow=J,ncol=K))
   }
@@ -175,11 +174,9 @@ initialize_tree_lcm <- function(Y,A,
     if (!check) stop("[] incompatible initial value for 'mu_alpha'.")
   }
   if (random_init){
-    cat("\n\n ha\n\n")
     vi_params$mu_alpha <- lapply(vi_params$mu_alpha,
                                  function(mu) mu+rnorm(length(mu),sd = abs(mu)*random_init_vals$mu_alpha_sd_frac))
   }
-
 
   # Initialize hyper-parameters:
   if (is.null(hyperparams[["tau_1"]])){ # tau for alphas.
@@ -192,7 +189,6 @@ initialize_tree_lcm <- function(Y,A,
     if (!check) stop("[] Incompatible intial values for 'tau_1' - mlogit class probabilities (alpha).")
   }
   if (random_init){
-    cat("\n\n ha\n\n")
     hyperparams$tau_1 <- sapply(hyperparams$tau_1,
                                 function(tau) runif(1,min = tau*random_init_vals$tau_lims[1],
                                                     max = tau*random_init_vals$tau_lims[2]))
@@ -207,7 +203,6 @@ initialize_tree_lcm <- function(Y,A,
     if (!check) stop("[] Incompatible intial values for 'tau_2' - logit response probabilities (gamma).")
   }
   if (random_init){
-    cat("\n\n ha\n\n")
     hyperparams$tau_2 <- sapply(hyperparams$tau_2,
                                 function(tau) runif(1,min = tau*random_init_vals$tau_lims[1],
                                                     max = tau*random_init_vals$tau_lims[2]))
@@ -216,7 +211,7 @@ initialize_tree_lcm <- function(Y,A,
 
   ## Initialize variational prob for s_u:
   if (is.null(vi_params[["prob"]])){
-    vi_params$prob <- rep(0.95,p)
+    vi_params$prob <- rep(0.05,p)
   }else{
     check <- is.numeric(vi_params$prob) &&
       length(vi_params$prob) == p &&
@@ -225,7 +220,6 @@ initialize_tree_lcm <- function(Y,A,
     if (!check) stop("[] Incompatible initial values for 'p_u' (for variational probability of s_u=1).")
   }
   if (random_init){
-    cat("\n\n ha\n\n")
     prob <- vi_params$prob
     prob[prob>0.99] <- 0.99
     prob[prob<0.01] <- 0.01
@@ -277,7 +271,6 @@ initialize_tree_lcm <- function(Y,A,
     if(!check) stop("[] Incompatible initial values for 'psi' - local variational parameters")
   }
   if (random_init){
-    cat("\n\n ha\n\n")
     hyperparams$psi <- abs(hyperparams$psi*
                              (1+rnorm(pL*J*K)*random_init_vals$psi_sd_frac))
   }
@@ -299,7 +292,6 @@ initialize_tree_lcm <- function(Y,A,
     if(!check) stop("[] Incompatible initial values for 'phi' - local variational parameters")
   }
   if (random_init){
-    cat("\n\n ha\n\n")
     hyperparams$phi <- abs(hyperparams$phi*
                              (1+rnorm(pL*(K-1))*random_init_vals$phi_sd_frac))
   }

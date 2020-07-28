@@ -1,11 +1,13 @@
-#' fit the tree-shrinkage latent class models (this function largely follows \code{moretrees})
+#' Fit latent class model with tree-structured shrinkage over the observations
+#' (this function largely follows Thomas, E. \code{moretrees})
 #'
-#' Returns the variational parameters (mostly moments of relevant unknown quantities)
 #'
-#' @param dat_tree a list of data and other information organized according to the tree
+#' @param dsgn a list of data and other information organized according to the tree
 #' @param vi_params_init,hyperparams_init,random_init,random_init_vals,tol,tol_hyper,max_iter,print_freq,update_hyper_freq,hyper_fixed
-#' initial values and updating protocols. Explained more in the wrapper function.
-#' @return a list with model updates
+#' initial values and updating protocols. Explained more in the wrapper function \code{\link{lcm_tree}}
+#' @return a list with model updates; because the variational posterior
+#' is comprised of familiar distributional forms that can be  determined
+#' by the moments, the returned values are moments:
 #'
 #' \describe{
 #' \item{\code{vi_params}}{named list of final variational parameter estimates}
@@ -16,6 +18,7 @@
 #' }
 #'
 #' @family internal VI functions
+#' @export
 fit_lcm_tree <- function(dsgn,
                          vi_params_init,
                          hyperparams_init,
@@ -28,19 +31,18 @@ fit_lcm_tree <- function(dsgn,
                          update_hyper_freq,
                          hyper_fixed
 ){
-  ## set up the design list: 'dsgn' so this can be passed to initialization or updating functions:
-  ## but when doing initialization, we want parsimony, so the dsgn does not
-  ## have all the dimension information that can be calculated; Here, we first
-  ## add elements to 'dsgn', although this is redundant, but can avoid calculating
-  ## these dimensions again in vi_params and hyperparams updates; this means the functional
-  ## arguments for vi_params and hyperparams updates contains more arguments, e.g.,
-  ## J, K, than what's minimal.
+  ## set up the design list: 'dsgn' so this can be passed to initialization or updating functions.
+  ## At initialization, we opted for parsimony, so `dsgn` does not
+  ## have all the dimension information that can be calculated. We first
+  ## add additional elements to 'dsgn'. Although this can be recalculated
+  ## in vi_params and hyperparams updates. This means arguments of vi_params and hyperparams updates
+  # contains more elements, e.g., J, K, than what can be minimal.
   ##
   ## NB: consider adding a class to the dsgn - so people know what to look for?
   ##     check advanced R.
 
   #-------------------------------BEGIN DESIGN PADDING--------------------------
-  dsgn$X  <- 2*dsgn$Y-1
+  dsgn$X  <- 2*dsgn$Y-1 # this dsgn$Y would be different from the Y as input to design_tree
   dsgn$n  <- nrow(dsgn$Y)
   dsgn$J  <- ncol(dsgn$Y)
   dsgn$p  <- length(unique(unlist(dsgn$ancestors)))
@@ -50,16 +52,13 @@ fit_lcm_tree <- function(dsgn,
   if (!is.null(hyper_fixed$K) && hyper_fixed$K<2){stop("[lotR] # of classes 'K' is 1.")}
   K  <- hyper_fixed$K
 
-  # for updating moments: do it here to avoid computing repeatedly in update_vi:----
-  dsgn$cardleaf       <- unlist(lapply(dsgn$outcomes_units,length)) # number of observations in each leaf.
-  dsgn$card_leaf_desc <- unlist(lapply(dsgn$outcomes_nodes,length)) # number of leaf descendants for each node.
+  #dsgn$cardleaf       <- unlist(lapply(dsgn$outcomes_units,length)) # number of observations in each leaf.
+  #dsgn$card_leaf_desc <- unlist(lapply(dsgn$outcomes_nodes,length)) # number of leaf descendants for each node.
   dsgn$cardanc        <- unlist(lapply(dsgn$ancestors,length))      # number of ancestors for each leaf.
   #dsgn$maxnv          <- max(unlist(lapply(dsgn$outcomes_units,length)))
-
-  ## for updating alpha-moments:
   #-------------------------------END OF DESIGN PADDING--------------------------
 
-  cat("\n [lotR]branch lengths: h_pau \n")
+  cat("\n [lotR] Branch lengths: `h_pau`: \n")
   print(dsgn$h_pau)
   # initialize: ----------------------
   init <- R.utils::doCall(initialize_tree_lcm,
@@ -69,11 +68,9 @@ fit_lcm_tree <- function(dsgn,
                           random_init = random_init,
                           random_init_vals = random_init_vals,
                           args = dsgn)
-
   vi_params   <- init$vi_params
   hyperparams <- init$hyperparams
-
-  cat("--- Iteration", 0, "; ELBO = ", init$hyperparams$ELBO,"\n") # needed if convergence across i -> i+1 is very quick before 2*update_hyper_freq/
+  cat("| Model Initialized.\n")
 
   # initialize ELBO:
   ELBO_track <- numeric(max_iter)
@@ -89,7 +86,7 @@ fit_lcm_tree <- function(dsgn,
     # check if max_iter reached:
     if (i > max_iter){
       i <- max_iter
-      cat(paste("--- Iteration", i, "complete. \n"))
+      cat(paste("| Iteration", i, "complete. \n"))
       warning("[lotR] Maximum number of iterations reached! Consider increasing 'max_iter'")
       break
     }
@@ -98,24 +95,21 @@ fit_lcm_tree <- function(dsgn,
     vi_params <- R.utils::doCall(update_vi_params,
                                  args = c(dsgn, vi_params, hyperparams, hyper_fixed))
 
-    # This is directly borrowed from 'moretrees' ------------------------------
     # compute ELBO and update psi, phi and hyperparameters (tau_1, tau_2):
     update_hyper <- i %% update_hyper_freq == 0
     hyperparams  <- R.utils::doCall(update_hyperparams,
                                     update_hyper = update_hyper,
-                                    args = c(dsgn,vi_params,hyperparams,hyper_fixed)
-    )
+                                    args = c(dsgn,vi_params,hyperparams,hyper_fixed))
 
     ELBO_track[i] <- hyperparams$ELBO
-    cat("--- Iteration", i, "; epsilon = ", ELBO_track[i] - ELBO_track[i-1], "; ELBO = ", ELBO_track[i],"\n")
 
     # print progress:
-    if (i %% print_freq ==0 && i>3){
-      if(ELBO_track[i] - ELBO_track[i-1]<0){
-        cat("--- Iteration", i, "; epsilon = ", ELBO_track[i] - ELBO_track[i-1], "; ELBO = ", ELBO_track[i],"\n")
-        cat("> empirical class probabilities: ", round(colMeans(vi_params$rmat),4),"\n")
-        cat("> node_select: ",which(vi_params$prob>0.5),"\n")
-      }
+    if (i %% print_freq ==0){
+      #if(ELBO_track[i] - ELBO_track[i-1]<0){
+      cat("| Iteration", i, "; epsilon = ", ELBO_track[i] - ELBO_track[i-1], "; ELBO = ", ELBO_track[i],"\n")
+      cat("> empirical class probabilities: ", round(colMeans(vi_params$rmat),4),"\n")
+      cat("> node_select: ",which(vi_params$prob>0.5),"\n")
+      #}
       barplot(vi_params$prob)
       image(expit(vi_params$mu_gamma[[1]])) # root node.
     }
