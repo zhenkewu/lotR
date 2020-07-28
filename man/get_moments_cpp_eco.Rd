@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{get_moments_cpp_eco}
 \alias{get_moments_cpp_eco}
-\title{update only selected moments that need update when iterating over u (except for \code{rmat})}
+\title{Calculate variational moments during the updates (only for node u)}
 \usage{
 get_moments_cpp_eco(
   leaves_u,
@@ -21,6 +21,8 @@ get_moments_cpp_eco(
 }
 \arguments{
 \item{leaves_u}{the leaf descendant node ids for node u}
+
+\item{E_beta, E_beta_sq, E_eta, E_eta_sq}{moment updates produced by \code{\link{get_moments_cpp}}}
 
 \item{prob}{variational probabilities for \code{s_u}; length p}
 
@@ -54,5 +56,8 @@ a List
 }
 }
 \description{
+update only selected moments that need update when iterating over u (except for \code{rmat})
+}
+\details{
 (one-node version of \code{\link{get_moments_cpp}})
 }

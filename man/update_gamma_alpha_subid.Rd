@@ -28,6 +28,9 @@ update_gamma_alpha_subid(
 
 \item{g_psi, g_phi}{g of local variational parameters}
 
+\item{E_beta, E_zeta_u}{moment updates produced by \code{\link{get_moments_cpp}};
+\code{E_zeta_u} is directly calculated: \code{prob[u]*sigma_gamma[u,,]}}
+
 \item{X}{transformed data: 2Y-1}
 
 \item{rmat}{a matrix of variational probabilities of all observations
@@ -48,12 +51,12 @@ each element is an integer, indicating which leaf does the observation belong to
 \value{
 a list
 \describe{
-  \item resA actually 1/A in the paper, this is variance
-  \item resB
-  \item logresBsq_o_A,
-  \item resC actually 1/C in the paper, this is variance
-  \item resD
-  \item logresDsq_o_C
+  \item{resA}{actually 1/A in the paper, this is variance}
+  \item{resB}{}
+  \item{logresBsq_o_A}{}
+  \item{resC}{actually 1/C in the paper, this is variance}
+  \item{resD}{}
+  \item{logresDsq_o_C}{}
 }
 }
 \description{

@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{get_moments_cpp}
 \alias{get_moments_cpp}
-\title{Get all moments that need update when iterating over a total of p internal and leaf nodes}
+\title{Calculate variational moments during the updates}
 \usage{
 get_moments_cpp(
   prob,

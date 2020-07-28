@@ -138,7 +138,7 @@ or guessed using \code{\link{initialize_tree_lcm}}.}
 \code{psi} will have a normal random variate added to them with standard deviation equal to
 \code{psi_sd_frac} multiplied by the initial value for eta either supplied in \code{hyperparams_init} or guessed
 using \code{\link{initialize_tree_lcm}}. Absolute values are then taken for any
-values of \code{psi} that are \code{< 0}.} S
+values of \code{psi} that are \code{< 0}.}
 \item{\code{phi_sd_frac}}{same as above}.
 \item{\code{mu_gamma_sd_frac}}{a value between 0 and 1. The initial values for
 \code{mu} will have a normal random variate added to them with standard deviation equal to

@@ -76,6 +76,8 @@ double logsumexp_row(arma::rowvec logv_arma)
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
+//' Calculate variational moments during the updates
+//'
 //' Get all moments that need update when iterating over a total of p internal and leaf nodes
 //'
 //' @param prob variational probabilities for \code{s_u}; length p
@@ -150,11 +152,13 @@ List get_moments_cpp(arma::vec prob,
   );
 }
 
+//' Calculate variational moments during the updates (only for node u)
+//'
 //' update only selected moments that need update when iterating over u (except for \code{rmat})
 //'
 //' (one-node version of \code{\link{get_moments_cpp}})
 //' @param leaves_u the leaf descendant node ids for node u
-//' @param E_beta,E_beta_sq,E_eta,E_eta_sq
+//' @param E_beta,E_beta_sq,E_eta,E_eta_sq moment updates produced by \code{\link{get_moments_cpp}}
 //' @param prob variational probabilities for \code{s_u}; length p
 //' @inheritParams get_moments_cpp
 //' @return a List
@@ -363,7 +367,8 @@ arma::mat update_rmat(arma::cube psi, arma::cube g_psi,arma::mat phi, arma::mat 
 //' @param u node id (internal or leaf node
 //' @param g_psi,g_phi g of local variational parameters
 //' @param tau_2_t,tau_1_t variational Gaussian variances for gamma and alpha
-//' @param E_beta,E_zeta_u
+//' @param E_beta,E_zeta_u moment updates produced by \code{\link{get_moments_cpp}};
+//' \code{E_zeta_u} is directly calculated: \code{prob[u]*sigma_gamma[u,,]}
 //' @param X transformed data: 2Y-1
 //' @param rmat a matrix of variational probabilities of all observations
 //' belong to K classes; N by K; each row sums to 1
@@ -376,12 +381,12 @@ arma::mat update_rmat(arma::cube psi, arma::cube g_psi,arma::mat phi, arma::mat 
 //'
 //' @return  a list
 //' \describe{
-//'   \item resA actually 1/A in the paper, this is variance
-//'   \item resB
-//'   \item logresBsq_o_A,
-//'   \item resC actually 1/C in the paper, this is variance
-//'   \item resD
-//'   \item logresDsq_o_C
+//'   \item{resA}{actually 1/A in the paper, this is variance}
+//'   \item{resB}{}
+//'   \item{logresBsq_o_A}{}
+//'   \item{resC}{actually 1/C in the paper, this is variance}
+//'   \item{resD}{}
+//'   \item{logresDsq_o_C}{}
 //' }
 //'
 //' @useDynLib lotR
