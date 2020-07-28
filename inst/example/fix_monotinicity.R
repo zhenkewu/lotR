@@ -14,23 +14,22 @@ theta <- rbind(rep(rep(c(0.01, 0.01), each = 1),9),
                rep(rep(c(0.5, 0.5), each = 1),9),
                rep(rep(c(0.1, 0.7), each = 1),9),
                rep(rep(c(0.9, 0.9), each = 1),9))
-
 image(t(theta))
 
 #
 # simulated data
 #
-Y <- BayesLCA::rlca(2663, itemprob = theta, classprob = tau)
-curr_leaves <- c(dat_mge[!is.na(match_ind),"ct_MLST"])
+# Y <- BayesLCA::rlca(2663, itemprob = theta, classprob = tau)
+# curr_leaves <- c(dat_mge[!is.na(match_ind),"ct_MLST"])
 
 ## five times more: () <---------- is it possible that the order of the outcomes matter in
 ## terms of estimation. Clean the code and push to github.
-# Y <- BayesLCA::rlca(2663*5, itemprob = theta, classprob = tau)
-# curr_leaves <- c(dat_mge[!is.na(match_ind),"ct_MLST"],
-#                  dat_mge[!is.na(match_ind),"ct_MLST"],
-#                  dat_mge[!is.na(match_ind),"ct_MLST"],
-#                  dat_mge[!is.na(match_ind),"ct_MLST"],
-#                  dat_mge[!is.na(match_ind),"ct_MLST"])
+Y <- BayesLCA::rlca(2663*5, itemprob = theta, classprob = tau)
+curr_leaves <- c(dat_mge[!is.na(match_ind),"ct_MLST"],
+                 dat_mge[!is.na(match_ind),"ct_MLST"],
+                 dat_mge[!is.na(match_ind),"ct_MLST"],
+                 dat_mge[!is.na(match_ind),"ct_MLST"],
+                 dat_mge[!is.na(match_ind),"ct_MLST"])
 
 
 ## two times more:
@@ -119,7 +118,7 @@ main="class probabilities", beside=TRUE)#,legend.text = c("truth","proposed","vb
 proposed <- mod0$prob_est$theta_collapsed
 
 
-pdf("inst/example_figure/comparison_with_std.pdf",width=10,height=9)
+png("inst/example_figure/comparison_with_std.png",width=10,height=9,units = "inches")
 par(mfcol=c(3,3))
 
 image(t(theta),main="truth")
