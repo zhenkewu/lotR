@@ -1,2 +1,5 @@
-^.*\.Rproj$
+^lotR\.Rproj$
 ^\.Rproj\.user$
+^.*\.Rproj$
+.travis.yml
+^appveyor\.yml$
