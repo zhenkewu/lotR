@@ -118,7 +118,7 @@ main="class probabilities", beside=TRUE)#,legend.text = c("truth","proposed","vb
 proposed <- mod0$prob_est$theta_collapsed
 
 
-png("inst/example_figure/comparison_with_std.png",width=10,height=9,units = "inches")
+png("inst/example_figure/comparison_with_std.png",width=10,height=9,units = "in",res=300)
 par(mfcol=c(3,3))
 
 image(t(theta),main="truth")

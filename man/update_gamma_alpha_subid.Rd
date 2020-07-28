@@ -24,12 +24,11 @@ update_gamma_alpha_subid(
 )
 }
 \arguments{
-\item{u}{node id}
+\item{u}{node id (internal or leaf node}
+
+\item{g_psi, g_phi}{g of local variational parameters}
 
 \item{X}{transformed data: 2Y-1}
-
-\item{E_eta, }{E_xi the moments obtained from \code{\link{get_moments_cpp}};
-E_eta are sums of ancestral elements of E_xi}
 
 \item{rmat}{a matrix of variational probabilities of all observations
 belong to K classes; N by K; each row sums to 1}
@@ -44,17 +43,17 @@ between a node and its parent}
 \item{v_lookup}{a vector of length equal to the total number of rows in X;
 each element is an integer, indicating which leaf does the observation belong to.}
 
-\item{tau_1_t}{variational Gaussian variances for alpha; matrix, dimension:(p by K-1)}
-
-\item{D_k_array, }{GvK_array, I_tilde,submat,idnotk utility quantities}
+\item{tau_2_t, tau_1_t}{variational Gaussian variances for gamma and alpha}
 }
 \value{
 a list
 \describe{
-Named("resMu")=resMu, K-1 column vector
-
-Named("resSigma")=resSigma, K-1 by K-1 matrix
-
+  \item resA actually 1/A in the paper, this is variance
+  \item resB
+  \item logresBsq_o_A,
+  \item resC actually 1/C in the paper, this is variance
+  \item resD
+  \item logresDsq_o_C
 }
 }
 \description{

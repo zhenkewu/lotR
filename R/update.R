@@ -179,7 +179,7 @@ update_hyperparams <- function(Y,A,
   expected_l_1m_rho <- digamma(b_t) - digamma(a_t+b_t)
 
   # part 1: E_q(lower bound of joint distribution (all data and unknowns)):
-  res1_2_13  <- get_line1_2_subid(psi,g_psi,phi,g_phi,rmat,E_beta,E_beta_sq,E_eta,E_eta_sq,as.matrix(X),v_units)
+  res1_2_13  <- get_line1_2_13_subid(psi,g_psi,phi,g_phi,rmat,E_beta,E_beta_sq,E_eta,E_eta_sq,as.matrix(X),v_units)
   line_1     <- res1_2_13$res1
   line_2     <- res1_2_13$res2
   line_3     <- sum(expected_l_rho[levels]*prob+expected_l_1m_rho[levels]*(1-prob))
@@ -188,14 +188,14 @@ update_hyperparams <- function(Y,A,
   line_6     <- - sum(expected_ss_gamma/2/tau_2[levels])-sum(J*K*log(2*pi*tau_2[levels]*h_pau))/2 # this is prior, use hyperparams.
 
   # part 2: -E_{q_t}(log(q_t)):
-  line_7  <- (J*K*sum(prob)*(1+log(2*pi))+sum(sapply(1:p,function(u) sum(prob[u]*log(sigma_gamma[u,,])))))/2
-  line_8  <- J*K*sum(1-prob)/2 +J*K*sum(log(2*pi*tau_2_t*h_pau)*(1-prob))/2
-  line_9  <- -1 * (sum(prob[prob != 0] * log(prob[prob != 0])) +sum((1 - prob[prob != 1]) * log(1 - prob[prob != 1])))
-  line_10 <- ((K-1)*sum(prob)*(1+log(2*pi))+sum(sapply(1:p,function(u) sum(prob[u]*log(Sigma_alpha[[u]])))))/2
-  line_11 <-((K-1) / 2) * sum(1 - prob) + ((K-1) / 2) * sum(log(2 * pi * tau_1_t*h_pau) * (1 - prob))
-  line_12 <- -1* sum((a_t - 1) * expected_l_rho + (b_t - 1) * expected_l_1m_rho - mapply(lbeta, a_t, b_t)) # a_t, b_t is of Fg dimension.
-  line_13 <- res1_2_13$res3
-  ELBO    <- line_1 + line_2 + line_3 + line_4 + line_5 + line_6 + line_7 +
+  line_7     <- (J*K*sum(prob)*(1+log(2*pi))+sum(sapply(1:p,function(u) sum(prob[u]*log(sigma_gamma[u,,])))))/2
+  line_8     <- J*K*sum(1-prob)/2 +J*K*sum(log(2*pi*tau_2_t*h_pau)*(1-prob))/2
+  line_9     <- -1 * (sum(prob[prob != 0] * log(prob[prob != 0])) +sum((1 - prob[prob != 1]) * log(1 - prob[prob != 1])))
+  line_10    <- ((K-1)*sum(prob)*(1+log(2*pi))+sum(sapply(1:p,function(u) sum(prob[u]*log(Sigma_alpha[[u]])))))/2
+  line_11    <-((K-1) / 2) * sum(1 - prob) + ((K-1) / 2) * sum(log(2 * pi * tau_1_t*h_pau) * (1 - prob))
+  line_12    <- -1* sum((a_t - 1) * expected_l_rho + (b_t - 1) * expected_l_1m_rho - mapply(lbeta, a_t, b_t)) # a_t, b_t is of Fg dimension.
+  line_13    <- res1_2_13$res3
+  ELBO       <- line_1 + line_2 + line_3 + line_4 + line_5 + line_6 + line_7 +
     line_8 + line_9 +line_10 + line_11 + line_12+ line_13
 
   # return results:

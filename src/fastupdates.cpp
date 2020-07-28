@@ -92,25 +92,19 @@ double logsumexp_row(arma::rowvec logv_arma)
 //' lengths may differ. The ancestors include the node concerned.
 //' @param cardanc a numeric vector of length pL; integers. The number
 //' of ancestors for each leaf node
-//' @param D_k_array a utility array of dimension (K-1,K,K); for each slice,
-//' multiplying it with a vector of length K produces \code{(alpha_k-alpha_m), for m not k}
-//' @param idnotk K-1 by K, utility matrix, column k indicates the indices that are not k
-//' @param submat K-1 by K, utility matrix with a K-1-identity, right padded with
-//' a column of zeros.
 //'
 //' @return a List
 //'
 //' \describe{
-//'     Named("E_beta")=E_beta,
-//'     Named("E_zeta")=E_zeta,
-//'     Named("E_beta_sq")=E_beta_sq,
-//'     Named("E_xi")=E_xi,
-//'     Named("E_eta")=E_eta,
-//'     Named("E_eta_sq")=E_eta_sq
-//' }
+//'   return List::create(Named("E_beta")=E_beta,
+//'    Named("E_beta_sq")=E_beta_sq,
+//'    Named("E_eta")=E_eta,
+//'    Named("E_eta_sq")=E_eta_sq);
+//'}
 //'
 //' @useDynLib lotR
 //' @importFrom Rcpp sourceCpp
+//' @export
 // [[Rcpp::export]]
 List get_moments_cpp(arma::vec prob,
                      arma::cube mu_gamma,//J by K by p
@@ -159,31 +153,18 @@ List get_moments_cpp(arma::vec prob,
 //' update only selected moments that need update when iterating over u (except for \code{rmat})
 //'
 //' (one-node version of \code{\link{get_moments_cpp}})
-//'
+//' @param leaves_u the leaf descendant node ids for node u
+//' @param E_beta,E_beta_sq,E_eta,E_eta_sq
 //' @param prob variational probabilities for \code{s_u}; length p
-//' @param mu_gamma variational Gaussian means (for \code{s_u=1} component) for J*K
-//' logit(class-specific response probabilities); (J,K,p) array; In R, we used a list of p (J,K) matrices
-//' @param mu_alpha variational Gaussian mean vectors (for \code{s_u=1} component) -
-//' this is a p by K-1 matrix; in R, we used a list of p vectors (each of length K-1)
-//' @param anc a list of pL vectors, each vector has the node ids of the ancestors;
-//' lengths may differ. The ancestors include the node concerned.
-//' @param cardanc a numeric vector of length pL; integers. The number
-//' of ancestors for each leaf node
-//'
+//' @inheritParams get_moments_cpp
 //' @return a List
 //'
 //' \describe{
-//' Named("E_beta")=E_beta,
-//' Named("E_zeta")=E_zeta,
-//' # Named("E_beta_sq")=E_beta_sq,
-//' Named("E_xi")=E_xi,
-//' Named("E_eta")=E_eta,
-//' Named("E_xi_diff")=E_xi_diff,
-//' Named("E_eta_diff")=E_eta_diff,
-//' # Named("E_eta_diff_sq")=E_eta_diff_sq
-//' }
-//'
-//'
+//'   return List::create(Named("E_beta")=E_beta,
+//'    Named("E_beta_sq")=E_beta_sq,
+//'    Named("E_eta")=E_eta,
+//'    Named("E_eta_sq")=E_eta_sq);
+//'}
 //' @useDynLib lotR
 //' @importFrom Rcpp sourceCpp
 // [[Rcpp::export]]
@@ -249,7 +230,6 @@ List get_moments_cpp_eco(arma::vec leaves_u,
 //' lengths may differ. The ancestors include the node concerned.
 //' @param cardanc a numeric vector of length pL; integers. The number
 //' of ancestors for each leaf node
-//'
 //' @param z  = \code{ ci_level+(1-ci_level)/2}
 //'
 //' @return a list
@@ -265,6 +245,7 @@ List get_moments_cpp_eco(arma::vec leaves_u,
 //' Named("eta_ciu")=eta_ciu
 //'
 //' }
+//' @export
 // [[Rcpp::export]]
 List get_est_cpp(arma::vec node_select,
                  arma::cube mu_gamma,//J by K by p
@@ -376,32 +357,31 @@ arma::mat update_rmat(arma::cube psi, arma::cube g_psi,arma::mat phi, arma::mat 
 }
 
 
-
 //' [update gamma and alpha together.]Update the variational mean and variance for logit of
 //' class-specific response probabilities (for the \code{s_u=1} component)
 //'
-//' @param u node id
+//' @param u node id (internal or leaf node
+//' @param g_psi,g_phi g of local variational parameters
+//' @param tau_2_t,tau_1_t variational Gaussian variances for gamma and alpha
+//' @param E_beta,E_zeta_u
+//' @param X transformed data: 2Y-1
 //' @param rmat a matrix of variational probabilities of all observations
 //' belong to K classes; N by K; each row sums to 1
-//' @param tau_1_t variational Gaussian variances for alpha; matrix, dimension:(p by K-1)
 //' @param h_pau a numeric vector of length p indicating the branch length
 //' between a node and its parent
 //' @param levels a vector of possibly repeating integers from 1 to Fg, or L,
-//' @param E_eta, E_xi the moments obtained from \code{\link{get_moments_cpp}};
-//' E_eta are sums of ancestral elements of E_xi
-//' @param X transformed data: 2Y-1
-//' @param D_k_array, GvK_array, I_tilde,submat,idnotk utility quantities
 //' @param subject_ids the ids of subjects in the leaf descendants of node u
 //' @param v_lookup a vector of length equal to the total number of rows in X;
 //' each element is an integer, indicating which leaf does the observation belong to.
 //'
-//'
 //' @return  a list
 //' \describe{
-//' Named("resMu")=resMu, K-1 column vector
-//'
-//' Named("resSigma")=resSigma, K-1 by K-1 matrix
-//'
+//'   \item resA actually 1/A in the paper, this is variance
+//'   \item resB
+//'   \item logresBsq_o_A,
+//'   \item resC actually 1/C in the paper, this is variance
+//'   \item resD
+//'   \item logresDsq_o_C
 //' }
 //'
 //' @useDynLib lotR
@@ -482,7 +462,6 @@ List update_gamma_alpha_subid(int u,
 
 //' @useDynLib lotR
 //' @importFrom Rcpp sourceCpp
-//' @export
 // [[Rcpp::export]]
 arma::rowvec getC(int u, arma::mat g_phi,
                   arma::mat rmat, arma::vec tau_1_t,//p by K-1
@@ -509,32 +488,25 @@ arma::rowvec getC(int u, arma::mat g_phi,
   return resC;
 }
 
-
-
 //' calculate line 1 and 2 and 13 of ELBO to assess convergence
 //' and choose among converged estimates from many restarts
 //'
-//' @param psi, g_psi see \code{\link{update_gamma_subid}}
-//' @param phi a (pL,K,K) array of local variational parameters for approximating
-//' the \code{expit(eta_vk-eta_vm)}
-//' @param g_phi g transformed phi
+//' @param psi,g_psi,phi,g_phi see \code{\link{update_hyperparams}}
 //' @param rmat a matrix of variational probabilities of all observations
 //' belong to K classes; N by K; each row sums to 1
-//' @param outcomes_units a list of length pL, each is a vector indicating the
-//' observations in each leaf (aka outcome)
-//' @param cardleaf a vector of legnth pL; counts the number of observations in each leaf
-//' @param E_beta, E_beta_sq, E_beta_diff, E_beta_diff_sq moments during
+//' @param E_beta, E_beta_sq, E_eta, E_eta_sq moments during
 //' VI updates from \code{\link{get_moments_cpp}}
 //' @param X transformed data: 2Y-1
-//' @param idnotk utility matrix
+//' @param v_lookup a vector of indicators; of size N, each indicating the leaf id (from 1 to pL)
+//' for each sample.
 //'
-//' @return ELBO value; negative
+//' @return line 1, 2, 13 of the ELBO
 //'
 //' @useDynLib lotR
 //' @importFrom Rcpp sourceCpp
 //' @export
 // [[Rcpp::export]]
-List get_line1_2_subid(arma::cube psi, arma::cube g_psi,
+List get_line1_2_13_subid(arma::cube psi, arma::cube g_psi,
                        arma::mat phi, arma::mat g_phi,
                        arma::mat rmat,
                        arma::cube E_beta, arma::cube E_beta_sq,

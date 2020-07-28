@@ -35,25 +35,15 @@ lengths may differ. The ancestors include the node concerned.}
 
 \item{cardanc}{a numeric vector of length pL; integers. The number
 of ancestors for each leaf node}
-
-\item{D_k_array}{a utility array of dimension (K-1,K,K); for each slice,
-multiplying it with a vector of length K produces \code{(alpha_k-alpha_m), for m not k}}
-
-\item{idnotk}{K-1 by K, utility matrix, column k indicates the indices that are not k}
-
-\item{submat}{K-1 by K, utility matrix with a K-1-identity, right padded with
-a column of zeros.}
 }
 \value{
 a List
 
 \describe{
-    Named("E_beta")=E_beta,
-    Named("E_zeta")=E_zeta,
-    Named("E_beta_sq")=E_beta_sq,
-    Named("E_xi")=E_xi,
-    Named("E_eta")=E_eta,
-    Named("E_eta_sq")=E_eta_sq
+  return List::create(Named("E_beta")=E_beta,
+   Named("E_beta_sq")=E_beta_sq,
+   Named("E_eta")=E_eta,
+   Named("E_eta_sq")=E_eta_sq);
 }
 }
 \description{

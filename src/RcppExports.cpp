@@ -169,9 +169,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// get_line1_2_subid
-List get_line1_2_subid(arma::cube psi, arma::cube g_psi, arma::mat phi, arma::mat g_phi, arma::mat rmat, arma::cube E_beta, arma::cube E_beta_sq, arma::mat E_eta, arma::mat E_eta_sq, arma::mat X, arma::vec v_lookup);
-RcppExport SEXP _lotR_get_line1_2_subid(SEXP psiSEXP, SEXP g_psiSEXP, SEXP phiSEXP, SEXP g_phiSEXP, SEXP rmatSEXP, SEXP E_betaSEXP, SEXP E_beta_sqSEXP, SEXP E_etaSEXP, SEXP E_eta_sqSEXP, SEXP XSEXP, SEXP v_lookupSEXP) {
+// get_line1_2_13_subid
+List get_line1_2_13_subid(arma::cube psi, arma::cube g_psi, arma::mat phi, arma::mat g_phi, arma::mat rmat, arma::cube E_beta, arma::cube E_beta_sq, arma::mat E_eta, arma::mat E_eta_sq, arma::mat X, arma::vec v_lookup);
+RcppExport SEXP _lotR_get_line1_2_13_subid(SEXP psiSEXP, SEXP g_psiSEXP, SEXP phiSEXP, SEXP g_phiSEXP, SEXP rmatSEXP, SEXP E_betaSEXP, SEXP E_beta_sqSEXP, SEXP E_etaSEXP, SEXP E_eta_sqSEXP, SEXP XSEXP, SEXP v_lookupSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -186,7 +186,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::mat >::type E_eta_sq(E_eta_sqSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type v_lookup(v_lookupSEXP);
-    rcpp_result_gen = Rcpp::wrap(get_line1_2_subid(psi, g_psi, phi, g_phi, rmat, E_beta, E_beta_sq, E_eta, E_eta_sq, X, v_lookup));
+    rcpp_result_gen = Rcpp::wrap(get_line1_2_13_subid(psi, g_psi, phi, g_phi, rmat, E_beta, E_beta_sq, E_eta, E_eta_sq, X, v_lookup));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -202,7 +202,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lotR_update_rmat", (DL_FUNC) &_lotR_update_rmat, 10},
     {"_lotR_update_gamma_alpha_subid", (DL_FUNC) &_lotR_update_gamma_alpha_subid, 15},
     {"_lotR_getC", (DL_FUNC) &_lotR_getC, 7},
-    {"_lotR_get_line1_2_subid", (DL_FUNC) &_lotR_get_line1_2_subid, 11},
+    {"_lotR_get_line1_2_13_subid", (DL_FUNC) &_lotR_get_line1_2_13_subid, 11},
     {NULL, NULL, 0}
 };
 

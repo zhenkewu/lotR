@@ -20,13 +20,22 @@ get_moments_cpp_eco(
 )
 }
 \arguments{
+\item{leaves_u}{the leaf descendant node ids for node u}
+
 \item{prob}{variational probabilities for \code{s_u}; length p}
 
 \item{mu_gamma}{variational Gaussian means (for \code{s_u=1} component) for J*K
 logit(class-specific response probabilities); (J,K,p) array; In R, we used a list of p (J,K) matrices}
 
+\item{sigma_gamma}{variational Gaussian variances (for \code{s_u=1} component)
+for J*K logit(class-specific response probabilities); (J,K,p) array}
+
 \item{mu_alpha}{variational Gaussian mean vectors (for \code{s_u=1} component) -
 this is a p by K-1 matrix; in R, we used a list of p vectors (each of length K-1)}
+
+\item{Sigma_alpha}{variational Gaussian variances (for \code{s_u=1} component)
+- this is an array of dimension (K-1, K-1, p); in R, we used a list of p matrices,
+each of dimension K-1 by K-1.}
 
 \item{anc}{a list of pL vectors, each vector has the node ids of the ancestors;
 lengths may differ. The ancestors include the node concerned.}
@@ -38,14 +47,10 @@ of ancestors for each leaf node}
 a List
 
 \describe{
-Named("E_beta")=E_beta,
-Named("E_zeta")=E_zeta,
-# Named("E_beta_sq")=E_beta_sq,
-Named("E_xi")=E_xi,
-Named("E_eta")=E_eta,
-Named("E_xi_diff")=E_xi_diff,
-Named("E_eta_diff")=E_eta_diff,
-# Named("E_eta_diff_sq")=E_eta_diff_sq
+  return List::create(Named("E_beta")=E_beta,
+   Named("E_beta_sq")=E_beta_sq,
+   Named("E_eta")=E_eta,
+   Named("E_eta_sq")=E_eta_sq);
 }
 }
 \description{
