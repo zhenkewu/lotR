@@ -25,6 +25,9 @@
 #' Default = every 50 iterations.
 #' @param print_freq How often to print out iteration number and current value of epsilon
 #' (the difference in objective function value for the two most recent iterations).
+#' @param plot_fig plot figure about prob and response profile (1st node)
+#' @param shared_tau logical: \code{TRUE} for sharing the tau_1 for alpha's in
+#' the same node; same for tau_2 (gamma's). Default is \code{FALSE}
 #' @param hyper_fixed Fixed values of hyperprior parameters for rho.
 #' This should be a list with two elements:
 #' a and b, both numeric vectors of length \code{L}, representing the
@@ -122,10 +125,14 @@
 lcm_tree <- function(Y,outcomes,mytree,# may have unordered nodes.
                      rootnode = "Node1",
                      weighted_edge = TRUE,
+                     Z_obs = NULL,
                      ci_level = 0.95,
                      get_lcm_by_group = TRUE,
                      update_hyper_freq = 50,
                      print_freq = 10,
+                     quiet      = TRUE,
+                     plot_fig   = FALSE,
+                     shared_tau = FALSE,
                      hyper_fixed = list(K=3), # <-- modify default?
                      tol = 1E-8,
                      tol_hyper = 1E-4,
@@ -160,8 +167,12 @@ lcm_tree <- function(Y,outcomes,mytree,# may have unordered nodes.
   }
   if (nrestarts == 1) parallel <- FALSE
 
+  if (log_restarts){
+      message("[lotR] Setting 'plot_fig = TRUE', since 'log_restarts = TRUE'\n")
+    }
+
   # construct designed data; here design_tree is going to reorder the nodes of the tree.
-  dsgn <- design_tree(Y,outcomes,mytree,rootnode,weighted_edge) # root_node,weighted_edge <--- need fixing.
+  dsgn <- design_tree(Y,outcomes,mytree,rootnode,weighted_edge,Z_obs) # root_node,weighted_edge <--- need fixing.
 
   # Get hyper_fixed if not supplied:
   if (is.null(hyper_fixed$a) | is.null(hyper_fixed$b)) {
@@ -198,6 +209,9 @@ lcm_tree <- function(Y,outcomes,mytree,# may have unordered nodes.
                         tol_hyper = tol_hyper,
                         max_iter = max_iter,
                         print_freq = print_freq,
+                        quiet      = quiet,
+                        plot_fig   = plot_fig,
+                        shared_tau = shared_tau,
                         update_hyper_freq = update_hyper_freq,
                         hyper_fixed = hyper_fixed)
     cat("\nRestart", i, "complete.\n")

@@ -14,6 +14,8 @@
 #' @param weighted_edge logical: TRUE for incorporating the branch lengths -
 #' then the mytree must have this info; if FALSE, every branch, including
 #' an imaginary rootnode to past branch, is set to have length 1.
+#' @param Z_obs Default is \code{NULL}, a two-column matrix of (id,class indicator)
+#' for a subset of people. The rows will be reordered according to the reordered \code{Y}.
 #'
 #' @return A list of data and tree information
 #' \itemize{
@@ -44,7 +46,7 @@
 #' }
 #' @export
 #'
-design_tree <- function(Y,outcomes,mytree,root_node="Node1",weighted_edge=FALSE){ # by default, not weighted tree.
+design_tree <- function(Y,outcomes,mytree,root_node="Node1",weighted_edge=FALSE,Z_obs = NULL){ # by default, not weighted tree.
   # warning("using hard-coded info\n")
   # Y        <- dat_mge[!is.na(match_ind),ind_EL] # these are not ordered yet.
   # outcomes <- dat_mge[!is.na(match_ind),"ct_MLST"]
@@ -102,7 +104,9 @@ design_tree <- function(Y,outcomes,mytree,root_node="Node1",weighted_edge=FALSE)
   ord <- order(ordered(outcomes, levels = leaves)) # <--- leaves.
   Y   <- Y[ord,,drop=FALSE]
   outcomes <- outcomes[ord] # length = n.
-
+  if (!is.null(Z_obs)){
+    Z_obs <- Z_obs[ord,,drop=FALSE]
+  }
   # get lists of ancestors for each outcome:
   d <- igraph::diameter(mytree,weight=NA)
   # need to set weight=NA to prevent the use of edge lengths in determining the diameter.
@@ -184,7 +188,7 @@ design_tree <- function(Y,outcomes,mytree,root_node="Node1",weighted_edge=FALSE)
   make_list(Y,A,A_leaves,
             outcomes,outcomes_units,outcomes_nodes,
             ancestors,edge_lengths,h_pau,
-            levels,v_units,subject_id_list)
+            levels,v_units,subject_id_list,Z_obs)
 }
 
 

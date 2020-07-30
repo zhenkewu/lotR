@@ -127,6 +127,27 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// update_rmat_partial
+arma::mat update_rmat_partial(arma::vec known_ids, arma::cube psi, arma::cube g_psi, arma::mat phi, arma::mat g_phi, arma::mat X, arma::cube E_beta, arma::mat E_eta, arma::cube E_beta_sq, arma::mat E_eta_sq, arma::vec v_lookup);
+RcppExport SEXP _lotR_update_rmat_partial(SEXP known_idsSEXP, SEXP psiSEXP, SEXP g_psiSEXP, SEXP phiSEXP, SEXP g_phiSEXP, SEXP XSEXP, SEXP E_betaSEXP, SEXP E_etaSEXP, SEXP E_beta_sqSEXP, SEXP E_eta_sqSEXP, SEXP v_lookupSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type known_ids(known_idsSEXP);
+    Rcpp::traits::input_parameter< arma::cube >::type psi(psiSEXP);
+    Rcpp::traits::input_parameter< arma::cube >::type g_psi(g_psiSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type phi(phiSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type g_phi(g_phiSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::cube >::type E_beta(E_betaSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type E_eta(E_etaSEXP);
+    Rcpp::traits::input_parameter< arma::cube >::type E_beta_sq(E_beta_sqSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type E_eta_sq(E_eta_sqSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type v_lookup(v_lookupSEXP);
+    rcpp_result_gen = Rcpp::wrap(update_rmat_partial(known_ids, psi, g_psi, phi, g_phi, X, E_beta, E_eta, E_beta_sq, E_eta_sq, v_lookup));
+    return rcpp_result_gen;
+END_RCPP
+}
 // update_gamma_alpha_subid
 List update_gamma_alpha_subid(int u, arma::cube g_psi, arma::mat g_phi, double tau_2_t_u, double tau_1_t_u, arma::cube E_beta, arma::mat E_zeta_u, arma::mat X, arma::mat E_eta, arma::vec E_xi_u, arma::mat rmat, arma::vec h_pau, arma::vec levels, arma::vec subject_ids, arma::vec v_lookup);
 RcppExport SEXP _lotR_update_gamma_alpha_subid(SEXP uSEXP, SEXP g_psiSEXP, SEXP g_phiSEXP, SEXP tau_2_t_uSEXP, SEXP tau_1_t_uSEXP, SEXP E_betaSEXP, SEXP E_zeta_uSEXP, SEXP XSEXP, SEXP E_etaSEXP, SEXP E_xi_uSEXP, SEXP rmatSEXP, SEXP h_pauSEXP, SEXP levelsSEXP, SEXP subject_idsSEXP, SEXP v_lookupSEXP) {
@@ -152,6 +173,31 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// update_gamma_alpha_subid_separate_tau
+List update_gamma_alpha_subid_separate_tau(int u, arma::cube g_psi, arma::mat g_phi, arma::mat tau_2_t_u, arma::vec tau_1_t_u, arma::cube E_beta, arma::mat E_zeta_u, arma::mat X, arma::mat E_eta, arma::vec E_xi_u, arma::mat rmat, arma::vec h_pau, arma::vec levels, arma::vec subject_ids, arma::vec v_lookup);
+RcppExport SEXP _lotR_update_gamma_alpha_subid_separate_tau(SEXP uSEXP, SEXP g_psiSEXP, SEXP g_phiSEXP, SEXP tau_2_t_uSEXP, SEXP tau_1_t_uSEXP, SEXP E_betaSEXP, SEXP E_zeta_uSEXP, SEXP XSEXP, SEXP E_etaSEXP, SEXP E_xi_uSEXP, SEXP rmatSEXP, SEXP h_pauSEXP, SEXP levelsSEXP, SEXP subject_idsSEXP, SEXP v_lookupSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type u(uSEXP);
+    Rcpp::traits::input_parameter< arma::cube >::type g_psi(g_psiSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type g_phi(g_phiSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type tau_2_t_u(tau_2_t_uSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type tau_1_t_u(tau_1_t_uSEXP);
+    Rcpp::traits::input_parameter< arma::cube >::type E_beta(E_betaSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type E_zeta_u(E_zeta_uSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type E_eta(E_etaSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type E_xi_u(E_xi_uSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type rmat(rmatSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type h_pau(h_pauSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type levels(levelsSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type subject_ids(subject_idsSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type v_lookup(v_lookupSEXP);
+    rcpp_result_gen = Rcpp::wrap(update_gamma_alpha_subid_separate_tau(u, g_psi, g_phi, tau_2_t_u, tau_1_t_u, E_beta, E_zeta_u, X, E_eta, E_xi_u, rmat, h_pau, levels, subject_ids, v_lookup));
+    return rcpp_result_gen;
+END_RCPP
+}
 // getC
 arma::rowvec getC(int u, arma::mat g_phi, arma::mat rmat, arma::vec tau_1_t, arma::vec h_pau, arma::vec subject_ids, arma::vec v_lookup);
 RcppExport SEXP _lotR_getC(SEXP uSEXP, SEXP g_phiSEXP, SEXP rmatSEXP, SEXP tau_1_tSEXP, SEXP h_pauSEXP, SEXP subject_idsSEXP, SEXP v_lookupSEXP) {
@@ -166,6 +212,23 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::vec >::type subject_ids(subject_idsSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type v_lookup(v_lookupSEXP);
     rcpp_result_gen = Rcpp::wrap(getC(u, g_phi, rmat, tau_1_t, h_pau, subject_ids, v_lookup));
+    return rcpp_result_gen;
+END_RCPP
+}
+// getC_separate_tau
+arma::rowvec getC_separate_tau(int u, arma::mat g_phi, arma::mat rmat, arma::mat tau_1_t, arma::vec h_pau, arma::vec subject_ids, arma::vec v_lookup);
+RcppExport SEXP _lotR_getC_separate_tau(SEXP uSEXP, SEXP g_phiSEXP, SEXP rmatSEXP, SEXP tau_1_tSEXP, SEXP h_pauSEXP, SEXP subject_idsSEXP, SEXP v_lookupSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type u(uSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type g_phi(g_phiSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type rmat(rmatSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type tau_1_t(tau_1_tSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type h_pau(h_pauSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type subject_ids(subject_idsSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type v_lookup(v_lookupSEXP);
+    rcpp_result_gen = Rcpp::wrap(getC_separate_tau(u, g_phi, rmat, tau_1_t, h_pau, subject_ids, v_lookup));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -200,8 +263,11 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lotR_get_moments_cpp_eco", (DL_FUNC) &_lotR_get_moments_cpp_eco, 12},
     {"_lotR_get_est_cpp", (DL_FUNC) &_lotR_get_est_cpp, 8},
     {"_lotR_update_rmat", (DL_FUNC) &_lotR_update_rmat, 10},
+    {"_lotR_update_rmat_partial", (DL_FUNC) &_lotR_update_rmat_partial, 11},
     {"_lotR_update_gamma_alpha_subid", (DL_FUNC) &_lotR_update_gamma_alpha_subid, 15},
+    {"_lotR_update_gamma_alpha_subid_separate_tau", (DL_FUNC) &_lotR_update_gamma_alpha_subid_separate_tau, 15},
     {"_lotR_getC", (DL_FUNC) &_lotR_getC, 7},
+    {"_lotR_getC_separate_tau", (DL_FUNC) &_lotR_getC_separate_tau, 7},
     {"_lotR_get_line1_2_13_subid", (DL_FUNC) &_lotR_get_line1_2_13_subid, 11},
     {NULL, NULL, 0}
 };

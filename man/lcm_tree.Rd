@@ -10,10 +10,14 @@ lcm_tree(
   mytree,
   rootnode = "Node1",
   weighted_edge = TRUE,
+  Z_obs = NULL,
   ci_level = 0.95,
   get_lcm_by_group = TRUE,
   update_hyper_freq = 50,
   print_freq = 10,
+  quiet = TRUE,
+  plot_fig = FALSE,
+  shared_tau = FALSE,
   hyper_fixed = list(K = 3),
   tol = 1e-08,
   tol_hyper = 1e-04,
@@ -63,6 +67,11 @@ Default = every 50 iterations.}
 
 \item{print_freq}{How often to print out iteration number and current value of epsilon
 (the difference in objective function value for the two most recent iterations).}
+
+\item{plot_fig}{plot figure about prob and response profile (1st node)}
+
+\item{shared_tau}{logical: \code{TRUE} for sharing the tau_1 for alpha's in
+the same node; same for tau_2 (gamma's). Default is \code{FALSE}}
 
 \item{hyper_fixed}{Fixed values of hyperprior parameters for rho.
 This should be a list with two elements:

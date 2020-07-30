@@ -8,6 +8,7 @@ class model with tree structured shrinkage}
 initialize_tree_lcm(
   Y,
   A,
+  Z_obs,
   outcomes_units,
   outcomes_nodes,
   ancestors,
@@ -19,7 +20,8 @@ initialize_tree_lcm(
   random_init,
   random_init_vals,
   subject_id_list,
-  v_units
+  v_units,
+  shared_tau
 )
 }
 \arguments{
@@ -58,6 +60,8 @@ initial values. This is needed if the algorithm needs multiple random starts
 to choose the best converged values.}
 
 \item{random_init_vals}{NB: fill out specific elements}
+
+\item{subject_id_list, v_units, shared_tau}{see \code{\link{update_vi_params}}}
 
 \item{ancestor}{a numeric vector of ancestor nodes for each leaf node (a list of length equal to
 the number of leaves)}

@@ -39,11 +39,13 @@ update_hyperparams(
   g_phi,
   tau_1,
   tau_2,
+  shared_tau,
   a,
   b,
   K,
   tau_update_levels,
-  update_hyper
+  update_hyper,
+  quiet
 )
 }
 \arguments{
@@ -118,6 +120,8 @@ ordered from low- to high-indexed leaf nodes.}
 \item{tau_1}{parameters updated by \code{update_hyperparams()}}
 
 \item{tau_2}{parameters updated by \code{update_hyperparams()}}
+
+\item{shared_tau}{parameters updated by \code{update_hyperparams()}}
 
 \item{a}{fixed hyperparameters not to be updated.}
 

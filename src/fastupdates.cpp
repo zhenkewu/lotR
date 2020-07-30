@@ -323,9 +323,9 @@ List get_est_cpp(arma::vec node_select,
 //' @export
 // [[Rcpp::export]]
 arma::mat update_rmat(arma::cube psi, arma::cube g_psi,arma::mat phi, arma::mat g_phi,
-                    arma::mat X,
-                    arma::cube E_beta,arma::mat E_eta, arma::cube E_beta_sq,arma::mat E_eta_sq,
-                    arma::vec v_lookup){
+                      arma::mat X,
+                      arma::cube E_beta,arma::mat E_eta, arma::cube E_beta_sq,arma::mat E_eta_sq,
+                      arma::vec v_lookup){
   int n = X.n_rows, J = psi.n_cols, K = psi.n_slices;
   int v = 0;
   X = X+0.0;
@@ -361,8 +361,70 @@ arma::mat update_rmat(arma::cube psi, arma::cube g_psi,arma::mat phi, arma::mat 
 }
 
 
+//' Update the variational probabilities of each observation in one of K classes
+//'
+//' This function updates the N by K matrix \code{rmat} in the package
+//'
+//' @param known_Z matrix of integers; two columns (subject id, class indicator)
+//' @param psi,g_psi,phi,g_phi local variational parameters
+//' @param X transformed data: 2Y-1
+//' @param E_beta,E_eta,E_beta_sq,E_eta_sq moment updates produced by \code{\link{get_moments_cpp}}
+//' @param v_lookup a vector of length equal to the total number of rows in \code{X};
+//' each element is an integer, indicating which leaf does the observation belong to.
+//'
+//' @return  N by K variational multinomial probabilities; row sums are 1s.
+//'
+//' @useDynLib lotR
+//' @importFrom Rcpp sourceCpp
+//' @export
+// [[Rcpp::export]]
+arma::mat update_rmat_partial(arma::vec known_ids,arma::cube psi, arma::cube g_psi,arma::mat phi, arma::mat g_phi,
+                              arma::mat X,
+                              arma::cube E_beta,arma::mat E_eta, arma::cube E_beta_sq,arma::mat E_eta_sq,
+                              arma::vec v_lookup){
+  int n = X.n_rows, J = psi.n_cols, K = psi.n_slices;
+  int v = 0;
+  X = X+0.0;
+  arma::mat res(n,K);res.zeros();
+  arma::vec tmp(n);tmp.zeros();
+  int i_known = 0;
+  for (int i=0;i<n;i++){
+    v = v_lookup(i)-1;// get leaf id.
+    bool is_known = std::find(known_ids.begin(), known_ids.end(),i+1)!=known_ids.end();
+    if (is_known){ continue;}
+    // if (is_known){res(i,(int) known_Z(i_known,1)-1) = 1.0; ++i_known; continue;}
+    for (int k=0;k<K;k++){
+      for (int j=0;j<J;j++){
+        res(i,k) += -log(1.0+exp(-psi(v,j,k)))+(1.0*X(i,j)*E_beta(j,k,v)-psi(v,j,k))*0.5-g_psi(v,j,k)*(E_beta_sq(j,k,v)-pow(psi(v,j,k),2.0));
+      }
+      if (k<1){//first segment
+        res(i,k)   += -log(1.0+exp(-phi(v,k)))+(E_eta(v,k)-phi(v,k))*0.5-g_phi(v,k)*(E_eta_sq(v,k)-pow(phi(v,k),2.0));
+      } else if (k< K-1){ // not the first, not the last.
+        for (int m=0;m<k-1;m++){
+          res(i,k)  += -log(1.0+exp(-phi(v,m)))+(-E_eta(v,m)-phi(v,m))*0.5-g_phi(v,m)*(E_eta_sq(v,m)-pow(phi(v,m),2.0));
+        }
+        res(i,k)  += -log(1.0+exp(-phi(v,k)))+(E_eta(v,k)-phi(v,k))*0.5-g_phi(v,k)*(E_eta_sq(v,k)-pow(phi(v,k),2.0));
+      } else{// k==K-1; the last segment:
+        for (int s=0;s<K-1;s++){
+          res(i,k)  += -log(1.0+exp(-phi(v,s)))+(-E_eta(v,s)-phi(v,s))*0.5-g_phi(v,s)*(E_eta_sq(v,s)-pow(phi(v,s),2.0));
+        }
+      }
+    }
+    tmp(i) = logsumexp_row(res.row(i));
+  }
+  for (int i=0;i<n;i++){
+    for (int k=0;k<K;k++){
+      res(i,k) = exp(res(i,k)-tmp(i)); // all 1s for rows that correspond to known subjects.
+    }
+  }
+  return(res);
+}
+
+
 //' [update gamma and alpha together.]Update the variational mean and variance for logit of
 //' class-specific response probabilities (for the \code{s_u=1} component)
+//'
+//' shared tau's
 //'
 //' @param u node id (internal or leaf node
 //' @param g_psi,g_phi g of local variational parameters
@@ -427,7 +489,7 @@ List update_gamma_alpha_subid(int u,
         vv = (int) v_lookup(ii)-1;
         // update gamma:
         pre_resA(0) = resA(j,k);
-        pre_resA(1) = log(2.0) + log(rmat(ii,k)) + log(g_psi(vv,j,k));
+        pre_resA(1) = log(2.0) + log(std::min(std::max(rmat(ii,k),1.0e-200),1.0-1e-200)) + log(g_psi(vv,j,k));
         resA(j,k)   = logsumexp(pre_resA);
         // resA(j,k) += 2.0*rmat(ii,k)*g_psi(vv,j,k);
         resB(j,k) += rmat(ii,k)*(X(ii,j)*0.5- 2.0*g_psi(vv,j,k)*(E_beta(j,k,vv)-E_zeta_u(j,k)));
@@ -465,11 +527,124 @@ List update_gamma_alpha_subid(int u,
 
 }
 
+
+//' [update gamma and alpha together.]Update the variational mean and variance for logit of
+//' class-specific response probabilities (for the \code{s_u=1} component)
+//'
+//' separate tau's
+//'
+//' @param u node id (internal or leaf node
+//' @param g_psi,g_phi g of local variational parameters
+//' @param tau_2_t,tau_1_t variational Gaussian variances for gamma and alpha
+//' @param E_beta,E_zeta_u moment updates produced by \code{\link{get_moments_cpp}};
+//' \code{E_zeta_u} is directly calculated: \code{prob[u]*sigma_gamma[u,,]}
+//' @param X transformed data: 2Y-1
+//' @param rmat a matrix of variational probabilities of all observations
+//' belong to K classes; N by K; each row sums to 1
+//' @param h_pau a numeric vector of length p indicating the branch length
+//' between a node and its parent
+//' @param levels a vector of possibly repeating integers from 1 to Fg, or L,
+//' @param subject_ids the ids of subjects in the leaf descendants of node u
+//' @param v_lookup a vector of length equal to the total number of rows in X;
+//' each element is an integer, indicating which leaf does the observation belong to.
+//'
+//' @return  a list
+//' \describe{
+//'   \item{resA}{actually 1/A in the paper, this is variance}
+//'   \item{resB}{}
+//'   \item{logresBsq_o_A}{}
+//'   \item{resC}{actually 1/C in the paper, this is variance}
+//'   \item{resD}{}
+//'   \item{logresDsq_o_C}{}
+//' }
+//'
+//' @useDynLib lotR
+//' @importFrom Rcpp sourceCpp
+//' @export
+// [[Rcpp::export]]
+List update_gamma_alpha_subid_separate_tau(int u,
+                                           arma::cube g_psi,arma::mat g_phi,
+                                           arma::mat tau_2_t_u,arma::vec tau_1_t_u,
+                                           arma::cube E_beta,arma::mat E_zeta_u,arma::mat X,
+                                           arma::mat E_eta, arma::vec E_xi_u,
+                                           arma::mat rmat,arma::vec h_pau,arma::vec levels,
+                                           arma::vec subject_ids,
+                                           arma::vec v_lookup
+){
+  int n = subject_ids.size(), J = g_psi.n_cols, K = g_psi.n_slices;
+  int p = h_pau.size(), pL = g_psi.n_rows;
+  int ii = 0;
+  int vv = 0;
+  int uu = (int) u-1;
+  X = X+0.0;
+  arma::mat resA(J,K);resA.zeros(); // inv A, or variance
+  arma::mat resB(J,K);resB.zeros();
+  arma::mat logresBsq_o_A(J,K);logresBsq_o_A.zeros();
+  arma::vec pre_resA(2);pre_resA.zeros();
+
+  arma::vec resC(K-1);resC.zeros(); // inv C, or variance
+  arma::vec resD(K-1);resD.zeros();
+  arma::vec logresDsq_o_C(K-1);logresDsq_o_C.zeros();
+  arma::vec pre_resC(2);pre_resC.zeros();
+
+  for (int k=0;k<K;k++){
+    if (k<(K-1)){ resC(k) = -log(tau_1_t_u(k))-log(h_pau(uu));}
+    for (int j=0;j<J;j++){
+      resA(j,k) = -log(tau_2_t_u(j,k))-log(h_pau(uu));
+      for (int i=0;i<n;i++){
+        ii = (int) subject_ids(i)-1;
+        vv = (int) v_lookup(ii)-1;
+        // update gamma:
+        pre_resA(0) = resA(j,k);
+        pre_resA(1) = log(2.0) + log(std::min(std::max(rmat(ii,k),1.0e-208),1.0-1e-208)) + log(g_psi(vv,j,k));
+        resA(j,k)   = logsumexp(pre_resA);
+        // resA(j,k) += 2.0*rmat(ii,k)*g_psi(vv,j,k);
+        resB(j,k) += rmat(ii,k)*(X(ii,j)*0.5- 2.0*g_psi(vv,j,k)*(E_beta(j,k,vv)-E_zeta_u(j,k)));
+
+        if (j<1 && k<(K-1)){// only do it once.
+          // update alpha:
+          for (int m=k;m<K;m++){ // currently does not deal with K=2 case. NB: need fixing.
+            pre_resC(0) = resC(k);
+            pre_resC(1) = log(2.0)+log(rmat(ii,m))+log(g_phi(vv,k));
+            resC(k) =  logsumexp(pre_resC);
+            if (m<k+1){
+              resD(k) += rmat(ii,m)*0.5-2.0*rmat(ii,m)*g_phi(vv,k)*(E_eta(vv,k)-E_xi_u(k));
+            }else{
+              resD(k) += -rmat(ii,m)*0.5-2.0*rmat(ii,m)*g_phi(vv,k)*(E_eta(vv,k)-E_xi_u(k));
+            }
+          }
+        }
+      }
+      // logresBsq_o_A(j,k) = 2.0*log(abs(resB(j,k)))-resA(j,k);
+      // resA(j,k) = exp(-resA(j,k));
+      // resA(j,k) += pow(tau_2_t_u*h_pau(uu),-1.0);
+    }
+    // if ( k<(K-1)){// only do it once.
+    //   logresDsq_o_C(k) = 2.0*log(abs(resD(k)))-resC(k);
+    //   resC(k) = exp(-resC(k));
+    //   // resC(k) += pow(tau_1_t_u*h_pau(uu),-1.0);
+    // }
+  }
+
+  logresBsq_o_A = 2.0*log(abs(resB))-resA;
+  resA = exp(-resA);
+
+  logresDsq_o_C = 2.0*log(abs(resD))-resC;
+  resC = exp(-resC);
+  return List::create(Named("resA")=resA,
+                      Named("resB")=resB,
+                      Named("logresBsq_o_A")=logresBsq_o_A,
+                      Named("resC")=resC,
+                      Named("resD")=resD,
+                      Named("logresDsq_o_C")=logresDsq_o_C);
+
+}
+
 //' @useDynLib lotR
 //' @importFrom Rcpp sourceCpp
 // [[Rcpp::export]]
 arma::rowvec getC(int u, arma::mat g_phi,
-                  arma::mat rmat, arma::vec tau_1_t,//p by K-1
+                  arma::mat rmat, arma::vec tau_1_t,//K-1
                   arma::vec h_pau,
                   arma::vec subject_ids,
                   arma::vec v_lookup
@@ -493,6 +668,36 @@ arma::rowvec getC(int u, arma::mat g_phi,
   return resC;
 }
 
+
+//' @useDynLib lotR
+//' @importFrom Rcpp sourceCpp
+//' @export
+// [[Rcpp::export]]
+arma::rowvec getC_separate_tau(int u, arma::mat g_phi,
+                               arma::mat rmat, arma::mat tau_1_t,//p by K-1
+                               arma::vec h_pau,
+                               arma::vec subject_ids,
+                               arma::vec v_lookup
+){
+  int n = subject_ids.size(), K = rmat.n_cols;
+  int p = tau_1_t.n_rows, pL = g_phi.n_rows;
+  int ii = 0;
+  int vv = 0;
+  u=u-1;
+  arma::rowvec resC(K-1);resC.zeros();
+  for (int k=0;k<K-1;k++){
+    for (int i=0;i<n;i++){
+      ii = subject_ids(i)-1;
+      vv = v_lookup(ii)-1;
+      for (int m=k;m<K;m++){ // currently does not deal with K=2 case. NB: need fixing.
+        resC(k) += 2.0*rmat(ii,m)*g_phi(vv,k);
+      }
+    }
+    resC(k) += pow(tau_1_t(u,k)*h_pau(u),-1.0);
+  }
+  return resC;
+}
+
 //' calculate line 1 and 2 and 13 of ELBO to assess convergence
 //' and choose among converged estimates from many restarts
 //'
@@ -512,12 +717,12 @@ arma::rowvec getC(int u, arma::mat g_phi,
 //' @export
 // [[Rcpp::export]]
 List get_line1_2_13_subid(arma::cube psi, arma::cube g_psi,
-                       arma::mat phi, arma::mat g_phi,
-                       arma::mat rmat,
-                       arma::cube E_beta, arma::cube E_beta_sq,
-                       arma::mat E_eta, arma::mat E_eta_sq,
-                       arma::mat X,
-                       arma::vec v_lookup){
+                          arma::mat phi, arma::mat g_phi,
+                          arma::mat rmat,
+                          arma::cube E_beta, arma::cube E_beta_sq,
+                          arma::mat E_eta, arma::mat E_eta_sq,
+                          arma::mat X,
+                          arma::vec v_lookup){
   int n = X.n_rows, J = psi.n_cols, K = rmat.n_cols;
   int v = 0;
   double res1 = 0.0;
@@ -528,24 +733,18 @@ List get_line1_2_13_subid(arma::cube psi, arma::cube g_psi,
     for (int ii=0;ii<n;ii++){
       v = (int) v_lookup(ii)-1;
       for (int j=0;j<J;j++){
-        // Rcout<<"term in res1 "<<rmat(ii,k)*g_psi(v,j,k)*(E_beta_sq(j,k,v)-pow(psi(v,j,k),2.0))<<std::endl;
         res1 += -rmat(ii,k)*log(1.0+exp(-psi(v,j,k)))+rmat(ii,k)*(1.0*X(ii,j)*E_beta(j,k,v)-psi(v,j,k))*0.5-rmat(ii,k)*g_psi(v,j,k)*(E_beta_sq(j,k,v)-pow(psi(v,j,k),2.0));
       }
       if (k<1){//first segment
         res2   += -rmat(ii,k)*log(1.0+exp(-phi(v,k)))+rmat(ii,k)*(E_eta(v,k)-phi(v,k))*0.5-rmat(ii,k)*g_phi(v,k)*(E_eta_sq(v,k)-pow(phi(v,k),2.0));
-        // Rcout<<"term in res2 "<<rmat(ii,k)*g_phi(v,k)*(E_eta_sq(v,k)-pow(phi(v,k),2.0))<<std::endl;
       } else if (k< K-1){ // not the first, not the last.
         for (int m=0;m<k-1;m++){
           res2  += -rmat(ii,k)*log(1.0+exp(-phi(v,m)))+rmat(ii,k)*(-E_eta(v,m)-phi(v,m))*0.5-rmat(ii,k)*g_phi(v,m)*(E_eta_sq(v,m)-pow(phi(v,m),2.0));
-          // Rcout<<"term in res2 "<<rmat(ii,k)*g_phi(v,m)*(E_eta_sq(v,m)-pow(phi(v,m),2.0))<<std::endl;
-
         }
         res2  += -rmat(ii,k)*log(1.0+exp(-phi(v,k)))+rmat(ii,k)*(E_eta(v,k)-phi(v,k))*0.5-rmat(ii,k)*g_phi(v,k)*(E_eta_sq(v,k)-pow(phi(v,k),2.0));
-        // Rcout<<"term in res2 "<<rmat(ii,k)*g_phi(v,k)*(E_eta_sq(v,k)-pow(phi(v,k),2.0))<<std::endl;
       } else{// k==K-1; the last segment:
         for (int s=0;s<K-1;s++){
           res2  += -rmat(ii,k)*log(1.0+exp(-phi(v,s)))+rmat(ii,k)*(-E_eta(v,s)-phi(v,s))*0.5-rmat(ii,k)*g_phi(v,s)*(E_eta_sq(v,s)-pow(phi(v,s),2.0));
-          // Rcout<<"term in res2 "<<rmat(ii,k)*g_phi(v,s)*(E_eta_sq(v,s)-pow(phi(v,s),2.0))<<std::endl;
         }
       }
       res3 += - xlogx(rmat(ii,k)); // line 13

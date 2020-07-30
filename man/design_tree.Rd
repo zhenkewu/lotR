@@ -4,7 +4,14 @@
 \alias{design_tree}
 \title{Organize the data around the edge-weighted rooted tree}
 \usage{
-design_tree(Y, outcomes, mytree, root_node = "Node1", weighted_edge = FALSE)
+design_tree(
+  Y,
+  outcomes,
+  mytree,
+  root_node = "Node1",
+  weighted_edge = FALSE,
+  Z_obs = NULL
+)
 }
 \arguments{
 \item{Y}{N by J matrix of binary measurements}
@@ -17,6 +24,9 @@ edge, edge-length information.}
 \item{weighted_edge}{logical: TRUE for incorporating the branch lengths -
 then the mytree must have this info; if FALSE, every branch, including
 an imaginary rootnode to past branch, is set to have length 1.}
+
+\item{Z_obs}{Default is \code{NULL}, a two-column matrix of (id,class indicator)
+for a subset of people. The rows will be reordered according to the reordered \code{Y}.}
 
 \item{rootnode}{a character string that indicates the name of the root node.}
 }

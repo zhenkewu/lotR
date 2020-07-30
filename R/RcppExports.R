@@ -144,8 +144,30 @@ update_rmat <- function(psi, g_psi, phi, g_phi, X, E_beta, E_eta, E_beta_sq, E_e
     .Call('_lotR_update_rmat', PACKAGE = 'lotR', psi, g_psi, phi, g_phi, X, E_beta, E_eta, E_beta_sq, E_eta_sq, v_lookup)
 }
 
+#' Update the variational probabilities of each observation in one of K classes
+#'
+#' This function updates the N by K matrix \code{rmat} in the package
+#'
+#' @param known_Z matrix of integers; two columns (subject id, class indicator)
+#' @param psi,g_psi,phi,g_phi local variational parameters
+#' @param X transformed data: 2Y-1
+#' @param E_beta,E_eta,E_beta_sq,E_eta_sq moment updates produced by \code{\link{get_moments_cpp}}
+#' @param v_lookup a vector of length equal to the total number of rows in \code{X};
+#' each element is an integer, indicating which leaf does the observation belong to.
+#'
+#' @return  N by K variational multinomial probabilities; row sums are 1s.
+#'
+#' @useDynLib lotR
+#' @importFrom Rcpp sourceCpp
+#' @export
+update_rmat_partial <- function(known_ids, psi, g_psi, phi, g_phi, X, E_beta, E_eta, E_beta_sq, E_eta_sq, v_lookup) {
+    .Call('_lotR_update_rmat_partial', PACKAGE = 'lotR', known_ids, psi, g_psi, phi, g_phi, X, E_beta, E_eta, E_beta_sq, E_eta_sq, v_lookup)
+}
+
 #' [update gamma and alpha together.]Update the variational mean and variance for logit of
 #' class-specific response probabilities (for the \code{s_u=1} component)
+#'
+#' shared tau's
 #'
 #' @param u node id (internal or leaf node
 #' @param g_psi,g_phi g of local variational parameters
@@ -179,10 +201,54 @@ update_gamma_alpha_subid <- function(u, g_psi, g_phi, tau_2_t_u, tau_1_t_u, E_be
     .Call('_lotR_update_gamma_alpha_subid', PACKAGE = 'lotR', u, g_psi, g_phi, tau_2_t_u, tau_1_t_u, E_beta, E_zeta_u, X, E_eta, E_xi_u, rmat, h_pau, levels, subject_ids, v_lookup)
 }
 
+#' [update gamma and alpha together.]Update the variational mean and variance for logit of
+#' class-specific response probabilities (for the \code{s_u=1} component)
+#'
+#' separate tau's
+#'
+#' @param u node id (internal or leaf node
+#' @param g_psi,g_phi g of local variational parameters
+#' @param tau_2_t,tau_1_t variational Gaussian variances for gamma and alpha
+#' @param E_beta,E_zeta_u moment updates produced by \code{\link{get_moments_cpp}};
+#' \code{E_zeta_u} is directly calculated: \code{prob[u]*sigma_gamma[u,,]}
+#' @param X transformed data: 2Y-1
+#' @param rmat a matrix of variational probabilities of all observations
+#' belong to K classes; N by K; each row sums to 1
+#' @param h_pau a numeric vector of length p indicating the branch length
+#' between a node and its parent
+#' @param levels a vector of possibly repeating integers from 1 to Fg, or L,
+#' @param subject_ids the ids of subjects in the leaf descendants of node u
+#' @param v_lookup a vector of length equal to the total number of rows in X;
+#' each element is an integer, indicating which leaf does the observation belong to.
+#'
+#' @return  a list
+#' \describe{
+#'   \item{resA}{actually 1/A in the paper, this is variance}
+#'   \item{resB}{}
+#'   \item{logresBsq_o_A}{}
+#'   \item{resC}{actually 1/C in the paper, this is variance}
+#'   \item{resD}{}
+#'   \item{logresDsq_o_C}{}
+#' }
+#'
+#' @useDynLib lotR
+#' @importFrom Rcpp sourceCpp
+#' @export
+update_gamma_alpha_subid_separate_tau <- function(u, g_psi, g_phi, tau_2_t_u, tau_1_t_u, E_beta, E_zeta_u, X, E_eta, E_xi_u, rmat, h_pau, levels, subject_ids, v_lookup) {
+    .Call('_lotR_update_gamma_alpha_subid_separate_tau', PACKAGE = 'lotR', u, g_psi, g_phi, tau_2_t_u, tau_1_t_u, E_beta, E_zeta_u, X, E_eta, E_xi_u, rmat, h_pau, levels, subject_ids, v_lookup)
+}
+
 #' @useDynLib lotR
 #' @importFrom Rcpp sourceCpp
 getC <- function(u, g_phi, rmat, tau_1_t, h_pau, subject_ids, v_lookup) {
     .Call('_lotR_getC', PACKAGE = 'lotR', u, g_phi, rmat, tau_1_t, h_pau, subject_ids, v_lookup)
+}
+
+#' @useDynLib lotR
+#' @importFrom Rcpp sourceCpp
+#' @export
+getC_separate_tau <- function(u, g_phi, rmat, tau_1_t, h_pau, subject_ids, v_lookup) {
+    .Call('_lotR_getC_separate_tau', PACKAGE = 'lotR', u, g_phi, rmat, tau_1_t, h_pau, subject_ids, v_lookup)
 }
 
 #' calculate line 1 and 2 and 13 of ELBO to assess convergence

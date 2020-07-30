@@ -8,6 +8,7 @@ organized in a tree}
 update_vi_params(
   Y,
   A,
+  Z_obs,
   outcomes_units,
   outcomes_nodes,
   ancestors,
@@ -38,6 +39,7 @@ update_vi_params(
   g_phi,
   tau_1,
   tau_2,
+  shared_tau,
   a,
   b,
   K,
@@ -54,9 +56,9 @@ ordered from low- to high-indexed leaf nodes.}
 
 \item{prob, mu_gamma, mu_alpha, rmat, sigma_gamma, Sigma_alpha, tau_1_t, tau_2_t, a_t, b_t, }{variational parameters updated by \code{\link{update_vi_params}}}
 
-\item{psi, g_psi, phi, g_phi, tau_1, tau_2, }{parameters updated by \code{update_hyperparams()}}
+\item{psi, g_psi, phi, g_phi, tau_1, tau_2, shared_tau}{parameters updated by \code{update_hyperparams()}}
 
-\item{a, b, K, s_u_zeroset, s_u_oneset}{fixed hyperparameters not to be updated.}
+\item{a, b, K, s_u_zeroset, s_u_oneset, Z_obs}{fixed hyperparameters not to be updated.}
 }
 \description{
 Used by \code{\link{fit_lcm_tree}}, which also invoke \code{\link{update_hyperparams}}

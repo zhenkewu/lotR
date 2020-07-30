@@ -3,7 +3,7 @@
 #'
 #'
 #' @param dsgn a list of data and other information organized according to the tree
-#' @param vi_params_init,hyperparams_init,random_init,random_init_vals,tol,tol_hyper,max_iter,print_freq,update_hyper_freq,hyper_fixed
+#' @param vi_params_init,hyperparams_init,random_init,random_init_vals,tol,tol_hyper,max_iter,print_freq,plot_fig,shared_tau,update_hyper_freq,hyper_fixed
 #' initial values and updating protocols. Explained more in the wrapper function \code{\link{lcm_tree}}
 #' @return a list with model updates; because the variational posterior
 #' is comprised of familiar distributional forms that can be  determined
@@ -28,6 +28,9 @@ fit_lcm_tree <- function(dsgn,
                          tol_hyper,
                          max_iter,
                          print_freq,
+                         quiet,
+                         plot_fig,
+                         shared_tau,
                          update_hyper_freq,
                          hyper_fixed
 ){
@@ -58,8 +61,7 @@ fit_lcm_tree <- function(dsgn,
   #dsgn$maxnv          <- max(unlist(lapply(dsgn$outcomes_units,length)))
   #-------------------------------END OF DESIGN PADDING--------------------------
 
-  cat("\n [lotR] Branch lengths: `h_pau`: \n")
-  print(dsgn$h_pau)
+  if (!quiet){cat("\n [lotR] Branch lengths: `h_pau`: \n");print(dsgn$h_pau)}
   # initialize: ----------------------
   init <- R.utils::doCall(initialize_tree_lcm,
                           vi_params   = vi_params_init,
@@ -67,18 +69,23 @@ fit_lcm_tree <- function(dsgn,
                           hyper_fixed = hyper_fixed,
                           random_init = random_init,
                           random_init_vals = random_init_vals,
-                          args = dsgn)
+                          shared_tau = shared_tau,
+                          args = c(dsgn))
   vi_params   <- init$vi_params
   hyperparams <- init$hyperparams
-  cat("| Model Initialized.\n")
+  cat("|--- Model Initialized.\n")
 
   # initialize ELBO:
   ELBO_track <- numeric(max_iter)
 
+  #if (quiet){pb <- progress_bar$new(format = "(:spin) [:bar] :percent",
+  #                                 total = max_iter, clear = FALSE)}
+  #for (i in 1:30) { pb$tick() ;Sys.sleep(3 / 100) }
+
   # run algorithm: ---------------------
   i <- 0
   repeat{
-
+    #if (quiet){pb$tick()} #;Sys.sleep(3 / 100)}
     # iterate i
     i <- i + 1
 
@@ -86,19 +93,23 @@ fit_lcm_tree <- function(dsgn,
     # check if max_iter reached:
     if (i > max_iter){
       i <- max_iter
-      cat(paste("| Iteration", i, "complete. \n"))
+      cat(paste("|--- Iteration", i, "complete. \n"))
       warning("[lotR] Maximum number of iterations reached! Consider increasing 'max_iter'")
       break
     }
 
     # update vi params:
     vi_params <- R.utils::doCall(update_vi_params,
-                                 args = c(dsgn, vi_params, hyperparams, hyper_fixed))
+                                 shared_tau = shared_tau,
+                                 args = c(dsgn, vi_params, hyperparams,
+                                          hyper_fixed))
 
     # compute ELBO and update psi, phi and hyperparameters (tau_1, tau_2):
     update_hyper <- i %% update_hyper_freq == 0
     hyperparams  <- R.utils::doCall(update_hyperparams,
                                     update_hyper = update_hyper,
+                                    shared_tau = shared_tau,
+                                    quiet      = quiet,
                                     args = c(dsgn,vi_params,hyperparams,hyper_fixed))
 
     ELBO_track[i] <- hyperparams$ELBO
@@ -106,12 +117,15 @@ fit_lcm_tree <- function(dsgn,
     # print progress:
     if (i %% print_freq ==0){
       #if(ELBO_track[i] - ELBO_track[i-1]<0){
-      cat("| Iteration", i, "; epsilon = ", ELBO_track[i] - ELBO_track[i-1], "; ELBO = ", ELBO_track[i],"\n")
-      cat("> empirical class probabilities: ", round(colMeans(vi_params$rmat),4),"\n")
-      cat("> node_select: ",which(vi_params$prob>0.5),"\n")
-      #}
-      barplot(vi_params$prob)
-      image(expit(vi_params$mu_gamma[[1]])) # root node.
+      if (!quiet){
+        cat("|--- Iteration", i, "; epsilon = ", ELBO_track[i] - ELBO_track[i-1], "; ELBO = ", ELBO_track[i],"\n")
+        cat("> empirical class probabilities: ", round(colMeans(vi_params$rmat),4),"\n")
+        cat("> node_select: ",which(vi_params$prob>0.5),"\n")
+      }
+      if (plot_fig){
+        barplot(vi_params$prob)
+        image(expit(vi_params$mu_gamma[[1]])) # root node.
+      }
     }
 
     # check tolerance
