@@ -4,10 +4,10 @@
 #' Used by \code{\link{fit_lcm_tree}}, which also invoke \code{\link{update_hyperparams}}
 #' to update hyperparameters and calculate evidence lower bound (ELBO)
 #'
-#' @param Y,A,outcomes_units,outcomes_nodes,ancestors,cardanc,v_units,h_pau,ancestors,levels,subject_id_list outputs from
+#' @param Y,A,outcomes_units,outcomes_nodes,ancestors,cardanc,v_units,h_pau,levels,subject_id_list outputs from
 #' \code{\link{design_tree}}, which reorders the nodes by internal and leaf nodes; the observations are also
 #' ordered from low- to high-indexed leaf nodes.
-#' @param X,n,J,p,pL,Fg,K computed from the data by \code{\link{lcm_tree}} at the beginning before the VI updates
+#' @param X,n,J,p,pL,Fg computed from the data by \code{\link{lcm_tree}} at the beginning before the VI updates
 #' @param  prob,mu_gamma,mu_alpha,rmat,sigma_gamma,Sigma_alpha,tau_1_t,tau_2_t,a_t,b_t,
 #' variational parameters updated by \code{\link{update_vi_params}}
 #' @param psi,g_psi,phi,g_phi,tau_1,tau_2,shared_tau parameters updated by \code{update_hyperparams()}
@@ -149,7 +149,10 @@ update_vi_params <- function(Y,A,Z_obs,
 #' @inheritParams update_vi_params
 #' @param update_hyper Logical, \code{TRUE} or \code{FALSE} to indicate
 #' whether to update \code{tau_1} and \code{tau_2}. This is computed at every iteration
-#' in \code{\link{fit_lcm}}
+#' in \code{\link{fit_lcm_tree}}
+#' @param E_beta_sq,E_eta_sq,E_beta,E_eta moments computed by \code{\link{update_vi_params}}
+#' @param tau_update_levels a numeric vector, specifies which levels of hyperparameters to update
+#' @param quiet default to \code{FALSE}, which prints intermediate updates of hyperparameters
 #'
 #' @importFrom matrixStats logSumExp
 #'

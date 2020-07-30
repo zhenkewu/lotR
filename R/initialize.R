@@ -38,12 +38,13 @@
 #' @param Y matrix of binary observations for LCM - rows ordered by leaves in the tree
 #' @param A a p by p binary matrix: each row is the ancestors including the node itself;
 #'          ordered by leaves in the tree
+#' @param Z_obs a two-column matrix of integers, first column is subject ids,
+#' second column is a mix of NA and integers, NA means unknown class indicators,
+#' an integer indicates the known class.
 #' @param outcomes_units The subject ids in each leaf node (a list)
 #' @param outcomes_nodes the leaf descendants for each internal or leaf nodes (a list)
-#' @param ancestor a numeric vector of ancestor nodes for each leaf node (a list of length equal to
+#' @param ancestors a numeric vector of ancestor nodes for each leaf node (a list of length equal to
 #' the number of leaves)
-#' @param edge_lengths A list (length= # leaves); a numeric vector of edge lengths on the
-#' path from the root node to a leaf node.
 #' @param h_pau a numeric vector (length = # nodes); the edge length between a node
 #' and its parent node. The root node has no parent, because we suggest a separate
 #' prior variance for the root node's gamma and alpha, we set the "edge-length" toward root
@@ -56,7 +57,7 @@
 #' @param vi_params the list of variational parameters. \code{mu_gamma},
 #' \code{mu_alpha}, \code{prob} (for s_u), \code{a_t}, \code{b_t}，
 #' \code{sigma_gamma}, \code{Sigma_alpha}
-#' @param hyperparam the list of hyperparameters, \code{tau_1} and \code{tau_2} -
+#' @param hyperparams the list of hyperparameters, \code{tau_1} and \code{tau_2} -
 #' these are initial specifications of the hyperparameters - they are updated by
 #'  \code{tau_1_t}, \code{tau_2_t}; \code{psi}, \code{g_psi}, \code{phi}, \code{g_phi} (these
 #' are not hyperparameters, but are updated with the same schedule as \code{tau_1_t} and \code{tau_2_t}).
@@ -71,9 +72,11 @@
 #' @param random_init_vals NB: fill out specific elements
 #' @param subject_id_list,v_units,shared_tau see \code{\link{update_vi_params}}
 #'
-#' @import BayesLCA
+#' @importFrom BayesLCA blca unMAP
+#' @importFrom stats runif rnorm
 #' @family internal function
-#' @return
+#' @return a list \code{vi_params,hyperparams} containing the initial values.
+#'
 #' @export
 initialize_tree_lcm <- function(Y,A,Z_obs,
                                 outcomes_units,

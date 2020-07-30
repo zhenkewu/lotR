@@ -1,4 +1,4 @@
-**lotR**: **l**atent class analaysis of **o**bservations oraganized by **t**ree in **R**
+**lotR**: **l**atent class analysis of **o**bservations organized by **t**ree in **R**
 
 An R package for Latent Class Models for Observations Organized by Tree Structure (lotR)
 

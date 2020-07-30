@@ -55,6 +55,15 @@ hyperparameters \code{rho[f]}, \code{tau_1[f]}, and \code{tau_2[f]}. If \code{V(
 the default is two levels of hyperparameters: one for all leaf nodes, and one
 for all internal nodes. NB: this needs to be checked in the \code{\link{design_tree}}}
 
+\item{rootnode}{a character string indicating the root node}
+
+\item{weighted_edge}{default to \code{TRUE}, which indicates the model will
+use the values of branch lengths (\code{h_pau} of \code{V(mytree)}).}
+
+\item{Z_obs}{a matrix of two columns, first column is subject ids (of all samples),
+the second column is a mix of NA or integers: NA for unknown and integers for known
+classes.}
+
 \item{ci_level}{A number between 0 and 1 giving the desired credible interval.
 For example, \code{ci_level = 0.95} (the default) returns a 95\% credible interval}
 
@@ -68,6 +77,9 @@ Default = every 50 iterations.}
 \item{print_freq}{How often to print out iteration number and current value of epsilon
 (the difference in objective function value for the two most recent iterations).}
 
+\item{quiet}{default to FALSE, which prints empirical class probabilities and updates on
+tau's}
+
 \item{plot_fig}{plot figure about prob and response profile (1st node)}
 
 \item{shared_tau}{logical: \code{TRUE} for sharing the tau_1 for alpha's in
@@ -79,7 +91,7 @@ a and b, both numeric vectors of length \code{L}, representing the
 parameters of the beta prior on rho for each level, where \code{L} is the
 number of levels.
 Default is \code{list(a = rep(1, L), b = rep(1, L), tau_update_levels = c(1,2))} (uniform hyperprior)
-Other options include specifying includedd or excluded nodes via
+Other options include specifying included or excluded nodes via
 e.g., \code{s_u_zeroset = (1:265)[-c(1)],s_u_oneset = c(1))} to fit a single
 big LCM (collapsing all nodes except the root node, the first node)}
 
@@ -87,7 +99,7 @@ big LCM (collapsing all nodes except the root node, the first node)}
 Default is \code{1E-8}.}
 
 \item{tol_hyper}{The convergence tolerance for the objective function between
-between subsequent hyperparmeter updates. Typically a more generous
+between subsequent hyperparameter updates. Typically a more generous
 tolerance than \code{tol}.
 Default is \code{1E-4}.}
 
@@ -136,14 +148,14 @@ The amount of variability is determined by \code{random_init_vals}.}
 
 \item{random_init_vals}{If \code{random_init = TRUE},
 this is a list containing the following parameters for randomly permuting
-the inital values:
+the initial values:
 \describe{
 \item{\code{tau_lims}}{a vector of length 2, where \code{tau_lims[1]} is between 0 and 1,
 and \code{tau_lims[2] > 1}. The initial values for the hyperparameter \code{tau} will
 be chosen uniformly at random in the range \code{(tau_init * tau_lims[1], tau_init * tau_lims[2])},
 where \code{tau_init} is the initial value for \code{tau} either supplied in \code{hyperparams_init}
 or guessed using \code{\link{initialize_tree_lcm}}.}
-\item{\code{psi_sd_frac}}{a value between 0 and 1. The initial values for the auxilliary parameters
+\item{\code{psi_sd_frac}}{a value between 0 and 1. The initial values for the auxillary parameters
 \code{psi} will have a normal random variate added to them with standard deviation equal to
 \code{psi_sd_frac} multiplied by the initial value for eta either supplied in \code{hyperparams_init} or guessed
 using \code{\link{initialize_tree_lcm}}. Absolute values are then taken for any
@@ -156,7 +168,7 @@ values of \code{psi} that are \code{< 0}.}
 \item{\code{mu_alpha_sd_frac}}{same as above.}
 \item{\code{u_sd_frac}}{a value between 0 and 1. The initial value for the node inclusion probabilities
 will first be transformed to the log odds scale to obtain \code{u}. A normal random variate will be
-added to \code{u} with standard deviation eqaul to u_sd_frac multiplied by the absolute value of the
+added to \code{u} with standard deviation equal to u_sd_frac multiplied by the absolute value of the
 initial value for \code{u} either supplied in \code{vi_params_init} or guessed using \code{moretrees_init_logistic()}.
 \code{u} will then be transformed back to the probability scale.}
 }}

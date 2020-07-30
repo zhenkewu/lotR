@@ -6,6 +6,9 @@
 \usage{
 logexpit_cpp(x)
 }
+\arguments{
+\item{x}{a number}
+}
 \description{
 logexpit to avoid numerical underflow
 }

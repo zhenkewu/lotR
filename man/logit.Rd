@@ -7,7 +7,7 @@
 logit(p)
 }
 \arguments{
-\item{p}{}
+\item{p}{a probability}
 }
 \description{
 sigmoid (copied from moretrees:)

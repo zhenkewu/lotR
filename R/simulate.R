@@ -19,7 +19,7 @@
 #' of class membership.
 #'
 #' @seealso \code{\link[BayesLCA]{blca}}
-#'
+#' @importFrom stats rmultinom runif
 #' @export
 lotR_blca <- function (n, itemprob = 0.5, classprob = 1, fit = NULL)
 {

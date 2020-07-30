@@ -6,6 +6,9 @@
 \usage{
 xlogx(x)
 }
+\arguments{
+\item{x}{a positive number or zero}
+}
 \description{
 utility function
 }

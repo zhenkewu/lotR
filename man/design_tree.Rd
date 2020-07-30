@@ -8,7 +8,7 @@ design_tree(
   Y,
   outcomes,
   mytree,
-  root_node = "Node1",
+  rootnode = "Node1",
   weighted_edge = FALSE,
   Z_obs = NULL
 )
@@ -21,14 +21,16 @@ design_tree(
 \item{mytree}{the tree (an \code{igraph} object) that contains the node,
 edge, edge-length information.}
 
+\item{rootnode}{a character string that indicates the name of the root node.}
+
 \item{weighted_edge}{logical: TRUE for incorporating the branch lengths -
 then the mytree must have this info; if FALSE, every branch, including
 an imaginary rootnode to past branch, is set to have length 1.}
 
 \item{Z_obs}{Default is \code{NULL}, a two-column matrix of (id,class indicator)
-for a subset of people. The rows will be reordered according to the reordered \code{Y}.}
-
-\item{rootnode}{a character string that indicates the name of the root node.}
+for a subset of people; # rows = # rows of Y; 2nd column is \code{NA} if
+a person's class indicator is unknown.
+The rows will be reordered according to the reordered \code{Y}.}
 }
 \value{
 A list of data and tree information

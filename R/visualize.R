@@ -1,12 +1,14 @@
+if(getRversion() >= "2.15.1") utils::globalVariables(c("Group"))
+
 #' \code{plot.moretrees_result} plots the groups discovered by MOReTreeS
 #' on the outcome tree.
-#' 
+#'
 #' @export
 #' @importFrom ggtree %<+%
 #' @param x Output from \code{moretrees()}
 #' An object of class "moretrees_result".
 #' @param group.text.size Text size for the group labels
-#' @param group.text.offset Offset of the group label from the 
+#' @param group.text.offset Offset of the group label from the
 #' leaves of the tree
 #' @param legend.text.size Text size for legend
 #' @param layout Layout for the tree, most likely "rectangular" (the default)
@@ -19,12 +21,13 @@
 #' @param ... Not used.
 #' @return A plot showing the groups discovered by MOReTreeS on the original
 #' outcome tree.
-#' @examples 
+#' @examples
 #' # See vignette
 #' vignette("moretrees")
 #' @family MOReTrees results
-
-# the followign is from moretrees:
+#' @importFrom grDevices colorRampPalette
+#' @importFrom RColorBrewer brewer.pal
+#' @export
 plot.lcm_tree <- function(x,
                           group.text.size = 4,
                           group.text.offset = 0.1,
@@ -32,12 +35,13 @@ plot.lcm_tree <- function(x,
                           layout = "rectangular",
                           horizontal = TRUE,
                           ...) {
+# the following is from moretrees:
   # Get data.frame with groups info
   leaves <- names(igraph::V(x$mytree)[igraph::degree(x$mytree, mode = "out") == 0])
   groups.df <- data.frame(leaves = leaves, Group = as.factor(x$prob_est$group))
-  cols_g <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(9, "Set1"))(length(unique(x$prob_est$group)))
+  cols_g <- colorRampPalette(brewer.pal(9, "Set1"))(length(unique(x$prob_est$group)))
   #cols_g <- RColorBrewer::brewer.pal(length(levels(groups.df$Group)), "Set3")
-  
+
   # Plot
   p <- ggtree::ggtree(x$mytree, ladderize = F, layout = layout)  %<+% groups.df
   if (horizontal) {
@@ -55,7 +59,7 @@ plot.lcm_tree <- function(x,
   if (length(cols_g) == length(levels(groups.df$Group))) {
     p <- p + ggplot2::scale_color_manual(values = cols_g)
   }
-  
+
   # Return
   return(p)
 }

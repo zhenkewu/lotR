@@ -15,7 +15,9 @@
 #' then the mytree must have this info; if FALSE, every branch, including
 #' an imaginary rootnode to past branch, is set to have length 1.
 #' @param Z_obs Default is \code{NULL}, a two-column matrix of (id,class indicator)
-#' for a subset of people. The rows will be reordered according to the reordered \code{Y}.
+#' for a subset of people; # rows = # rows of Y; 2nd column is \code{NA} if
+#' a person's class indicator is unknown.
+#' The rows will be reordered according to the reordered \code{Y}.
 #'
 #' @return A list of data and tree information
 #' \itemize{
@@ -45,14 +47,15 @@
 #' and the edge length is set to 1.
 #' }
 #' @export
+#' @import igraph
 #'
-design_tree <- function(Y,outcomes,mytree,root_node="Node1",weighted_edge=FALSE,Z_obs = NULL){ # by default, not weighted tree.
+design_tree <- function(Y,outcomes,mytree,rootnode="Node1",weighted_edge=FALSE,Z_obs = NULL){ # by default, not weighted tree.
   # warning("using hard-coded info\n")
   # Y        <- dat_mge[!is.na(match_ind),ind_EL] # these are not ordered yet.
   # outcomes <- dat_mge[!is.na(match_ind),"ct_MLST"]
   # mytree   <- thetree_igraph
   # E(mytree)$weight <- thetree$edge.length
-  # root_node="Node1"
+  # rootnode="Node1"
   # weighted_edge <- FALSE
 
   if (!is.character(outcomes)) stop("[lotR]outcomes is not a character object")
@@ -137,14 +140,14 @@ design_tree <- function(Y,outcomes,mytree,root_node="Node1",weighted_edge=FALSE,
   names(edge_lengths) <- names(ancestors)
   for (j in 1:pL){
     res <- shortest_paths(mytree, # here we are using the original mytree, not "nodes" which is reordered.
-                          which(vertex_attr(mytree)$name==root_node), # root.
+                          which(vertex_attr(mytree)$name==rootnode), # root.
                           which(vertex_attr(mytree)$name==leaves[j]), # leaf.
                           output="both")
     edge_lengths[[j]] <- E(mytree)$weight[sapply(res$epath[[1]],
                                                  function(e) which(E(mytree) == e))]
   }
 
-  parent_nm <- c(root_node,
+  parent_nm <- c(rootnode,
                  names(unlist(lapply(igraph::ego(mytree, order = 1,
                                                  nodes = nodes, mode = "in")[-1],"[",-1))))
   h_pau       <- rep(1,p)

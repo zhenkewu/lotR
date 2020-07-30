@@ -109,6 +109,8 @@ ordered from low- to high-indexed leaf nodes.}
 
 \item{b_t}{variational parameters updated by \code{\link{update_vi_params}}}
 
+\item{E_beta_sq, E_eta_sq, E_beta, E_eta}{moments computed by \code{\link{update_vi_params}}}
+
 \item{psi}{parameters updated by \code{update_hyperparams()}}
 
 \item{g_psi}{parameters updated by \code{update_hyperparams()}}
@@ -127,11 +129,15 @@ ordered from low- to high-indexed leaf nodes.}
 
 \item{b}{fixed hyperparameters not to be updated.}
 
-\item{K}{computed from the data by \code{\link{lcm_tree}} at the beginning before the VI updates}
+\item{K}{fixed hyperparameters not to be updated.}
+
+\item{tau_update_levels}{a numeric vector, specifies which levels of hyperparameters to update}
 
 \item{update_hyper}{Logical, \code{TRUE} or \code{FALSE} to indicate
 whether to update \code{tau_1} and \code{tau_2}. This is computed at every iteration
-in \code{\link{fit_lcm}}}
+in \code{\link{fit_lcm_tree}}}
+
+\item{quiet}{default to \code{FALSE}, which prints intermediate updates of hyperparameters}
 }
 \value{
 a list of updated hyperparameters: tau_1,tau_2,psi,g_psi,phi,g_phi,

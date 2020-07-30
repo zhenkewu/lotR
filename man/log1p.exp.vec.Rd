@@ -7,7 +7,7 @@
 \method{log1p}{exp.vec}(x)
 }
 \arguments{
-\item{x}{}
+\item{x}{a vector of numbers}
 }
 \description{
 log expit vectorized

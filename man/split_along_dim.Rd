@@ -24,7 +24,6 @@ myarray <- array(c(1,2,3,4,5,6,7,8),c(2,2,2))
 split_along_dim(myarray,1)
 split_along_dim(myarray,2)
 split_along_dim(myarray,3)
-
 }
 \seealso{
 Other utility functions: 

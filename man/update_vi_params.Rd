@@ -48,11 +48,11 @@ update_vi_params(
 )
 }
 \arguments{
-\item{Y, A, outcomes_units, outcomes_nodes, ancestors, cardanc, v_units, h_pau, ancestors, levels, subject_id_list}{outputs from
+\item{Y, A, outcomes_units, outcomes_nodes, ancestors, cardanc, v_units, h_pau, levels, subject_id_list}{outputs from
 \code{\link{design_tree}}, which reorders the nodes by internal and leaf nodes; the observations are also
 ordered from low- to high-indexed leaf nodes.}
 
-\item{X, n, J, p, pL, Fg, K}{computed from the data by \code{\link{lcm_tree}} at the beginning before the VI updates}
+\item{X, n, J, p, pL, Fg}{computed from the data by \code{\link{lcm_tree}} at the beginning before the VI updates}
 
 \item{prob, mu_gamma, mu_alpha, rmat, sigma_gamma, Sigma_alpha, tau_1_t, tau_2_t, a_t, b_t, }{variational parameters updated by \code{\link{update_vi_params}}}
 

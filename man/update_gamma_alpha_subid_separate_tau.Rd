@@ -28,10 +28,16 @@ update_gamma_alpha_subid_separate_tau(
 
 \item{g_psi, g_phi}{g of local variational parameters}
 
+\item{tau_2_t_u, tau_1_t_u}{variational Gaussian variances for gamma and alpha}
+
 \item{E_beta, E_zeta_u}{moment updates produced by \code{\link{get_moments_cpp}};
 \code{E_zeta_u} is directly calculated: \code{prob[u]*sigma_gamma[u,,]}}
 
 \item{X}{transformed data: 2Y-1}
+
+\item{E_eta}{leaves' expected eta}
+
+\item{E_xi_u}{node u's expected xi}
 
 \item{rmat}{a matrix of variational probabilities of all observations
 belong to K classes; N by K; each row sums to 1}
@@ -45,8 +51,6 @@ between a node and its parent}
 
 \item{v_lookup}{a vector of length equal to the total number of rows in X;
 each element is an integer, indicating which leaf does the observation belong to.}
-
-\item{tau_2_t, tau_1_t}{variational Gaussian variances for gamma and alpha}
 }
 \value{
 a list

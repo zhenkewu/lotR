@@ -36,7 +36,6 @@
 #'
 #' @seealso \code{\link{get_est_cpp}}
 #' @export
-#'
 compute_params <- function(mod,dsgn,ci_level=0.95){
   outcomes <- names(dsgn$outcomes)
   prob     <- mod$vi_params$prob
@@ -53,8 +52,8 @@ compute_params <- function(mod,dsgn,ci_level=0.95){
   K <- mod$hyper_fixed$K
   node_select <- prob >0.5
 
-  z <- qnorm(ci_level+(1-ci_level)/2)
-  prob_est <- lotR:::get_est_cpp(node_select,
+  z <- stats::qnorm(ci_level+(1-ci_level)/2)
+  prob_est <- get_est_cpp(node_select,
               array(unlist(mu_gamma),c(J,K,p)),
               aperm(sigma_gamma,c(2,3,1)),
               as.matrix(do.call("rbind",mu_alpha)),

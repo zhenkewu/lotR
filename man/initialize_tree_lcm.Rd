@@ -30,9 +30,16 @@ initialize_tree_lcm(
 \item{A}{a p by p binary matrix: each row is the ancestors including the node itself;
 ordered by leaves in the tree}
 
+\item{Z_obs}{a two-column matrix of integers, first column is subject ids,
+second column is a mix of NA and integers, NA means unknown class indicators,
+an integer indicates the known class.}
+
 \item{outcomes_units}{The subject ids in each leaf node (a list)}
 
 \item{outcomes_nodes}{the leaf descendants for each internal or leaf nodes (a list)}
+
+\item{ancestors}{a numeric vector of ancestor nodes for each leaf node (a list of length equal to
+the number of leaves)}
 
 \item{h_pau}{a numeric vector (length = # nodes); the edge length between a node
 and its parent node. The root node has no parent, because we suggest a separate
@@ -49,6 +56,11 @@ for leaf and non-leaf nodes. The levels are pre-specified, not estimated.}
 \code{mu_alpha}, \code{prob} (for s_u), \code{a_t}, \code{b_t}，
 \code{sigma_gamma}, \code{Sigma_alpha}}
 
+\item{hyperparams}{the list of hyperparameters, \code{tau_1} and \code{tau_2} -
+these are initial specifications of the hyperparameters - they are updated by
+ \code{tau_1_t}, \code{tau_2_t}; \code{psi}, \code{g_psi}, \code{phi}, \code{g_phi} (these
+are not hyperparameters, but are updated with the same schedule as \code{tau_1_t} and \code{tau_2_t}).}
+
 \item{hyper_fixed}{a list of fixed hyperparameters, such as those
 in the Beta priors for \code{rho}, e.g., \code{list(a=c(1,1,99),b=c(1,1,1))},
 \code{K}, number of classes.
@@ -62,20 +74,9 @@ to choose the best converged values.}
 \item{random_init_vals}{NB: fill out specific elements}
 
 \item{subject_id_list, v_units, shared_tau}{see \code{\link{update_vi_params}}}
-
-\item{ancestor}{a numeric vector of ancestor nodes for each leaf node (a list of length equal to
-the number of leaves)}
-
-\item{edge_lengths}{A list (length= # leaves); a numeric vector of edge lengths on the
-path from the root node to a leaf node.}
-
-\item{hyperparam}{the list of hyperparameters, \code{tau_1} and \code{tau_2} -
-these are initial specifications of the hyperparameters - they are updated by
- \code{tau_1_t}, \code{tau_2_t}; \code{psi}, \code{g_psi}, \code{phi}, \code{g_phi} (these
-are not hyperparameters, but are updated with the same schedule as \code{tau_1_t} and \code{tau_2_t}).}
 }
 \value{
-
+a list \code{vi_params,hyperparams} containing the initial values.
 }
 \description{
 Initialize the variational inferential algorithm for latent

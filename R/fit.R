@@ -3,7 +3,7 @@
 #'
 #'
 #' @param dsgn a list of data and other information organized according to the tree
-#' @param vi_params_init,hyperparams_init,random_init,random_init_vals,tol,tol_hyper,max_iter,print_freq,plot_fig,shared_tau,update_hyper_freq,hyper_fixed
+#' @param vi_params_init,hyperparams_init,random_init,random_init_vals,tol,tol_hyper,max_iter,print_freq,quiet,plot_fig,shared_tau,update_hyper_freq,hyper_fixed
 #' initial values and updating protocols. Explained more in the wrapper function \code{\link{lcm_tree}}
 #' @return a list with model updates; because the variational posterior
 #' is comprised of familiar distributional forms that can be  determined
@@ -16,7 +16,7 @@
 #' \item{\code{ELBO_track}}{numeric vector containing the values of the objective function
 #' (ELBO) at the end of every iteration}
 #' }
-#'
+#' @importFrom graphics barplot image
 #' @family internal VI functions
 #' @export
 fit_lcm_tree <- function(dsgn,
@@ -164,6 +164,15 @@ fit_lcm_tree <- function(dsgn,
 
 #' estimate latent class models by pre-specified groups of observations,
 #' e.g., the ones obtained from the tree-shrunk LCM.
+#'
+#' @param Y data
+#' @param outcomes individual's leaf indicators in a vector
+#' @param members_list a list, of length G, which is the number of unique
+#' groups of leaves
+#' @param K the number of classes
+#' @param ... other arguments for \code{\link[BayesLCA]{blca}}
+#' @importFrom BayesLCA blca
+#' @export
 lcm_by_group <- function(Y,outcomes,members_list,K,...){
   G <- length(unique(members_list))
   res <- vector("list",G)

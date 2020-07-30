@@ -14,7 +14,7 @@ the \code{expit(xi) = lower_bd(xi)}}
 a positive value between 0 and 1
 }
 \description{
-lower bound is quardratic in the exponent
+lower bound is quadratic in the exponent
 }
 \examples{
 

@@ -7,7 +7,7 @@
 log1p_exp(x)
 }
 \arguments{
-\item{x}{}
+\item{x}{a number}
 }
 \description{
 log(1+exp(x)) (copied from moretrees:)

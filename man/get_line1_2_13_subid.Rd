@@ -25,7 +25,7 @@ get_line1_2_13_subid(
 \item{rmat}{a matrix of variational probabilities of all observations
 belong to K classes; N by K; each row sums to 1}
 
-\item{E_beta, }{E_beta_sq, E_eta, E_eta_sq moments during
+\item{E_beta, E_beta_sq, E_eta, E_eta_sq}{moments during
 VI updates from \code{\link{get_moments_cpp}}}
 
 \item{X}{transformed data: 2Y-1}

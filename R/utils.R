@@ -17,7 +17,7 @@ mexpit  <- function(v) exp(v - matrixStats::logSumExp(v))
 
 #' sigmoid (copied from moretrees:)
 #'
-#' @param p
+#' @param p a probability
 #'
 #' @export
 #' @family utility function
@@ -26,7 +26,7 @@ logit   <- function(p) log(p)-log(1-p)
 
 #' log(1+exp(x)) (copied from moretrees:)
 #'
-#' @param x
+#' @param x a number
 #'
 #' @export
 #' @family utility function
@@ -41,7 +41,7 @@ log1p_exp <- function(x) {
 
 #' log expit vectorized
 #'
-#' @param x
+#' @param x a vector of numbers
 #'
 #' @export
 #' @family utility function
@@ -56,7 +56,7 @@ log1p.exp.vec <- function(x){
 
 #' log expit
 #'
-#' @param x
+#' @param x a number or a vector of numbers
 #'
 #' @export
 #' @family utility function
@@ -67,7 +67,7 @@ logexpit <- function(x) {
 
 #' expit
 #'
-#' @param x
+#' @param x a number
 #'
 #' @export
 #' @family utility function
@@ -179,7 +179,7 @@ prob2stick <- function(x){
 #' split_along_dim(myarray,1)
 #' split_along_dim(myarray,2)
 #' split_along_dim(myarray,3)
-#'
+#' @importFrom stats setNames
 #' @export
 #' @family utility functions
 split_along_dim <- function(a, n){
@@ -193,7 +193,7 @@ split_along_dim <- function(a, n){
 
 #' lower bound of expit(x)
 #'
-#' lower bound is quardratic in the exponent
+#' lower bound is quadratic in the exponent
 #'
 #' @param xi local variational parameter, positive value, this is where
 #' the \code{expit(xi) = lower_bd(xi)}

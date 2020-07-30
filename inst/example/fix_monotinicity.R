@@ -52,7 +52,6 @@ dir.create(log_dir)
 set.seed(345083)
 par(mfrow=c(3,3));plot(0,0)
 
-
 # profvis::profvis({
 mod0     <- lcm_tree(Y,curr_leaves,thetree_igraph,
                      rootnode      = "Node1", # <-- may be redundant?
@@ -124,7 +123,7 @@ main="class probabilities", beside=TRUE)#,legend.text = c("truth","proposed","vb
 # res2 <- poLCA::poLCA(form, as.data.frame(dsgn0$Y),nclass=K)
 proposed <- mod0$prob_est$theta_collapsed
 
-png("inst/example_figure/comparison_with_std.png",width=10,height=9,units = "in",res=300)
+png("inst/example_figure/comparison_with_std_test.png",width=10,height=9,units = "in",res=300)
 par(mfcol=c(3,3))
 
 image(t(theta),main="truth")

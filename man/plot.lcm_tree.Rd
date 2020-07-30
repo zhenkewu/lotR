@@ -21,7 +21,7 @@ An object of class "moretrees_result".}
 
 \item{group.text.size}{Text size for the group labels}
 
-\item{group.text.offset}{Offset of the group label from the 
+\item{group.text.offset}{Offset of the group label from the
 leaves of the tree}
 
 \item{legend.text.size}{Text size for legend}

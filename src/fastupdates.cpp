@@ -13,6 +13,8 @@ using namespace R;
 //'
 //' utility function
 //'
+//' @param x a positive number or zero
+//'
 //' @useDynLib lotR
 //' @importFrom Rcpp sourceCpp
 //' @export
@@ -41,10 +43,9 @@ double logsumexp(arma::vec logv_arma)
 
 //' logexpit to avoid numerical underflow
 //'
-//'
+//' @param x a number
 //' @useDynLib lotR
 //' @importFrom Rcpp sourceCpp
-//' @export
 // [[Rcpp::export]]
 double logexpit_cpp(double x)
 {
@@ -365,7 +366,7 @@ arma::mat update_rmat(arma::cube psi, arma::cube g_psi,arma::mat phi, arma::mat 
 //'
 //' This function updates the N by K matrix \code{rmat} in the package
 //'
-//' @param known_Z matrix of integers; two columns (subject id, class indicator)
+//' @param known_ids a vector of integers representing subject ids
 //' @param psi,g_psi,phi,g_phi local variational parameters
 //' @param X transformed data: 2Y-1
 //' @param E_beta,E_eta,E_beta_sq,E_eta_sq moment updates produced by \code{\link{get_moments_cpp}}
@@ -428,10 +429,12 @@ arma::mat update_rmat_partial(arma::vec known_ids,arma::cube psi, arma::cube g_p
 //'
 //' @param u node id (internal or leaf node
 //' @param g_psi,g_phi g of local variational parameters
-//' @param tau_2_t,tau_1_t variational Gaussian variances for gamma and alpha
+//' @param tau_2_t_u,tau_1_t_u variational Gaussian variances for gamma and alpha
 //' @param E_beta,E_zeta_u moment updates produced by \code{\link{get_moments_cpp}};
 //' \code{E_zeta_u} is directly calculated: \code{prob[u]*sigma_gamma[u,,]}
 //' @param X transformed data: 2Y-1
+//' @param E_eta leaves' expected eta
+//' @param E_xi_u node u's expected xi
 //' @param rmat a matrix of variational probabilities of all observations
 //' belong to K classes; N by K; each row sums to 1
 //' @param h_pau a numeric vector of length p indicating the branch length
@@ -535,10 +538,12 @@ List update_gamma_alpha_subid(int u,
 //'
 //' @param u node id (internal or leaf node
 //' @param g_psi,g_phi g of local variational parameters
-//' @param tau_2_t,tau_1_t variational Gaussian variances for gamma and alpha
+//' @param tau_2_t_u,tau_1_t_u variational Gaussian variances for gamma and alpha
 //' @param E_beta,E_zeta_u moment updates produced by \code{\link{get_moments_cpp}};
 //' \code{E_zeta_u} is directly calculated: \code{prob[u]*sigma_gamma[u,,]}
 //' @param X transformed data: 2Y-1
+//' @param E_eta leaves' expected eta
+//' @param E_xi_u node u's expected xi
 //' @param rmat a matrix of variational probabilities of all observations
 //' belong to K classes; N by K; each row sums to 1
 //' @param h_pau a numeric vector of length p indicating the branch length
@@ -640,6 +645,10 @@ List update_gamma_alpha_subid_separate_tau(int u,
 
 }
 
+//' Initialize sigma alpha for shared tau
+//'
+//' @param u,g_phi,rmat,tau_1_t,h_pau,subject_ids,v_lookup NB: lazy now, see other functions.
+//'
 //' @useDynLib lotR
 //' @importFrom Rcpp sourceCpp
 // [[Rcpp::export]]
@@ -668,10 +677,12 @@ arma::rowvec getC(int u, arma::mat g_phi,
   return resC;
 }
 
-
+//' Initialize sigma alpha for distinct tau
+//'
+//' @param u,g_phi,rmat,tau_1_t,h_pau,subject_ids,v_lookup see \code{\link{getC}}
+//'
 //' @useDynLib lotR
 //' @importFrom Rcpp sourceCpp
-//' @export
 // [[Rcpp::export]]
 arma::rowvec getC_separate_tau(int u, arma::mat g_phi,
                                arma::mat rmat, arma::mat tau_1_t,//p by K-1
@@ -704,7 +715,7 @@ arma::rowvec getC_separate_tau(int u, arma::mat g_phi,
 //' @param psi,g_psi,phi,g_phi see \code{\link{update_hyperparams}}
 //' @param rmat a matrix of variational probabilities of all observations
 //' belong to K classes; N by K; each row sums to 1
-//' @param E_beta, E_beta_sq, E_eta, E_eta_sq moments during
+//' @param E_beta,E_beta_sq,E_eta,E_eta_sq moments during
 //' VI updates from \code{\link{get_moments_cpp}}
 //' @param X transformed data: 2Y-1
 //' @param v_lookup a vector of indicators; of size N, each indicating the leaf id (from 1 to pL)
@@ -714,7 +725,6 @@ arma::rowvec getC_separate_tau(int u, arma::mat g_phi,
 //'
 //' @useDynLib lotR
 //' @importFrom Rcpp sourceCpp
-//' @export
 // [[Rcpp::export]]
 List get_line1_2_13_subid(arma::cube psi, arma::cube g_psi,
                           arma::mat phi, arma::mat g_phi,

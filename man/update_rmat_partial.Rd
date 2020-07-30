@@ -19,6 +19,8 @@ update_rmat_partial(
 )
 }
 \arguments{
+\item{known_ids}{a vector of integers representing subject ids}
+
 \item{psi, g_psi, phi, g_phi}{local variational parameters}
 
 \item{X}{transformed data: 2Y-1}
@@ -27,8 +29,6 @@ update_rmat_partial(
 
 \item{v_lookup}{a vector of length equal to the total number of rows in \code{X};
 each element is an integer, indicating which leaf does the observation belong to.}
-
-\item{known_Z}{matrix of integers; two columns (subject id, class indicator)}
 }
 \value{
 N by K variational multinomial probabilities; row sums are 1s.

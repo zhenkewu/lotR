@@ -7,7 +7,7 @@
 expit(x)
 }
 \arguments{
-\item{x}{}
+\item{x}{a number}
 }
 \description{
 expit
