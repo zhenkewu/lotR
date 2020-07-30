@@ -1,6 +1,8 @@
 # still haven't fixed monotinicity :(/
 source("inst/example/lotR_example.R")
 
+
+library(lotR)
 # V(thetree_igraph)$levels       <- rep(2,length(V(thetree_igraph)))
 # V(thetree_igraph)$levels[c(1)] <- 1
 V(thetree_igraph)$levels <- rep(1,length(V(thetree_igraph)))
@@ -60,9 +62,9 @@ mod0     <- lcm_tree(Y,curr_leaves,thetree_igraph,
                      parallel      = TRUE,
                      hyper_fixed   = list(K=K,a=c(1,1),b=c(1,1),
                                           tau_update_levels = c(1,2),
-                                          s_u_zeroset = NULL,s_u_oneset = NULL),
+                                          #s_u_zeroset = NULL,s_u_oneset = NULL),
                      #s_u_zeroset = (1:265)[-c(1,2,3,4,76,120)],s_u_oneset = c(1,2,3,4,76,120)),
-                     #s_u_zeroset = (1:265)[-c(1)],s_u_oneset = c(1)),
+                     s_u_zeroset = (1:265)[-c(1)],s_u_oneset = c(1)),
                      # hyperparams_init = list(tau_1=rep(900/4,2),
                      #                         tau_2=rep(900/4,2)),
                      # hyperparams_init = list(tau_1=matrix(900/4,nrow=2,ncol=K-1),
@@ -123,7 +125,7 @@ main="class probabilities", beside=TRUE)#,legend.text = c("truth","proposed","vb
 # res2 <- poLCA::poLCA(form, as.data.frame(dsgn0$Y),nclass=K)
 proposed <- mod0$prob_est$theta_collapsed
 
-png("inst/example_figure/comparison_with_std_test.png",width=10,height=9,units = "in",res=300)
+png("inst/example_figure/comparison_with_std.png",width=10,height=9,units = "in",res=300)
 par(mfcol=c(3,3))
 
 image(t(theta),main="truth")
