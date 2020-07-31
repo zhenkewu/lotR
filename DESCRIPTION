@@ -22,7 +22,6 @@ Imports:
     BayesLCA(>= 1.9),
     ggtree(>= 2.2.1),
     igraph(>= 1.2.5),
-    doParallel (>= 1.0.15),
     foreach (>= 1.5.0),
     ggplot2 (>= 3.2.1),
     R.utils (>= 2.9.2),

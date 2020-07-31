@@ -47,6 +47,5 @@ on the outcome tree.
 }
 \examples{
 # See vignette
-vignette("moretrees")
+
 }
-\concept{MOReTrees results}

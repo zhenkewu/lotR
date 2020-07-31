@@ -1,8 +1,8 @@
 # still haven't fixed monotinicity :(/
 source("inst/example/lotR_example.R")
 
-
 library(lotR)
+
 # V(thetree_igraph)$levels       <- rep(2,length(V(thetree_igraph)))
 # V(thetree_igraph)$levels[c(1)] <- 1
 V(thetree_igraph)$levels <- rep(1,length(V(thetree_igraph)))

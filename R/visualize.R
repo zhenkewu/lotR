@@ -1,10 +1,7 @@
 if(getRversion() >= "2.15.1") utils::globalVariables(c("Group"))
 
-#' \code{plot.moretrees_result} plots the groups discovered by MOReTreeS
-#' on the outcome tree.
+#' plots the groups discovered by lcm_tree on the outcome tree.
 #'
-#' @export
-#' @importFrom ggtree %<+%
 #' @param x Output from \code{moretrees()}
 #' An object of class "moretrees_result".
 #' @param group.text.size Text size for the group labels
@@ -23,8 +20,8 @@ if(getRversion() >= "2.15.1") utils::globalVariables(c("Group"))
 #' outcome tree.
 #' @examples
 #' # See vignette
-#' vignette("moretrees")
-#' @family MOReTrees results
+#'
+#' @importFrom ggtree %<+%
 #' @importFrom grDevices colorRampPalette
 #' @importFrom RColorBrewer brewer.pal
 #' @export
