@@ -2,6 +2,7 @@
 
 S3method(log1p,exp.vec)
 S3method(plot,lcm_tree)
+export(approx_sb)
 export(compute_params)
 export(design_tree)
 export(expit)

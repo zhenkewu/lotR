@@ -7,7 +7,7 @@
 #' NB: currently this minimally built; need some checking functions
 #'
 #' @param Y N by J matrix of binary measurements
-#' @param outcomes This is a character string
+#' @param leaf_ids This is a character string
 #' @param mytree the tree (an \code{igraph} object) that contains the node,
 #'              edge, edge-length information.
 #' @param rootnode a character string that indicates the name of the root node.
@@ -22,14 +22,14 @@
 #' @return A list of data and tree information
 #' \itemize{
 #' \item \code{Y} A matrix of n by J; binary measurements with rows ordered by
-#'       leaf ("outcome") groups (e.g., information from phylogenetic tree).
+#'       leaf ("leaf_ids") groups (e.g., information from phylogenetic tree).
 #' \item \code{A} A matrix of p by p; ancestor matrix
 #' \item \code{A_leaves} A matrix of pL by p; ancestor matrix only for leaves
-#' \item \code{outcomes} This is a vector of length n; ordered by the leaves as
+#' \item \code{leaf_ids} This is a vector of length n; ordered by the leaves as
 #'              specified by the tree.
-#' \item \code{outcomes_units} A list of length \code{p[L]}, each element
-#'            is a numeric vector of subject ids belonging to each leaf ("outcome")
-#' \item \code{outcomes_nodes} a list of length \code{p}, each element
+#' \item \code{leaf_ids_units} A list of length \code{p[L]}, each element
+#'            is a numeric vector of subject ids belonging to each leaf ("leaf_ids")
+#' \item \code{leaf_ids_nodes} a list of length \code{p}, each element
 #'            is a numeric vector indicating the leaf nodes.
 #' \item \code{ancestors} a list of length \code{p[L]},
 #'      each element is the numeric vector of ancestors
@@ -42,23 +42,24 @@
 #' each element is an integer, indicating which leaf does the observation belong to.
 #' \item \code{subject_id_list} a list of length p; each element is a vector of subject ids
 #' that are in the leaf descendants of node u (internal or leaf node)
-#'
+#' \item \code{ord} the permutation to order the original rows to produce the final ordering
+#' of the rows
 #' is the length between the node and its parent; the root node has no parent
 #' and the edge length is set to 1.
 #' }
 #' @export
 #' @import igraph
 #'
-design_tree <- function(Y,outcomes,mytree,rootnode="Node1",weighted_edge=FALSE,Z_obs = NULL){ # by default, not weighted tree.
+design_tree <- function(Y,leaf_ids,mytree,rootnode="Node1",weighted_edge=FALSE,Z_obs = NULL){ # by default, not weighted tree.
   # warning("using hard-coded info\n")
   # Y        <- dat_mge[!is.na(match_ind),ind_EL] # these are not ordered yet.
-  # outcomes <- dat_mge[!is.na(match_ind),"ct_MLST"]
+  # leaf_ids <- dat_mge[!is.na(match_ind),"ct_MLST"]
   # mytree   <- thetree_igraph
   # E(mytree)$weight <- thetree$edge.length
   # rootnode="Node1"
   # weighted_edge <- FALSE
 
-  if (!is.character(outcomes)) stop("[lotR]outcomes is not a character object")
+  if (!is.character(leaf_ids)) stop("[lotR]leaf_ids is not a character object")
   if (!igraph::is.igraph(mytree)) stop("[lotR]'mytree' is not a graph object")
   if (!igraph::is.directed(mytree)) stop()
 
@@ -66,8 +67,8 @@ design_tree <- function(Y,outcomes,mytree,rootnode="Node1",weighted_edge=FALSE,Z
 
   nodes  <- names(igraph::V(mytree))
   leaves <- names(igraph::V(mytree)[igraph::degree(mytree, mode = "out") == 0])
-  if(!setequal(unique(outcomes), leaves))
-  {stop("[lotR]Not all outcomes are leaves of tree")}
+  if(!setequal(unique(leaf_ids), leaves))
+  {stop("[lotR]Not all leaf_ids are leaves of tree")}
 
   # Re-order nodes to have internal nodes first, then leaves: <------- ordered nodes.
   nodes <- c(nodes[!(nodes %in% leaves)], leaves)
@@ -103,14 +104,14 @@ design_tree <- function(Y,outcomes,mytree,rootnode="Node1",weighted_edge=FALSE,Z
   A[A > 0 ] <- 1
   A <- Matrix::Matrix(A, sparse = T)
 
-  # Sort by outcomes, where order is specified by ordering in 'mytree':
-  ord <- order(ordered(outcomes, levels = leaves)) # <--- leaves.
+  # Sort by leaf_ids, where order is specified by ordering in 'mytree':
+  ord <- order(ordered(leaf_ids, levels = leaves)) # <--- leaves.
   Y   <- Y[ord,,drop=FALSE]
-  outcomes <- outcomes[ord] # length = n.
+  leaf_ids <- leaf_ids[ord] # length = n.
   if (!is.null(Z_obs)){
     Z_obs <- Z_obs[ord,,drop=FALSE]
   }
-  # get lists of ancestors for each outcome:
+  # get lists of ancestors for each leaf_ids:
   d <- igraph::diameter(mytree,weight=NA)
   # need to set weight=NA to prevent the use of edge lengths in determining the diameter.
   ancestors <- igraph::ego(mytree, order = d + 1, nodes = leaves, mode = "in")
@@ -119,21 +120,21 @@ design_tree <- function(Y,outcomes,mytree,rootnode="Node1",weighted_edge=FALSE,Z
                       nodes = nodes, simplify = F)
   names(ancestors) <- leaves
 
-  # get lists of which units correspond to each outcome
-  outcomes_units <- sapply(leaves, function(v) which(outcomes == v), simplify = F)
-  names(outcomes_units) <- leaves
+  # get lists of which units correspond to each leaf_ids
+  leaf_ids_units <- sapply(leaves, function(v) which(leaf_ids == v), simplify = F)
+  names(leaf_ids_units) <- leaves
 
-  # get lists of outcomes are descendants of each node
+  # get lists of leaf_ids are descendants of each node
   descendants <- igraph::ego(mytree, order = d + 1, nodes = nodes, mode = "out")
   descendants <- sapply(descendants, names)
 
   # leaf.descendants:
-  outcomes_nodes <- sapply(descendants, function(d, leaves) which(leaves %in% d),
+  leaf_ids_nodes <- sapply(descendants, function(d, leaves) which(leaves %in% d),
                            leaves = leaves,
                            simplify = F)
 
-  # Change outcomes to integers
-  outcomes <- sapply(outcomes, function(o) which(leaves == o))
+  # Change leaf_ids to integers
+  leaf_ids <- sapply(leaf_ids, function(o) which(leaves == o))
 
   # The branch lengths (NB: need to check this is correct.)
   edge_lengths        <- vector("list",length=pL)
@@ -168,30 +169,30 @@ design_tree <- function(Y,outcomes,mytree,rootnode="Node1",weighted_edge=FALSE,Z
   A_leaves <- A[nodes%in%leaves,]
   v_units <- NULL
   for (v in 1:pL){
-    leaf_list_tmp <- outcomes_units[v]
+    leaf_list_tmp <- leaf_ids_units[v]
     units         <- unlist(leaf_list_tmp)
     v_units       <- c(v_units,unlist(mapply(rep,v,unlist(lapply(leaf_list_tmp,length)))))
   }
 
-  # outcomes_units: pL length, each is the ids of individuals.
-  # outcomes_nodes: p length, each is the indicator (between 1 and pL) the leaves.
+  # leaf_ids_units: pL length, each is the ids of individuals.
+  # leaf_ids_nodes: p length, each is the indicator (between 1 and pL) the leaves.
   subject_id_list <- list() # for each internal or leaf node
   for (u in 1:p){
-    leaf_desc            <- outcomes_nodes[[u]]
-    subject_id_list[[u]] <- unlist(outcomes_units[leaf_desc])
+    leaf_desc            <- leaf_ids_nodes[[u]]
+    subject_id_list[[u]] <- unlist(leaf_ids_units[leaf_desc])
     # if (u==120){
     #   for (v in leaf_desc){
     #     print(leaves[v])
-    #     print(c(unlist(outcomes_units[v])))
+    #     print(c(unlist(leaf_ids_units[v])))
     #   }
     # }
   }
 
   # print(subject_id_list)
   make_list(Y,A,A_leaves,
-            outcomes,outcomes_units,outcomes_nodes,
+            leaf_ids,leaf_ids_units,leaf_ids_nodes,
             ancestors,edge_lengths,h_pau,
-            levels,v_units,subject_id_list,Z_obs)
+            levels,v_units,subject_id_list,Z_obs,ord)
 }
 
 

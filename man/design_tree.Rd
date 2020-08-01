@@ -6,7 +6,7 @@
 \usage{
 design_tree(
   Y,
-  outcomes,
+  leaf_ids,
   mytree,
   rootnode = "Node1",
   weighted_edge = FALSE,
@@ -16,7 +16,7 @@ design_tree(
 \arguments{
 \item{Y}{N by J matrix of binary measurements}
 
-\item{outcomes}{This is a character string}
+\item{leaf_ids}{This is a character string}
 
 \item{mytree}{the tree (an \code{igraph} object) that contains the node,
 edge, edge-length information.}
@@ -36,14 +36,14 @@ The rows will be reordered according to the reordered \code{Y}.}
 A list of data and tree information
 \itemize{
 \item \code{Y} A matrix of n by J; binary measurements with rows ordered by
-      leaf ("outcome") groups (e.g., information from phylogenetic tree).
+      leaf ("leaf_ids") groups (e.g., information from phylogenetic tree).
 \item \code{A} A matrix of p by p; ancestor matrix
 \item \code{A_leaves} A matrix of pL by p; ancestor matrix only for leaves
-\item \code{outcomes} This is a vector of length n; ordered by the leaves as
+\item \code{leaf_ids} This is a vector of length n; ordered by the leaves as
              specified by the tree.
-\item \code{outcomes_units} A list of length \code{p[L]}, each element
-           is a numeric vector of subject ids belonging to each leaf ("outcome")
-\item \code{outcomes_nodes} a list of length \code{p}, each element
+\item \code{leaf_ids_units} A list of length \code{p[L]}, each element
+           is a numeric vector of subject ids belonging to each leaf ("leaf_ids")
+\item \code{leaf_ids_nodes} a list of length \code{p}, each element
            is a numeric vector indicating the leaf nodes.
 \item \code{ancestors} a list of length \code{p[L]},
      each element is the numeric vector of ancestors
@@ -56,7 +56,8 @@ A list of data and tree information
 each element is an integer, indicating which leaf does the observation belong to.
 \item \code{subject_id_list} a list of length p; each element is a vector of subject ids
 that are in the leaf descendants of node u (internal or leaf node)
-
+\item \code{ord} the permutation to order the original rows to produce the final ordering
+of the rows
 is the length between the node and its parent; the root node has no parent
 and the edge length is set to 1.
 }

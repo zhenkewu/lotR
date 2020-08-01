@@ -6,13 +6,13 @@ if(getRversion() >= "2.15.1") utils::globalVariables(c("i"))
 #' where each of n observation may belong to a leaf node; we hope to group n subjects into
 #' groups possibly coarser than the leaf-induced groups, and in each group, we have a homogeneous latent
 #' class model
-#' @param outcomes Character vector of length \code{n}. \code{outcomes[i]} is a string indicating the
-#' outcome experienced by unit \code{i}.
+#' @param leaf_ids Character vector of length \code{n}. \code{leaf_ids[i]} is a string indicating the
+#' leaf_ids experienced by unit \code{i}.
 #' @param mytree A directed \code{igraph} object. This is a tree representing the relationships
-#' among the outcomes. The leaves represent individual outcomes, and internal nodes
-#' represent outcome categories consisting of their leaf descendants. All nodes
+#' among the leaf_ids. The leaves represent individual leaf_ids, and internal nodes
+#' represent leaf_ids categories consisting of their leaf descendants. All nodes
 #' of mytree must have unique names as given by \code{names(V(mytree))}. The names of the leaves must
-#' be equal to the unique elements of outcomes. The vertices of \code{mytree}, \code{V(mytree)}, may have
+#' be equal to the unique elements of leaf_ids. The vertices of \code{mytree}, \code{V(mytree)}, may have
 #' an attribute \code{levels} containing integer values from 1 to \code{max(V(mytree)$levels)}.
 #' In this case, the levels attribute specifies groups of nodes that share common
 #' hyperparameters \code{rho[f]}, \code{tau_1[f]}, and \code{tau_2[f]}. If \code{V(mytree)$levels} is \code{NULL},
@@ -27,7 +27,7 @@ if(getRversion() >= "2.15.1") utils::globalVariables(c("i"))
 #' @param ci_level A number between 0 and 1 giving the desired credible interval.
 #' For example, \code{ci_level = 0.95} (the default) returns a 95\% credible interval
 #' @param get_lcm_by_group If \code{TRUE}, lotR will also return the maximum likelihood estimates of the
-#' coefficients for each outcome group discovered by the model.
+#' coefficients for each leaf_ids group discovered by the model.
 #' Default is \code{TRUE}.
 #' @param update_hyper_freq How frequently to update hyperparameters.
 #' Default = every 50 iterations.
@@ -77,7 +77,7 @@ if(getRversion() >= "2.15.1") utils::globalVariables(c("i"))
 #' variational parameters and hyperparameters. Supplying good initial values can be challenging,
 #' and \code{lotR()} provides a way to guess initial values based on transformations
 #' of conditional logistic regression estimates of the effect sizes
-#' for each individual outcome (see \code{\link{initialize_tree_lcm}}).
+#' for each individual leaf_ids (see \code{\link{initialize_tree_lcm}}).
 #' The most common use for \code{vi_params_init} and \code{hyperparams_init} is to supply starting
 #' values based on previous output from \code{lotR()};
 #' see the \code{vignette('lotR')} for examples.
@@ -131,7 +131,7 @@ if(getRversion() >= "2.15.1") utils::globalVariables(c("i"))
 #' @useDynLib lotR
 #' @export
 #' @family lcm_tree functions
-lcm_tree <- function(Y,outcomes,mytree,# may have unordered nodes.
+lcm_tree <- function(Y,leaf_ids,mytree,# may have unordered nodes.
                      rootnode = "Node1",
                      weighted_edge = TRUE,
                      Z_obs = NULL,
@@ -181,7 +181,7 @@ lcm_tree <- function(Y,outcomes,mytree,# may have unordered nodes.
     }
 
   # construct designed data; here design_tree is going to reorder the nodes of the tree.
-  dsgn <- design_tree(Y,outcomes,mytree,rootnode,weighted_edge,Z_obs) # root_node,weighted_edge <--- need fixing.
+  dsgn <- design_tree(Y,leaf_ids,mytree,rootnode,weighted_edge,Z_obs) # root_node,weighted_edge <--- need fixing.
 
   # Get hyper_fixed if not supplied:
   if (is.null(hyper_fixed$a) | is.null(hyper_fixed$b)) {
@@ -248,14 +248,14 @@ lcm_tree <- function(Y,outcomes,mytree,# may have unordered nodes.
 
   # get a LCM result based on the groups formed by the output:
   if (!is.null(get_lcm_by_group) && get_lcm_by_group){
-    est_ad_hoc <- lcm_by_group(dsgn$Y,names(dsgn$outcomes),
+    est_ad_hoc <- lcm_by_group(dsgn$Y,names(dsgn$leaf_ids),
                                members_list = prob_est$members,
                                mod$hyper_fixed$K,method="em")
   }
   ## function for using a previous lcm_tree results to continue iterations;
   ## only useful when the previous result is not converged.
-  if (allow_continue){ # here Y and outcomes may not be ordered....!!!
-    old_mod <- append(make_list(Y,outcomes,mytree,rootnode,weighted_edge,#ci_level = 0.95#get_ml = TRUE
+  if (allow_continue){ # here Y and leaf_ids may not be ordered....!!!
+    old_mod <- append(make_list(Y,leaf_ids,mytree,rootnode,weighted_edge,#ci_level = 0.95#get_ml = TRUE
                                 hyper_fixed,random_init_vals, # definitely fixed
                                 update_hyper_freq,
                                 print_freq # can use default, be better take the same values as here.

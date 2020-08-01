@@ -6,7 +6,7 @@
 \usage{
 lcm_tree(
   Y,
-  outcomes,
+  leaf_ids,
   mytree,
   rootnode = "Node1",
   weighted_edge = TRUE,
@@ -41,14 +41,14 @@ where each of n observation may belong to a leaf node; we hope to group n subjec
 groups possibly coarser than the leaf-induced groups, and in each group, we have a homogeneous latent
 class model}
 
-\item{outcomes}{Character vector of length \code{n}. \code{outcomes[i]} is a string indicating the
-outcome experienced by unit \code{i}.}
+\item{leaf_ids}{Character vector of length \code{n}. \code{leaf_ids[i]} is a string indicating the
+leaf_ids experienced by unit \code{i}.}
 
 \item{mytree}{A directed \code{igraph} object. This is a tree representing the relationships
-among the outcomes. The leaves represent individual outcomes, and internal nodes
-represent outcome categories consisting of their leaf descendants. All nodes
+among the leaf_ids. The leaves represent individual leaf_ids, and internal nodes
+represent leaf_ids categories consisting of their leaf descendants. All nodes
 of mytree must have unique names as given by \code{names(V(mytree))}. The names of the leaves must
-be equal to the unique elements of outcomes. The vertices of \code{mytree}, \code{V(mytree)}, may have
+be equal to the unique elements of leaf_ids. The vertices of \code{mytree}, \code{V(mytree)}, may have
 an attribute \code{levels} containing integer values from 1 to \code{max(V(mytree)$levels)}.
 In this case, the levels attribute specifies groups of nodes that share common
 hyperparameters \code{rho[f]}, \code{tau_1[f]}, and \code{tau_2[f]}. If \code{V(mytree)$levels} is \code{NULL},
@@ -68,7 +68,7 @@ classes.}
 For example, \code{ci_level = 0.95} (the default) returns a 95\% credible interval}
 
 \item{get_lcm_by_group}{If \code{TRUE}, lotR will also return the maximum likelihood estimates of the
-coefficients for each outcome group discovered by the model.
+coefficients for each leaf_ids group discovered by the model.
 Default is \code{TRUE}.}
 
 \item{update_hyper_freq}{How frequently to update hyperparameters.
@@ -133,7 +133,7 @@ Default is the working directory.}
 variational parameters and hyperparameters. Supplying good initial values can be challenging,
 and \code{lotR()} provides a way to guess initial values based on transformations
 of conditional logistic regression estimates of the effect sizes
-for each individual outcome (see \code{\link{initialize_tree_lcm}}).
+for each individual leaf_ids (see \code{\link{initialize_tree_lcm}}).
 The most common use for \code{vi_params_init} and \code{hyperparams_init} is to supply starting
 values based on previous output from \code{lotR()};
 see the \code{vignette('lotR')} for examples.

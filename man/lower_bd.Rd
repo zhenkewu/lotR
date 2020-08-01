@@ -36,6 +36,7 @@ for (i in 1:length(xi_seq)){
 }
 \seealso{
 Other VI functions: 
+\code{\link{approx_sb}()},
 \code{\link{g_fun.vec}()},
 \code{\link{g_fun0}()},
 \code{\link{g_fun}()}

@@ -41,8 +41,8 @@
 #' @param Z_obs a two-column matrix of integers, first column is subject ids,
 #' second column is a mix of NA and integers, NA means unknown class indicators,
 #' an integer indicates the known class.
-#' @param outcomes_units The subject ids in each leaf node (a list)
-#' @param outcomes_nodes the leaf descendants for each internal or leaf nodes (a list)
+#' @param leaf_ids_units The subject ids in each leaf node (a list)
+#' @param leaf_ids_nodes the leaf descendants for each internal or leaf nodes (a list)
 #' @param ancestors a numeric vector of ancestor nodes for each leaf node (a list of length equal to
 #' the number of leaves)
 #' @param h_pau a numeric vector (length = # nodes); the edge length between a node
@@ -78,8 +78,8 @@
 #'
 #' @export
 initialize_tree_lcm <- function(Y,A,Z_obs,
-                                outcomes_units,
-                                outcomes_nodes,
+                                leaf_ids_units,
+                                leaf_ids_nodes,
                                 ancestors,
                                 h_pau,
                                 levels,
@@ -127,9 +127,9 @@ initialize_tree_lcm <- function(Y,A,Z_obs,
       }
     }
     for (v in 1:p){
-      u   <- outcomes_nodes[[v]] # this might be few for some leaves
+      u   <- leaf_ids_nodes[[v]] # this might be few for some leaves
       # Amazingly this can be fitted by VB method in BayesLCA.
-      units <- unlist(outcomes_units[u])
+      units <- unlist(leaf_ids_units[u])
       #invisible(capture.output(
       sub_id <- match(Z_obs[!is.na(Z_obs[,2]),1],units) # which in units are in Z_obs.
       if (!is.null(Z_obs) && sum(!is.na(sub_id))>0){
@@ -380,7 +380,7 @@ initialize_tree_lcm <- function(Y,A,Z_obs,
     # lp <- array(0,c(n,J,K))
     # for (v in 1:pL){
     #   beta_v <- Reduce('+',zeta[ancestors[[v]]])
-    #   for (i in outcomes_units[[v]]){
+    #   for (i in leaf_ids_units[[v]]){
     #     lp[i,,] <- diag(X[i,,drop=FALSE])%*%beta_v
     #   }
     # }
@@ -402,7 +402,7 @@ initialize_tree_lcm <- function(Y,A,Z_obs,
     # # with the quadratic term set to zero as approximation; in actual VI update
     # # we will account for the quadratic term.
     # for (v in 1:pL){
-    #   units <- outcomes_units[[v]]
+    #   units <- leaf_ids_units[[v]]
     #   tmp   <- sum_m_neq_k(log(expit(hyperparams$phi[v,,]))+
     #                          (lp_diff[v,,]-hyperparams$phi[v,,])/2)
     #   tmp2 <- log(expit(hyperparams$psi[rep(v,length(units)),,,drop=FALSE]))+
@@ -455,9 +455,9 @@ initialize_tree_lcm <- function(Y,A,Z_obs,
   if (is.null(vi_params[["sigma_gamma"]])){ # depends on multinomial parameters.
     vi_params$sigma_gamma<- array(NA,c(p,J,K))
     for (u in 1:p){
-      leaf_list_tmp <- outcomes_units[outcomes_nodes[[u]]]
+      leaf_list_tmp <- leaf_ids_units[leaf_ids_nodes[[u]]]
       units         <- unlist(leaf_list_tmp)
-      v_units_curr       <- unlist(mapply(rep,outcomes_nodes[[u]],unlist(lapply(leaf_list_tmp,length))))
+      v_units_curr       <- unlist(mapply(rep,leaf_ids_nodes[[u]],unlist(lapply(leaf_list_tmp,length))))
       if (shared_tau){ # SHARED TAU:
         for (j in 1:J){
           for (k in 1:K){
@@ -483,9 +483,9 @@ initialize_tree_lcm <- function(Y,A,Z_obs,
   if (is.null(vi_params[["Sigma_alpha"]])){
     vi_params$Sigma_alpha <- list()
     # for (u in 1:p){
-    #   leaf_list_tmp <- outcomes_units[outcomes_nodes[[u]]]
+    #   leaf_list_tmp <- leaf_ids_units[leaf_ids_nodes[[u]]]
     #   units <- unlist(leaf_list_tmp)
-    #   v_units <- c(unlist(mapply(rep,outcomes_nodes[[u]],unlist(lapply(leaf_list_tmp,length)))))
+    #   v_units <- c(unlist(mapply(rep,leaf_ids_nodes[[u]],unlist(lapply(leaf_list_tmp,length)))))
     #   tmp <- matrix(0,nrow=K,ncol=K)
     #   for (k in 1:K){
     #     for (i in seq_along(units)){
@@ -507,9 +507,9 @@ initialize_tree_lcm <- function(Y,A,Z_obs,
       }
     } else{ # DISTINCT TAU:
       for (u in 1:p){
-        leaf_list_tmp <- outcomes_units[outcomes_nodes[[u]]]
+        leaf_list_tmp <- leaf_ids_units[leaf_ids_nodes[[u]]]
         #units         <- unlist(leaf_list_tmp)
-        #v_units       <- unlist(mapply(rep,outcomes_nodes[[u]],unlist(lapply(leaf_list_tmp,length))))
+        #v_units       <- unlist(mapply(rep,leaf_ids_nodes[[u]],unlist(lapply(leaf_list_tmp,length))))
         vi_params$Sigma_alpha[[u]] <- c(1/getC_separate_tau(u,hyperparams$g_phi,vi_params$rmat,
                                                             do.call("rbind",vi_params$tau_1_t),h_pau,subject_id_list[[u]],v_units))
       }

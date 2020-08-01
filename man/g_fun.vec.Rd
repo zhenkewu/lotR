@@ -14,6 +14,7 @@ g, vectorized
 }
 \seealso{
 Other VI functions: 
+\code{\link{approx_sb}()},
 \code{\link{g_fun0}()},
 \code{\link{g_fun}()},
 \code{\link{lower_bd}()}

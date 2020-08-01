@@ -55,10 +55,10 @@ fit_lcm_tree <- function(dsgn,
   if (!is.null(hyper_fixed$K) && hyper_fixed$K<2){stop("[lotR] # of classes 'K' is 1.")}
   K  <- hyper_fixed$K
 
-  #dsgn$cardleaf       <- unlist(lapply(dsgn$outcomes_units,length)) # number of observations in each leaf.
-  #dsgn$card_leaf_desc <- unlist(lapply(dsgn$outcomes_nodes,length)) # number of leaf descendants for each node.
+  #dsgn$cardleaf       <- unlist(lapply(dsgn$leaf_ids_units,length)) # number of observations in each leaf.
+  #dsgn$card_leaf_desc <- unlist(lapply(dsgn$leaf_ids_nodes,length)) # number of leaf descendants for each node.
   dsgn$cardanc        <- unlist(lapply(dsgn$ancestors,length))      # number of ancestors for each leaf.
-  #dsgn$maxnv          <- max(unlist(lapply(dsgn$outcomes_units,length)))
+  #dsgn$maxnv          <- max(unlist(lapply(dsgn$leaf_ids_units,length)))
   #-------------------------------END OF DESIGN PADDING--------------------------
 
   if (!quiet){cat("\n [lotR] Branch lengths: `h_pau`: \n");print(dsgn$h_pau)}
@@ -166,18 +166,18 @@ fit_lcm_tree <- function(dsgn,
 #' e.g., the ones obtained from the tree-shrunk LCM.
 #'
 #' @param Y data
-#' @param outcomes individual's leaf indicators in a vector
+#' @param leaf_ids individual's leaf indicators in a vector
 #' @param members_list a list, of length G, which is the number of unique
 #' groups of leaves
 #' @param K the number of classes
 #' @param ... other arguments for \code{\link[BayesLCA]{blca}}
 #' @importFrom BayesLCA blca
 #' @export
-lcm_by_group <- function(Y,outcomes,members_list,K,...){
+lcm_by_group <- function(Y,leaf_ids,members_list,K,...){
   G <- length(unique(members_list))
   res <- vector("list",G)
   for (g in 1:G){
-    units <- which(outcomes %in% members_list[[g]])
+    units <- which(leaf_ids %in% members_list[[g]])
     #print(length(units))
     res[[g]] <- BayesLCA::blca(Y[units,,drop=FALSE],K,verbose=FALSE,...)
   }

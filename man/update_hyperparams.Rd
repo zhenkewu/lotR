@@ -8,7 +8,7 @@ a tree}
 update_hyperparams(
   Y,
   A,
-  outcomes_units,
+  leaf_ids_units,
   ancestors,
   h_pau,
   levels,
@@ -57,7 +57,7 @@ ordered from low- to high-indexed leaf nodes.}
 \code{\link{design_tree}}, which reorders the nodes by internal and leaf nodes; the observations are also
 ordered from low- to high-indexed leaf nodes.}
 
-\item{outcomes_units}{outputs from
+\item{leaf_ids_units}{outputs from
 \code{\link{design_tree}}, which reorders the nodes by internal and leaf nodes; the observations are also
 ordered from low- to high-indexed leaf nodes.}
 

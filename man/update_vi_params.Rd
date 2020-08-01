@@ -9,8 +9,8 @@ update_vi_params(
   Y,
   A,
   Z_obs,
-  outcomes_units,
-  outcomes_nodes,
+  leaf_ids_units,
+  leaf_ids_nodes,
   ancestors,
   cardanc,
   v_units,
@@ -48,7 +48,7 @@ update_vi_params(
 )
 }
 \arguments{
-\item{Y, A, outcomes_units, outcomes_nodes, ancestors, cardanc, v_units, h_pau, levels, subject_id_list}{outputs from
+\item{Y, A, leaf_ids_units, leaf_ids_nodes, ancestors, cardanc, v_units, h_pau, levels, subject_id_list}{outputs from
 \code{\link{design_tree}}, which reorders the nodes by internal and leaf nodes; the observations are also
 ordered from low- to high-indexed leaf nodes.}
 

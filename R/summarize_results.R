@@ -37,7 +37,7 @@
 #' @seealso \code{\link{get_est_cpp}}
 #' @export
 compute_params <- function(mod,dsgn,ci_level=0.95){
-  outcomes <- names(dsgn$outcomes)
+  leaf_ids <- names(dsgn$leaf_ids)
   prob     <- mod$vi_params$prob
   mu_gamma <- mod$vi_params$mu_gamma
   mu_alpha <- mod$vi_params$mu_alpha
@@ -73,7 +73,7 @@ compute_params <- function(mod,dsgn,ci_level=0.95){
   }
 
   prob_est$n_obs <- sapply(prob_est$members,
-                           function(u) sum(outcomes %in% u))
+                           function(u) sum(leaf_ids %in% u))
   prob_est$theta_collapsed <- prob_est$theta[,,!duplicated(prob_est$pi)]
   prob_est$pi_collapsed <- prob_est$pi[!duplicated(prob_est$pi),]
   prob_est

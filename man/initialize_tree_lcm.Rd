@@ -9,8 +9,8 @@ initialize_tree_lcm(
   Y,
   A,
   Z_obs,
-  outcomes_units,
-  outcomes_nodes,
+  leaf_ids_units,
+  leaf_ids_nodes,
   ancestors,
   h_pau,
   levels,
@@ -34,9 +34,9 @@ ordered by leaves in the tree}
 second column is a mix of NA and integers, NA means unknown class indicators,
 an integer indicates the known class.}
 
-\item{outcomes_units}{The subject ids in each leaf node (a list)}
+\item{leaf_ids_units}{The subject ids in each leaf node (a list)}
 
-\item{outcomes_nodes}{the leaf descendants for each internal or leaf nodes (a list)}
+\item{leaf_ids_nodes}{the leaf descendants for each internal or leaf nodes (a list)}
 
 \item{ancestors}{a numeric vector of ancestor nodes for each leaf node (a list of length equal to
 the number of leaves)}

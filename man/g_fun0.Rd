@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{g_fun0}
 \alias{g_fun0}
-\title{g}
+\title{g 0}
 \usage{
 g_fun0(eta)
 }
@@ -10,10 +10,11 @@ g_fun0(eta)
 \item{eta}{local variational parameter}
 }
 \description{
-g
+g 0
 }
 \seealso{
 Other VI functions: 
+\code{\link{approx_sb}()},
 \code{\link{g_fun.vec}()},
 \code{\link{g_fun}()},
 \code{\link{lower_bd}()}

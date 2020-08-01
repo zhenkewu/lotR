@@ -59,6 +59,9 @@ logsumexp_row <- function(logv_arma) {
 #'    Named("E_eta_sq")=E_eta_sq);
 #'}
 #'
+#' @example
+#' inst/example/variance_ss.R
+#'
 #' @useDynLib lotR
 #' @importFrom Rcpp sourceCpp
 #' @export
@@ -83,6 +86,10 @@ get_moments_cpp <- function(prob, mu_gamma, sigma_gamma, mu_alpha, Sigma_alpha, 
 #'    Named("E_eta")=E_eta,
 #'    Named("E_eta_sq")=E_eta_sq);
 #'}
+#'
+#' @example
+#' inst/example/variance_ss.R
+#'
 #' @useDynLib lotR
 #' @importFrom Rcpp sourceCpp
 get_moments_cpp_eco <- function(leaves_u, E_beta, E_beta_sq, E_eta, E_eta_sq, prob, mu_gamma, sigma_gamma, mu_alpha, Sigma_alpha, anc, cardanc) {

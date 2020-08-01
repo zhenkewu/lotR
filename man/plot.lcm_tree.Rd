@@ -2,8 +2,7 @@
 % Please edit documentation in R/visualize.R
 \name{plot.lcm_tree}
 \alias{plot.lcm_tree}
-\title{\code{plot.moretrees_result} plots the groups discovered by MOReTreeS
-on the outcome tree.}
+\title{plots the groups discovered by lcm_tree on the tree for observations.}
 \usage{
 \method{plot}{lcm_tree}(
   x,
@@ -39,11 +38,10 @@ the right.}
 }
 \value{
 A plot showing the groups discovered by MOReTreeS on the original
-outcome tree.
+leaf_ids tree.
 }
 \description{
-\code{plot.moretrees_result} plots the groups discovered by MOReTreeS
-on the outcome tree.
+plots the groups discovered by lcm_tree on the tree for observations.
 }
 \examples{
 # See vignette

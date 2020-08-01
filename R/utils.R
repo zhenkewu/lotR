@@ -97,10 +97,7 @@ g_fun <- function(eta){
   (1/(2*eta))*(1/(1+exp(-eta))-0.5)
 }
 
-
-
-
-#' g
+#' g 0
 #'
 #' @param eta local variational parameter
 #'
@@ -120,6 +117,7 @@ g_fun0 <- function(eta){
   if (eta ==0){return(1/8)}
   (1/(2*eta))*(1/(1+exp(-eta))-0.5)
 }
+
 
 
 #' g, vectorized
@@ -189,8 +187,6 @@ split_along_dim <- function(a, n){
 }
 
 
-
-
 #' lower bound of expit(x)
 #'
 #' lower bound is quadratic in the exponent
@@ -221,8 +217,66 @@ split_along_dim <- function(a, n){
 #' @family VI functions
 lower_bd <- function(xi){
   function(z){
-    expit(xi)*exp((z-xi)/2-g_fun(xi)*(z^2-xi^2))
+    expit(xi)*exp((z-xi)/2-g_fun0(xi)*(z^2-xi^2))
   }
+}
+
+
+
+#' lower bound of a vector of probabilities that sum to one
+#'
+#' the lower bound is based on the best set of local variational parameters
+#' which are logit of the stick-breaking form of the supplied vector
+#'
+#' @param x a vector of probabilities that sum to one
+#'
+#' @return approximation to a vector of probabilities
+#'
+#' @examples
+#'
+#' # based on Tsiatis 2016 NeuroIPS
+#' approx <- function(x){
+#'   res = rep(NA,length=length(x))
+#'   for (i in 1:length(res)){
+#'     curr_v <- x[i] - x[-i]
+#'     res[i]  = prod(expit(curr_v))
+#'   }
+#'   res
+#' }
+#'
+#' tau = rep(0.25,4)
+#' barplot(rbind(tau,approx_sb(tau),approx(tau)),beside=TRUE,
+#'         legend.text=c("truth","sb + quad (lotR)","1 vs other + quad"),
+#'         main="truth 1")
+#'
+#' tau = c(0.5,0.3,0.15,0.05)
+#' barplot(rbind(tau,approx_sb(tau),approx(tau)),beside=TRUE,
+#'         legend.text=c("truth","sb + quad (lotR)","1 vs other + quad"),
+#'         main="truth 2")
+#'
+#' @references
+#' \itemize{
+#' \item Jaakkola, Tommi S., and Michael I. Jordan. "Bayesian parameter estimation via variational methods." Statistics and Computing 10.1 (2000): 25-37.
+#' \url{http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.399.9368&rep=rep1&type=pdf}
+#' \item Titsias M(2016). One-vs-each approximation to softmax for scalable estimation of probabilities. Advances in Neural Information Processing Systems.
+#' \url{https://papers.nips.cc/paper/6468-one-vs-each-approximation-to-softmax-for-scalable-estimation-of-probabilities.pdf}
+#'}
+#' @export
+#' @family VI functions
+approx_sb <- function(x){
+  logit_stick_lengths <-  logit(prob2stick(x))[-length(x)] # best local variational parameters, e.g., psi, phi in lotR.
+  res = rep(1,length=length(x))
+  hm = rep(1,length=length(x))
+  hp = rep(1,length=length(x))
+  hp[1] = lower_bd(logit_stick_lengths[1])(logit_stick_lengths[1])
+  res[1] = hp[1]
+  for (i in 2:(length(res)-1)){
+    hm[i] = lower_bd(logit_stick_lengths[i-1])(-logit_stick_lengths[i-1])
+    hp[i] = lower_bd(logit_stick_lengths[i])(logit_stick_lengths[i])
+    res[i] = prod(hm[1:(i)])*hp[i]
+  }
+  res[length(x)] = prod(hm[1:(length(x)-1)])*lower_bd(logit_stick_lengths[length(x)-1])(-logit_stick_lengths[length(x)-1])
+  res
 }
 
 

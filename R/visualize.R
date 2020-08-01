@@ -1,6 +1,6 @@
 if(getRversion() >= "2.15.1") utils::globalVariables(c("Group"))
 
-#' plots the groups discovered by lcm_tree on the outcome tree.
+#' plots the groups discovered by lcm_tree on the tree for observations.
 #'
 #' @param x Output from \code{moretrees()}
 #' An object of class "moretrees_result".
@@ -17,7 +17,7 @@ if(getRversion() >= "2.15.1") utils::globalVariables(c("Group"))
 #' the right.
 #' @param ... Not used.
 #' @return A plot showing the groups discovered by MOReTreeS on the original
-#' outcome tree.
+#' leaf_ids tree.
 #' @examples
 #' # See vignette
 #'

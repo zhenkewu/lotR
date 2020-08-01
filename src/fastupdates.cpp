@@ -105,6 +105,9 @@ double logsumexp_row(arma::rowvec logv_arma)
 //'    Named("E_eta_sq")=E_eta_sq);
 //'}
 //'
+//' @example
+//' inst/example/variance_ss.R
+//'
 //' @useDynLib lotR
 //' @importFrom Rcpp sourceCpp
 //' @export
@@ -170,6 +173,10 @@ List get_moments_cpp(arma::vec prob,
 //'    Named("E_eta")=E_eta,
 //'    Named("E_eta_sq")=E_eta_sq);
 //'}
+//'
+//' @example
+//' inst/example/variance_ss.R
+//'
 //' @useDynLib lotR
 //' @importFrom Rcpp sourceCpp
 // [[Rcpp::export]]

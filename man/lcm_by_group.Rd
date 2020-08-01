@@ -5,12 +5,12 @@
 \title{estimate latent class models by pre-specified groups of observations,
 e.g., the ones obtained from the tree-shrunk LCM.}
 \usage{
-lcm_by_group(Y, outcomes, members_list, K, ...)
+lcm_by_group(Y, leaf_ids, members_list, K, ...)
 }
 \arguments{
 \item{Y}{data}
 
-\item{outcomes}{individual's leaf indicators in a vector}
+\item{leaf_ids}{individual's leaf indicators in a vector}
 
 \item{members_list}{a list, of length G, which is the number of unique
 groups of leaves}

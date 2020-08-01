@@ -1,8 +1,8 @@
 Package: lotR
 Type: Package
 Title: Latent class analysis with Observed Trees in R (lotR)
-Version: 0.4.1
-Date: 2020-07-30
+Version: 0.5.0
+Date: 2020-07-31
 Authors@R: c(
      person("Zhenke", "Wu", email="zhenkewu@umich.edu",role=c("cre","aut"),
      comment = c(ORCID = "0000-0001-7582-669X"))

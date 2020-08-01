@@ -4,7 +4,7 @@
 #' Used by \code{\link{fit_lcm_tree}}, which also invoke \code{\link{update_hyperparams}}
 #' to update hyperparameters and calculate evidence lower bound (ELBO)
 #'
-#' @param Y,A,outcomes_units,outcomes_nodes,ancestors,cardanc,v_units,h_pau,levels,subject_id_list outputs from
+#' @param Y,A,leaf_ids_units,leaf_ids_nodes,ancestors,cardanc,v_units,h_pau,levels,subject_id_list outputs from
 #' \code{\link{design_tree}}, which reorders the nodes by internal and leaf nodes; the observations are also
 #' ordered from low- to high-indexed leaf nodes.
 #' @param X,n,J,p,pL,Fg computed from the data by \code{\link{lcm_tree}} at the beginning before the VI updates
@@ -17,8 +17,8 @@
 #' @export
 #' @family Internal VI functions
 update_vi_params <- function(Y,A,Z_obs,
-                             outcomes_units,
-                             outcomes_nodes,
+                             leaf_ids_units,
+                             leaf_ids_nodes,
                              ancestors,cardanc,
                              v_units,
                              h_pau,
@@ -120,7 +120,7 @@ update_vi_params <- function(Y,A,Z_obs,
     prob[u] <- expit(w_u)
 
     # updating ancestral node will impact the variational moments of the descendants:
-    moments_cpp <- get_moments_cpp_eco(outcomes_nodes[[u]],
+    moments_cpp <- get_moments_cpp_eco(leaf_ids_nodes[[u]],
                                        E_beta,E_beta_sq,E_eta,E_eta_sq,
                                        prob,array(unlist(mu_gamma),c(J,K,p)),
                                        aperm(sigma_gamma,c(2,3,1)),
@@ -160,7 +160,7 @@ update_vi_params <- function(Y,A,Z_obs,
 #' along with a new ELBO value.
 #' @export
 update_hyperparams <- function(Y,A,
-                               outcomes_units,
+                               leaf_ids_units,
                                ancestors,
                                h_pau,
                                levels,
