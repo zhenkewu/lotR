@@ -20,6 +20,7 @@ update_hyperparams(
   pL,
   Fg,
   prob,
+  prob_gamma,
   mu_gamma,
   mu_alpha,
   rmat,
@@ -90,6 +91,8 @@ ordered from low- to high-indexed leaf nodes.}
 \item{Fg}{computed from the data by \code{\link{lcm_tree}} at the beginning before the VI updates}
 
 \item{prob}{variational parameters updated by \code{\link{update_vi_params}}}
+
+\item{prob_gamma}{variational parameters updated by \code{\link{update_vi_params}}}
 
 \item{mu_gamma}{variational parameters updated by \code{\link{update_vi_params}}}
 

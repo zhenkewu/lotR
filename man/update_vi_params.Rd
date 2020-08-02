@@ -24,6 +24,7 @@ update_vi_params(
   pL,
   Fg,
   prob,
+  prob_gamma,
   mu_gamma,
   mu_alpha,
   rmat,
@@ -54,7 +55,7 @@ ordered from low- to high-indexed leaf nodes.}
 
 \item{X, n, J, p, pL, Fg}{computed from the data by \code{\link{lcm_tree}} at the beginning before the VI updates}
 
-\item{prob, mu_gamma, mu_alpha, rmat, sigma_gamma, Sigma_alpha, tau_1_t, tau_2_t, a_t, b_t, }{variational parameters updated by \code{\link{update_vi_params}}}
+\item{prob, prob_gamma, mu_gamma, mu_alpha, rmat, sigma_gamma, Sigma_alpha, tau_1_t, tau_2_t, a_t, b_t, }{variational parameters updated by \code{\link{update_vi_params}}}
 
 \item{psi, g_psi, phi, g_phi, tau_1, tau_2, shared_tau}{parameters updated by \code{update_hyperparams()}}
 

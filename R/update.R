@@ -8,7 +8,7 @@
 #' \code{\link{design_tree}}, which reorders the nodes by internal and leaf nodes; the observations are also
 #' ordered from low- to high-indexed leaf nodes.
 #' @param X,n,J,p,pL,Fg computed from the data by \code{\link{lcm_tree}} at the beginning before the VI updates
-#' @param  prob,mu_gamma,mu_alpha,rmat,sigma_gamma,Sigma_alpha,tau_1_t,tau_2_t,a_t,b_t,
+#' @param  prob,prob_gamma,mu_gamma,mu_alpha,rmat,sigma_gamma,Sigma_alpha,tau_1_t,tau_2_t,a_t,b_t,
 #' variational parameters updated by \code{\link{update_vi_params}}
 #' @param psi,g_psi,phi,g_phi,tau_1,tau_2,shared_tau parameters updated by \code{update_hyperparams()}
 #' @param a,b,K,s_u_zeroset,s_u_oneset,Z_obs fixed hyperparameters not to be updated.
@@ -25,7 +25,7 @@ update_vi_params <- function(Y,A,Z_obs,
                              levels,
                              subject_id_list,
                              X,n,J,p,pL,Fg,# data and design
-                             prob,mu_gamma,mu_alpha,rmat,
+                             prob,prob_gamma,mu_gamma,mu_alpha,rmat,
                              sigma_gamma,Sigma_alpha,# Sigma_alpha is list of length p; in Rcpp this is matrix p by K-1.
                              tau_1_t,
                              tau_2_t,
@@ -40,14 +40,18 @@ update_vi_params <- function(Y,A,Z_obs,
   # Note: only after the entire block is updated we have a monotonic increase in ELBO!
   seq_update <- 1:p
   if (!is.null(s_u_zeroset)){ # not updating nodes that are set to zeros.
+    if (length(setdiff(s_u_zeroset,1:p))!=0){stop("[lotR] 's_u_zeroset has elements not between 1 and p.'")}
     seq_update <- (1:p)[-s_u_zeroset]
     prob[s_u_zeroset] <- 0
   }
-  if (!is.null(s_u_oneset)){prob[s_u_oneset] <- 1}
+  if (!is.null(s_u_oneset)){
+    prob[s_u_oneset] <- 1
+    if (length(setdiff(s_u_oneset,1:p))!=0){stop("[lotR] 's_u_oneset has elements not between 1 and p.'")}
+  }
 
   if (!exists("E_beta_sq") || !exists("E_eta_sq") || !exists("E_beta") || !exists("E_eta")){
     # calculate initial moments that are required in the VI updates (do so only when not available):
-    moments_cpp <- get_moments_cpp(prob,array(unlist(mu_gamma),c(J,K,p)),
+    moments_cpp <- get_moments_cpp(prob,prob_gamma,array(unlist(mu_gamma),c(J,K,p)),
                                    aperm(sigma_gamma,c(2,3,1)),
                                    as.matrix(do.call("rbind",mu_alpha)),
                                    as.matrix(do.call("rbind",Sigma_alpha)),
@@ -60,15 +64,12 @@ update_vi_params <- function(Y,A,Z_obs,
   }
   # update for all subjects their variational probabilities of belonging to each of K classes: q_t(Z^v_i)
   if (!is.null(Z_obs)){
-    ind_obs <- which(!is.na(Z_obs[,2]))
-    tmp  <- update_rmat_partial(ind_obs,psi,g_psi,phi,g_phi,as.matrix(X),E_beta,E_eta,E_beta_sq,E_eta_sq,v_units)
-    rmat[-ind_obs,] <- tmp[-ind_obs,] # don't update observed Z; it is initialized.
+    ind_unknown <- which(is.na(Z_obs[,2]))
+    tmp  <- update_rmat_partial(ind_unknown,psi,g_psi,phi,g_phi,as.matrix(X),E_beta,E_eta,E_beta_sq,E_eta_sq,v_units)
+    rmat[ind_unknown,] <- tmp[ind_unknown,] # don't update observed Z; it is initialized.
   } else{
     rmat  <- update_rmat(psi,g_psi,phi,g_phi,as.matrix(X),E_beta,E_eta,E_beta_sq,E_eta_sq,v_units)
   }
-
-  # print(rmat[!is.na(Z_obs[,2]),])
-  # known_Z is a two column matrix, the first is the subject id, the second is the class id that is known.
 
   for (u in seq_update){
     ## --- | update q_t(gamma_u,alpha_u,s_u):
@@ -82,7 +83,7 @@ update_vi_params <- function(Y,A,Z_obs,
 
       gamma_alpha_update <- update_gamma_alpha_subid(u,g_psi,g_phi,
                                                      tau_2_t[u],tau_1_t[u],
-                                                     E_beta,as.matrix(prob[u]*mu_gamma[[u]],nrow=J,ncol=K),as.matrix(X),
+                                                     E_beta,as.matrix(prob_gamma[u]*mu_gamma[[u]],nrow=J,ncol=K),as.matrix(X),
                                                      E_eta, c(prob[u]*mu_alpha[[u]]),
                                                      rmat,h_pau,levels,subject_id_list[[u]],v_units)
       mu_gamma[[u]]    <-   gamma_alpha_update$resB*gamma_alpha_update$resA #  J by K
@@ -92,19 +93,20 @@ update_vi_params <- function(Y,A,Z_obs,
 
       # update w_u, q_t(s_u)
       w_u   <- digamma(a_t[levels[u]])-digamma(b_t[levels[u]])-
-        0.5*J*K*log(tau_2_t[u]*h_pau[u])+0.5*sum(log(sigma_gamma[u,,]))+
-        0.5*exp(logSumExp(c(gamma_alpha_update$logresBsq_o_A)))-
+        # 0.5*J*K*log(tau_2_t[u]*h_pau[u])+0.5*sum(log(sigma_gamma[u,,]))+
+        # 0.5*exp(logSumExp(c(gamma_alpha_update$logresBsq_o_A)))-
         0.5*(K-1)*log(tau_1_t[u]*h_pau[u])+0.5*sum(log(Sigma_alpha[[u]]))+
         0.5*exp(logSumExp(c(gamma_alpha_update$logresDsq_o_C)))
     } else{ # <--- if separate tau's.
       tau_1_t[[u]] <- tau_1[levels[u],] # tau_1 is Fg by K-1
       tau_2_t[[u]] <- tau_2[levels[u],,] # tau_2 is Fg by J by K.
 
-      gamma_alpha_update <- update_gamma_alpha_subid_separate_tau(u,g_psi,g_phi,
-                                                                  tau_2_t[[u]],tau_1_t[[u]],
-                                                                  E_beta,as.matrix(prob[u]*mu_gamma[[u]],nrow=J,ncol=K),as.matrix(X),
-                                                                  E_eta, c(prob[u]*mu_alpha[[u]]),
-                                                                  rmat,h_pau,levels,subject_id_list[[u]],v_units)
+      gamma_alpha_update <- update_gamma_alpha_subid_separate_tau(
+        u,g_psi,g_phi,
+        tau_2_t[[u]],tau_1_t[[u]],
+        E_beta,as.matrix(prob_gamma[u]*mu_gamma[[u]],nrow=J,ncol=K),as.matrix(X),
+        E_eta, c(prob[u]*mu_alpha[[u]]),
+        rmat,h_pau,levels,subject_id_list[[u]],v_units)
       mu_gamma[[u]]    <-   gamma_alpha_update$resB*gamma_alpha_update$resA #  J by K
       sigma_gamma[u,,] <-   gamma_alpha_update$resA
       mu_alpha[[u]]    <-  c(gamma_alpha_update$resD)*c(gamma_alpha_update$resC)
@@ -112,8 +114,8 @@ update_vi_params <- function(Y,A,Z_obs,
 
       # update w_u, q_t(s_u)
       w_u   <- digamma(a_t[levels[u]])-digamma(b_t[levels[u]])-
-        0.5*sum(log(c(tau_2_t[[u]])*h_pau[u]))+0.5*sum(log(sigma_gamma[u,,]))+
-        0.5*exp(logSumExp(c(gamma_alpha_update$logresBsq_o_A)))-
+        # 0.5*sum(log(c(tau_2_t[[u]])*h_pau[u]))+0.5*sum(log(sigma_gamma[u,,]))+
+        # 0.5*exp(logSumExp(c(gamma_alpha_update$logresBsq_o_A)))-
         0.5*sum(log(tau_1_t[[u]]*h_pau[u]))+0.5*sum(log(Sigma_alpha[[u]]))+
         0.5*exp(logSumExp(c(gamma_alpha_update$logresDsq_o_C)))
     }
@@ -122,7 +124,7 @@ update_vi_params <- function(Y,A,Z_obs,
     # updating ancestral node will impact the variational moments of the descendants:
     moments_cpp <- get_moments_cpp_eco(leaf_ids_nodes[[u]],
                                        E_beta,E_beta_sq,E_eta,E_eta_sq,
-                                       prob,array(unlist(mu_gamma),c(J,K,p)),
+                                       prob,prob_gamma,array(unlist(mu_gamma),c(J,K,p)),
                                        aperm(sigma_gamma,c(2,3,1)),
                                        as.matrix(do.call("rbind",mu_alpha)),
                                        as.matrix(do.call("rbind",Sigma_alpha)),
@@ -139,7 +141,8 @@ update_vi_params <- function(Y,A,Z_obs,
     b_t[l] <- b[l] + sum(1-prob[levels == l])
   }
 
-  make_list(a_t,b_t,rmat,tau_1_t,tau_2_t,sigma_gamma,mu_gamma,Sigma_alpha,mu_alpha,prob,
+  make_list(a_t,b_t,rmat,tau_1_t,tau_2_t,sigma_gamma,mu_gamma,Sigma_alpha,mu_alpha,
+            prob,prob_gamma,
             E_beta_sq,E_eta_sq,E_beta,E_eta)
 }
 
@@ -167,7 +170,7 @@ update_hyperparams <- function(Y,A,
                                v_units,
                                X,n,J,p,pL,Fg, # redundant but streamlined in lcm_tree.
                                # data and design
-                               prob,mu_gamma,mu_alpha,rmat,
+                               prob,prob_gamma,mu_gamma,mu_alpha,rmat,
                                sigma_gamma,Sigma_alpha,
                                tau_1_t,tau_2_t, # <-- update tau_1, tau_2.(this is unique values); tau_1_t is a full vector.
                                a_t,b_t,
@@ -193,9 +196,9 @@ update_hyperparams <- function(Y,A,
       expected_ss_alpha[u] <- 1/h_pau[u]*(prob[u]*(
         exp(logSumExp(c(log(Sigma_alpha[[u]]),2*log(abs(mu_alpha[[u]])))))      )+
           (1-prob[u])*(K-1)*tau_1_t[u]*h_pau[u])
-      expected_ss_gamma[u] <- 1/h_pau[u]*(prob[u]*(
+      expected_ss_gamma[u] <- 1/h_pau[u]*(prob_gamma[u]*(
         exp(logSumExp(c(c(log(sigma_gamma[u,,])),c(2*log(abs(mu_gamma[[u]]))))))        )+
-          (1-prob[u])*J*K*tau_2_t[u]*h_pau[u])
+          (1-prob_gamma[u])*J*K*tau_2_t[u]*h_pau[u])
     }
 
     if (update_hyper){ # computed at each iteration - TRUE to update the hyperparameters.
@@ -203,7 +206,7 @@ update_hyperparams <- function(Y,A,
         if (l %in% tau_update_levels){
           tau_1[l]  <- sum(expected_ss_alpha[levels==l])/((K-1)*sum(levels==l))
           tau_2[l]  <- sum(expected_ss_gamma[levels==l])/(J*K*sum(levels==l))
-          cat("> Updated tau_1 and tau_2; level ",l,":",  tau_1[l],", ",tau_2[l],". \n")
+          # cat("> Updated tau_1 and tau_2; level ",l,":",  tau_1[l],", ",tau_2[l],". \n")
         }
       }
     }
@@ -222,8 +225,8 @@ update_hyperparams <- function(Y,A,
     line_6     <- - sum(expected_ss_gamma/2/tau_2[levels])-sum(J*K*log(2*pi*tau_2[levels]*h_pau))/2 # this is prior, use hyperparams.
 
     # part 2: -E_{q_t}(log(q_t)):
-    line_7     <- (J*K*sum(prob)*(1+log(2*pi))+sum(sapply(1:p,function(u) sum(prob[u]*log(sigma_gamma[u,,])))))/2
-    line_8     <- J*K*sum(1-prob)/2 +J*K*sum(log(2*pi*tau_2_t*h_pau)*(1-prob))/2
+    line_7     <- (J*K*sum(prob_gamma)*(1+log(2*pi))+sum(sapply(1:p,function(u) sum(prob_gamma[u]*log(sigma_gamma[u,,])))))/2
+    line_8     <- J*K*sum(1-prob_gamma)/2 +J*K*sum(log(2*pi*tau_2_t*h_pau)*(1-prob_gamma))/2
     line_9     <- -1 * (sum(prob[prob != 0] * log(prob[prob != 0])) +sum((1 - prob[prob != 1]) * log(1 - prob[prob != 1])))
     line_10    <- ((K-1)*sum(prob)*(1+log(2*pi))+sum(sapply(1:p,function(u) sum(prob[u]*log(Sigma_alpha[[u]])))))/2
     line_11    <-((K-1) / 2) * sum(1 - prob) + ((K-1) / 2) * sum(log(2 * pi * tau_1_t*h_pau) * (1 - prob))
@@ -235,7 +238,7 @@ update_hyperparams <- function(Y,A,
     expected_ss_alpha <- expected_ss_gamma <- vector("list",p) # marginal variational posterior expectation of squared (alpha or gamma):
     for (u in 1:p){
       expected_ss_alpha[[u]] <- (prob[u]*(c(Sigma_alpha[[u]])+c(mu_alpha[[u]]^2))+(1-prob[u])*c(tau_1_t[[u]])*h_pau[u])/h_pau[u]
-      expected_ss_gamma[[u]] <- (prob[u]*(sigma_gamma[u,,]+mu_gamma[[u]]^2)+(1-prob[u])*tau_2_t[[u]]*h_pau[u])/h_pau[u]
+      expected_ss_gamma[[u]] <- (prob_gamma[u]*(sigma_gamma[u,,]+mu_gamma[[u]]^2)+(1-prob_gamma[u])*tau_2_t[[u]]*h_pau[u])/h_pau[u]
     }
 
     if (update_hyper){ # computed at each iteration - TRUE to update the hyperparameters.
@@ -243,7 +246,7 @@ update_hyperparams <- function(Y,A,
         if (l %in% tau_update_levels){
           tau_1[l,]  <- colMeans(do.call("rbind",expected_ss_alpha[levels==l]))
           tau_2[l,,] <- apply(array(unlist(expected_ss_gamma[levels==l]),c(J,K,sum(levels==l))),c(1,2),mean)
-          if (!quiet){cat("> Updated tau_1 and tau_2; level ",l,":",  tau_1[l],", ",tau_2[l],". \n")}
+          # if (!quiet){cat("> Updated tau_1 and tau_2; level ",l,":",  tau_1[l],", ",tau_2[l],". \n")}
         }
       }
     }
@@ -262,8 +265,8 @@ update_hyperparams <- function(Y,A,
     line_6     <- - sum(sapply(1:p,function(u){sum(expected_ss_gamma[[u]]/2/tau_2[levels[u],,])}))-0.5*(sum(sapply(1:p,function(u){sum(log(2*pi*tau_2[levels[u],,]*h_pau[u]))}))) # this is prior, use hyerprior params.
 
     # part 2: -E_q(log(q)):
-    line_7  <- (J*K*sum(prob)*(1+log(2*pi))+sum(sapply(1:p,function(u) sum(prob[u]*log(sigma_gamma[u,,])))))/2
-    line_8  <- J*K*sum(1-prob)/2 + sum(mapply(FUN=function(pp,mat,hh){sum(pp*log(2*pi*mat*hh))},pp=1-prob,mat=tau_2_t,hh=h_pau))/2
+    line_7  <- (J*K*sum(prob_gamma)*(1+log(2*pi))+sum(sapply(1:p,function(u) sum(prob_gamma[u]*log(sigma_gamma[u,,])))))/2
+    line_8  <- J*K*sum(1-prob_gamma)/2 + sum(mapply(FUN=function(pp,mat,hh){sum(pp*log(2*pi*mat*hh))},pp=1-prob_gamma,mat=tau_2_t,hh=h_pau))/2
     line_9  <- -1 * (sum(prob[prob != 0] * log(prob[prob != 0])) +sum((1 - prob[prob != 1]) * log(1 - prob[prob != 1])))
     line_10 <- ((K-1)*sum(prob)*(1+log(2*pi))+sum(sapply(1:p,function(u) sum(prob[u]*log(Sigma_alpha[[u]])))))/2
     line_11 <- (K-1) / 2 * sum(1 - prob) + sum(mapply(FUN=function(pp,v,hh){sum(pp*log(2 * pi * v*hh) )},pp=1-prob,v=tau_1_t,hh=h_pau))/2

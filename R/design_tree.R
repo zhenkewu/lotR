@@ -10,7 +10,6 @@
 #' @param leaf_ids This is a character string
 #' @param mytree the tree (an \code{igraph} object) that contains the node,
 #'              edge, edge-length information.
-#' @param rootnode a character string that indicates the name of the root node.
 #' @param weighted_edge logical: TRUE for incorporating the branch lengths -
 #' then the mytree must have this info; if FALSE, every branch, including
 #' an imaginary rootnode to past branch, is set to have length 1.
@@ -50,7 +49,7 @@
 #' @export
 #' @import igraph
 #'
-design_tree <- function(Y,leaf_ids,mytree,rootnode="Node1",weighted_edge=FALSE,Z_obs = NULL){ # by default, not weighted tree.
+design_tree <- function(Y,leaf_ids,mytree,weighted_edge=FALSE,Z_obs = NULL){ # by default, not weighted tree.
   # warning("using hard-coded info\n")
   # Y        <- dat_mge[!is.na(match_ind),ind_EL] # these are not ordered yet.
   # leaf_ids <- dat_mge[!is.na(match_ind),"ct_MLST"]
@@ -67,6 +66,7 @@ design_tree <- function(Y,leaf_ids,mytree,rootnode="Node1",weighted_edge=FALSE,Z
 
   nodes  <- names(igraph::V(mytree))
   leaves <- names(igraph::V(mytree)[igraph::degree(mytree, mode = "out") == 0])
+  rootnode <- names(igraph::V(mytree)[igraph::degree(mytree, mode = "in") == 0])
   if(!setequal(unique(leaf_ids), leaves))
   {stop("[lotR]Not all leaf_ids are leaves of tree")}
 
@@ -112,7 +112,7 @@ design_tree <- function(Y,leaf_ids,mytree,rootnode="Node1",weighted_edge=FALSE,Z
     Z_obs <- Z_obs[ord,,drop=FALSE]
   }
   # get lists of ancestors for each leaf_ids:
-  d <- igraph::diameter(mytree,weight=NA)
+  d <- igraph::diameter(mytree,weights=NA)
   # need to set weight=NA to prevent the use of edge lengths in determining the diameter.
   ancestors <- igraph::ego(mytree, order = d + 1, nodes = leaves, mode = "in")
   ancestors <- sapply(ancestors, names, simplify = F)
@@ -189,7 +189,7 @@ design_tree <- function(Y,leaf_ids,mytree,rootnode="Node1",weighted_edge=FALSE,Z
   }
 
   # print(subject_id_list)
-  make_list(Y,A,A_leaves,
+  make_list(Y,A,A_leaves,rootnode,
             leaf_ids,leaf_ids_units,leaf_ids_nodes,
             ancestors,edge_lengths,h_pau,
             levels,v_units,subject_id_list,Z_obs,ord)

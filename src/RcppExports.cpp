@@ -51,25 +51,26 @@ BEGIN_RCPP
 END_RCPP
 }
 // get_moments_cpp
-List get_moments_cpp(arma::vec prob, arma::cube mu_gamma, arma::cube sigma_gamma, arma::mat mu_alpha, arma::mat Sigma_alpha, List anc, arma::vec cardanc);
-RcppExport SEXP _lotR_get_moments_cpp(SEXP probSEXP, SEXP mu_gammaSEXP, SEXP sigma_gammaSEXP, SEXP mu_alphaSEXP, SEXP Sigma_alphaSEXP, SEXP ancSEXP, SEXP cardancSEXP) {
+List get_moments_cpp(arma::vec prob, arma::vec prob_gamma, arma::cube mu_gamma, arma::cube sigma_gamma, arma::mat mu_alpha, arma::mat Sigma_alpha, List anc, arma::vec cardanc);
+RcppExport SEXP _lotR_get_moments_cpp(SEXP probSEXP, SEXP prob_gammaSEXP, SEXP mu_gammaSEXP, SEXP sigma_gammaSEXP, SEXP mu_alphaSEXP, SEXP Sigma_alphaSEXP, SEXP ancSEXP, SEXP cardancSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::vec >::type prob(probSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type prob_gamma(prob_gammaSEXP);
     Rcpp::traits::input_parameter< arma::cube >::type mu_gamma(mu_gammaSEXP);
     Rcpp::traits::input_parameter< arma::cube >::type sigma_gamma(sigma_gammaSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type mu_alpha(mu_alphaSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type Sigma_alpha(Sigma_alphaSEXP);
     Rcpp::traits::input_parameter< List >::type anc(ancSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type cardanc(cardancSEXP);
-    rcpp_result_gen = Rcpp::wrap(get_moments_cpp(prob, mu_gamma, sigma_gamma, mu_alpha, Sigma_alpha, anc, cardanc));
+    rcpp_result_gen = Rcpp::wrap(get_moments_cpp(prob, prob_gamma, mu_gamma, sigma_gamma, mu_alpha, Sigma_alpha, anc, cardanc));
     return rcpp_result_gen;
 END_RCPP
 }
 // get_moments_cpp_eco
-List get_moments_cpp_eco(arma::vec leaves_u, arma::cube E_beta, arma::cube E_beta_sq, arma::mat E_eta, arma::mat E_eta_sq, arma::vec prob, arma::cube mu_gamma, arma::cube sigma_gamma, arma::mat mu_alpha, arma::mat Sigma_alpha, List anc, arma::vec cardanc);
-RcppExport SEXP _lotR_get_moments_cpp_eco(SEXP leaves_uSEXP, SEXP E_betaSEXP, SEXP E_beta_sqSEXP, SEXP E_etaSEXP, SEXP E_eta_sqSEXP, SEXP probSEXP, SEXP mu_gammaSEXP, SEXP sigma_gammaSEXP, SEXP mu_alphaSEXP, SEXP Sigma_alphaSEXP, SEXP ancSEXP, SEXP cardancSEXP) {
+List get_moments_cpp_eco(arma::vec leaves_u, arma::cube E_beta, arma::cube E_beta_sq, arma::mat E_eta, arma::mat E_eta_sq, arma::vec prob, arma::vec prob_gamma, arma::cube mu_gamma, arma::cube sigma_gamma, arma::mat mu_alpha, arma::mat Sigma_alpha, List anc, arma::vec cardanc);
+RcppExport SEXP _lotR_get_moments_cpp_eco(SEXP leaves_uSEXP, SEXP E_betaSEXP, SEXP E_beta_sqSEXP, SEXP E_etaSEXP, SEXP E_eta_sqSEXP, SEXP probSEXP, SEXP prob_gammaSEXP, SEXP mu_gammaSEXP, SEXP sigma_gammaSEXP, SEXP mu_alphaSEXP, SEXP Sigma_alphaSEXP, SEXP ancSEXP, SEXP cardancSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -79,13 +80,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::mat >::type E_eta(E_etaSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type E_eta_sq(E_eta_sqSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type prob(probSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type prob_gamma(prob_gammaSEXP);
     Rcpp::traits::input_parameter< arma::cube >::type mu_gamma(mu_gammaSEXP);
     Rcpp::traits::input_parameter< arma::cube >::type sigma_gamma(sigma_gammaSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type mu_alpha(mu_alphaSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type Sigma_alpha(Sigma_alphaSEXP);
     Rcpp::traits::input_parameter< List >::type anc(ancSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type cardanc(cardancSEXP);
-    rcpp_result_gen = Rcpp::wrap(get_moments_cpp_eco(leaves_u, E_beta, E_beta_sq, E_eta, E_eta_sq, prob, mu_gamma, sigma_gamma, mu_alpha, Sigma_alpha, anc, cardanc));
+    rcpp_result_gen = Rcpp::wrap(get_moments_cpp_eco(leaves_u, E_beta, E_beta_sq, E_eta, E_eta_sq, prob, prob_gamma, mu_gamma, sigma_gamma, mu_alpha, Sigma_alpha, anc, cardanc));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -128,12 +130,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // update_rmat_partial
-arma::mat update_rmat_partial(arma::vec known_ids, arma::cube psi, arma::cube g_psi, arma::mat phi, arma::mat g_phi, arma::mat X, arma::cube E_beta, arma::mat E_eta, arma::cube E_beta_sq, arma::mat E_eta_sq, arma::vec v_lookup);
-RcppExport SEXP _lotR_update_rmat_partial(SEXP known_idsSEXP, SEXP psiSEXP, SEXP g_psiSEXP, SEXP phiSEXP, SEXP g_phiSEXP, SEXP XSEXP, SEXP E_betaSEXP, SEXP E_etaSEXP, SEXP E_beta_sqSEXP, SEXP E_eta_sqSEXP, SEXP v_lookupSEXP) {
+arma::mat update_rmat_partial(arma::vec unknown_ids, arma::cube psi, arma::cube g_psi, arma::mat phi, arma::mat g_phi, arma::mat X, arma::cube E_beta, arma::mat E_eta, arma::cube E_beta_sq, arma::mat E_eta_sq, arma::vec v_lookup);
+RcppExport SEXP _lotR_update_rmat_partial(SEXP unknown_idsSEXP, SEXP psiSEXP, SEXP g_psiSEXP, SEXP phiSEXP, SEXP g_phiSEXP, SEXP XSEXP, SEXP E_betaSEXP, SEXP E_etaSEXP, SEXP E_beta_sqSEXP, SEXP E_eta_sqSEXP, SEXP v_lookupSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec >::type known_ids(known_idsSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type unknown_ids(unknown_idsSEXP);
     Rcpp::traits::input_parameter< arma::cube >::type psi(psiSEXP);
     Rcpp::traits::input_parameter< arma::cube >::type g_psi(g_psiSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type phi(phiSEXP);
@@ -144,7 +146,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::cube >::type E_beta_sq(E_beta_sqSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type E_eta_sq(E_eta_sqSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type v_lookup(v_lookupSEXP);
-    rcpp_result_gen = Rcpp::wrap(update_rmat_partial(known_ids, psi, g_psi, phi, g_phi, X, E_beta, E_eta, E_beta_sq, E_eta_sq, v_lookup));
+    rcpp_result_gen = Rcpp::wrap(update_rmat_partial(unknown_ids, psi, g_psi, phi, g_phi, X, E_beta, E_eta, E_beta_sq, E_eta_sq, v_lookup));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -259,8 +261,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lotR_logsumexp", (DL_FUNC) &_lotR_logsumexp, 1},
     {"_lotR_logexpit_cpp", (DL_FUNC) &_lotR_logexpit_cpp, 1},
     {"_lotR_logsumexp_row", (DL_FUNC) &_lotR_logsumexp_row, 1},
-    {"_lotR_get_moments_cpp", (DL_FUNC) &_lotR_get_moments_cpp, 7},
-    {"_lotR_get_moments_cpp_eco", (DL_FUNC) &_lotR_get_moments_cpp_eco, 12},
+    {"_lotR_get_moments_cpp", (DL_FUNC) &_lotR_get_moments_cpp, 8},
+    {"_lotR_get_moments_cpp_eco", (DL_FUNC) &_lotR_get_moments_cpp_eco, 13},
     {"_lotR_get_est_cpp", (DL_FUNC) &_lotR_get_est_cpp, 8},
     {"_lotR_update_rmat", (DL_FUNC) &_lotR_update_rmat, 10},
     {"_lotR_update_rmat_partial", (DL_FUNC) &_lotR_update_rmat_partial, 11},

@@ -6,7 +6,6 @@
 #   obtained from the posterior collapsing.
 #######################################################################
 
-
 #' compute model summariies from the model outputs
 #'
 #' @param mod output from \code{\link{lcm_tree}}
@@ -37,20 +36,25 @@
 #' @seealso \code{\link{get_est_cpp}}
 #' @export
 compute_params <- function(mod,dsgn,ci_level=0.95){
-  leaf_ids <- names(dsgn$leaf_ids)
-  prob     <- mod$vi_params$prob
-  mu_gamma <- mod$vi_params$mu_gamma
-  mu_alpha <- mod$vi_params$mu_alpha
+  # # <---- delete when fdinishing testing.
+  # mod = mod0$mod
+  # dsgn= mod0$dsgn
+  # # <----- delete when finishing testing
+
+  leaf_ids    <- names(dsgn$leaf_ids)
+  prob        <- mod$vi_params$prob
+  mu_gamma    <- mod$vi_params$mu_gamma
+  mu_alpha    <- mod$vi_params$mu_alpha
   sigma_gamma <- mod$vi_params$sigma_gamma
   Sigma_alpha <- mod$vi_params$Sigma_alpha
 
   anc     <- dsgn$ancestors
-  cardanc <-unlist(lapply(anc,length))
+  cardanc <- unlist(lapply(anc,length))
 
   p <- length(prob)
   J <- ncol(dsgn$Y)
   K <- mod$hyper_fixed$K
-  node_select <- prob >0.5
+  node_select <- (prob >0.5)
 
   z <- stats::qnorm(ci_level+(1-ci_level)/2)
   prob_est <- get_est_cpp(node_select,
@@ -64,7 +68,7 @@ compute_params <- function(mod,dsgn,ci_level=0.95){
   prob_est$theta <- expit(prob_est$beta_est)
 
   #prob_est <- mod0$prob_est
-  grp <- prob_est$beta_est[2,1,] # <-- this is currently quite ad hoc.
+  grp <- round(prob_est$beta_est[2,1,],6) # <-- this is currently quite ad hoc.
   prob_est$group <- as.integer(factor(grp,levels=unique(grp)))
 
   prob_est$members <- vector("list",length(unique(prob_est$group)))
@@ -74,6 +78,7 @@ compute_params <- function(mod,dsgn,ci_level=0.95){
 
   prob_est$n_obs <- sapply(prob_est$members,
                            function(u) sum(leaf_ids %in% u))
+  # output estimates from collapsed groups:
   prob_est$theta_collapsed <- prob_est$theta[,,!duplicated(prob_est$pi)]
   prob_est$pi_collapsed <- prob_est$pi[!duplicated(prob_est$pi),]
   prob_est

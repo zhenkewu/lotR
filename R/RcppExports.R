@@ -36,6 +36,7 @@ logsumexp_row <- function(logv_arma) {
 #' Get all moments that need update when iterating over a total of p internal and leaf nodes
 #'
 #' @param prob variational probabilities for \code{s_u}; length p
+#' @param prob_gamma should be fixed: \code{c(1,rep(0,p-1))}
 #' @param mu_gamma variational Gaussian means (for \code{s_u=1} component) for J*K
 #' logit(class-specific response probabilities); (J,K,p) array; In R, we used a list of p (J,K) matrices
 #' @param sigma_gamma variational Gaussian variances (for \code{s_u=1} component)
@@ -65,8 +66,8 @@ logsumexp_row <- function(logv_arma) {
 #' @useDynLib lotR
 #' @importFrom Rcpp sourceCpp
 #' @export
-get_moments_cpp <- function(prob, mu_gamma, sigma_gamma, mu_alpha, Sigma_alpha, anc, cardanc) {
-    .Call('_lotR_get_moments_cpp', PACKAGE = 'lotR', prob, mu_gamma, sigma_gamma, mu_alpha, Sigma_alpha, anc, cardanc)
+get_moments_cpp <- function(prob, prob_gamma, mu_gamma, sigma_gamma, mu_alpha, Sigma_alpha, anc, cardanc) {
+    .Call('_lotR_get_moments_cpp', PACKAGE = 'lotR', prob, prob_gamma, mu_gamma, sigma_gamma, mu_alpha, Sigma_alpha, anc, cardanc)
 }
 
 #' Calculate variational moments during the updates (only for node u)
@@ -77,6 +78,7 @@ get_moments_cpp <- function(prob, mu_gamma, sigma_gamma, mu_alpha, Sigma_alpha, 
 #' @param leaves_u the leaf descendant node ids for node u
 #' @param E_beta,E_beta_sq,E_eta,E_eta_sq moment updates produced by \code{\link{get_moments_cpp}}
 #' @param prob variational probabilities for \code{s_u}; length p
+#' @param prob_gamma should be fixed: \code{c(1,rep(0,p-1))}
 #' @inheritParams get_moments_cpp
 #' @return a List
 #'
@@ -92,8 +94,8 @@ get_moments_cpp <- function(prob, mu_gamma, sigma_gamma, mu_alpha, Sigma_alpha, 
 #'
 #' @useDynLib lotR
 #' @importFrom Rcpp sourceCpp
-get_moments_cpp_eco <- function(leaves_u, E_beta, E_beta_sq, E_eta, E_eta_sq, prob, mu_gamma, sigma_gamma, mu_alpha, Sigma_alpha, anc, cardanc) {
-    .Call('_lotR_get_moments_cpp_eco', PACKAGE = 'lotR', leaves_u, E_beta, E_beta_sq, E_eta, E_eta_sq, prob, mu_gamma, sigma_gamma, mu_alpha, Sigma_alpha, anc, cardanc)
+get_moments_cpp_eco <- function(leaves_u, E_beta, E_beta_sq, E_eta, E_eta_sq, prob, prob_gamma, mu_gamma, sigma_gamma, mu_alpha, Sigma_alpha, anc, cardanc) {
+    .Call('_lotR_get_moments_cpp_eco', PACKAGE = 'lotR', leaves_u, E_beta, E_beta_sq, E_eta, E_eta_sq, prob, prob_gamma, mu_gamma, sigma_gamma, mu_alpha, Sigma_alpha, anc, cardanc)
 }
 
 #' Summarize the posterior mean, sd and confidence interval
@@ -156,7 +158,7 @@ update_rmat <- function(psi, g_psi, phi, g_phi, X, E_beta, E_eta, E_beta_sq, E_e
 #'
 #' This function updates the N by K matrix \code{rmat} in the package
 #'
-#' @param known_ids a vector of integers representing subject ids
+#' @param unknown_ids a vector of integers representing subject ids with unkonwn class memberships
 #' @param psi,g_psi,phi,g_phi local variational parameters
 #' @param X transformed data: 2Y-1
 #' @param E_beta,E_eta,E_beta_sq,E_eta_sq moment updates produced by \code{\link{get_moments_cpp}}
@@ -168,8 +170,8 @@ update_rmat <- function(psi, g_psi, phi, g_phi, X, E_beta, E_eta, E_beta_sq, E_e
 #' @useDynLib lotR
 #' @importFrom Rcpp sourceCpp
 #' @export
-update_rmat_partial <- function(known_ids, psi, g_psi, phi, g_phi, X, E_beta, E_eta, E_beta_sq, E_eta_sq, v_lookup) {
-    .Call('_lotR_update_rmat_partial', PACKAGE = 'lotR', known_ids, psi, g_psi, phi, g_phi, X, E_beta, E_eta, E_beta_sq, E_eta_sq, v_lookup)
+update_rmat_partial <- function(unknown_ids, psi, g_psi, phi, g_phi, X, E_beta, E_eta, E_beta_sq, E_eta_sq, v_lookup) {
+    .Call('_lotR_update_rmat_partial', PACKAGE = 'lotR', unknown_ids, psi, g_psi, phi, g_phi, X, E_beta, E_eta, E_beta_sq, E_eta_sq, v_lookup)
 }
 
 #' [update gamma and alpha together.]Update the variational mean and variance for logit of

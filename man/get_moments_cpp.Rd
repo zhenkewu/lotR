@@ -6,6 +6,7 @@
 \usage{
 get_moments_cpp(
   prob,
+  prob_gamma,
   mu_gamma,
   sigma_gamma,
   mu_alpha,
@@ -16,6 +17,8 @@ get_moments_cpp(
 }
 \arguments{
 \item{prob}{variational probabilities for \code{s_u}; length p}
+
+\item{prob_gamma}{should be fixed: \code{c(1,rep(0,p-1))}}
 
 \item{mu_gamma}{variational Gaussian means (for \code{s_u=1} component) for J*K
 logit(class-specific response probabilities); (J,K,p) array; In R, we used a list of p (J,K) matrices}
@@ -50,6 +53,8 @@ a List
 Get all moments that need update when iterating over a total of p internal and leaf nodes
 }
 \examples{
+# illustrates the calculation of the various moments:
+
 prob = 0.2
 mu1 = 2
 mu0 = 0
@@ -57,7 +62,7 @@ mu0 = 0
 sigma1 = 3
 sigma0 = 1
 
-N = 1000000
+N = 10000
 s = rbinom(N,1,prob)
 y <- rep(NA,length(s))
 for (i in seq_along(s)){
@@ -67,7 +72,6 @@ for (i in seq_along(s)){
 
 var(s*y)
 prob*(sigma1+(1-prob)*mu1^2)
-
 
 mean(y^2)
 prob*(sigma1+mu1^2) + (1-prob)*sigma0

@@ -56,6 +56,7 @@
 #' for leaf and non-leaf nodes. The levels are pre-specified, not estimated.
 #' @param vi_params the list of variational parameters. \code{mu_gamma},
 #' \code{mu_alpha}, \code{prob} (for s_u), \code{a_t}, \code{b_t},\code{sigma_gamma}, \code{Sigma_alpha}
+#' \code{prob},\code{prob_gamma=c(1,rep(0,p-1))} (this is not updated).
 #' @param hyperparams the list of hyperparameters, \code{tau_1} and \code{tau_2} -
 #' these are initial specifications of the hyperparameters - they are updated by
 #'  \code{tau_1_t}, \code{tau_2_t}; \code{psi}, \code{g_psi}, \code{phi}, \code{g_phi} (these
@@ -142,10 +143,11 @@ initialize_tree_lcm <- function(Y,A,Z_obs,
       tmp          <- sapply(mod$classprob,function(s) min(max(s,0.01),0.99))
       tau          <- (tmp/sum(tmp))
       eta_map[v,]  <- logit(prob2stick(tau)[-length(tau)])
-
       beta_map[v,,] <- logit(pmin(pmax(mod$itemprob,0.01),0.99))
-
       rm("tau")
+      # cat("node ",v," initialized as:\n")
+      # barplot(tau,main=v)
+      # image(t(mod$itemprob),main=v)
     }
     # replace infinite values:
     # beta_marg <- aperm(array(logit(pmin(pmax(colMeans(Y),0.001),0.9999)),
@@ -236,9 +238,11 @@ initialize_tree_lcm <- function(Y,A,Z_obs,
     # Initialize hyper-parameters:
     if (is.null(hyperparams[["tau_1"]])){ # tau for alphas.
       hyperparams$tau_1 <- matrix(NA,nrow=Fg,ncol=K-1)
-      for (l in 1:Fg){hyperparams$tau_1[l,]  <- rowMeans(mapply(function(v1,v2){v1^2/v2},
+
+      for (l in 1:Fg){
+        hyperparams$tau_1[l,]  <- rowMeans(mapply(function(v1,v2){v1^2/v2},
                                                                 v1 = vi_params$mu_alpha[levels==l],
-                                                                v2 = h_pau[levels==l]))}
+                                                                v2 = h_pau[levels==l]))} # <--- this has problem if K=2; so need to fix.
 
     }else{
       check <- sum(abs(dim(hyperparams[["tau_1"]]) - c(Fg,K-1))<0.1)==2
@@ -286,6 +290,12 @@ initialize_tree_lcm <- function(Y,A,Z_obs,
     u <- u + rnorm(p)*random_init_vals$u_sd_frac*abs(u)
     vi_params$prob <- expit(u)
   }
+
+  ## forcing identical gammas, i.e., response probability profiles across the nodes.
+  if (is.null(vi_params[["prob_gamma"]])){ # this is used in update_vi_param and update_hyperparam
+    vi_params$prob_gamma <- c(1,rep(0,p-1))
+  }
+
   # the following code segment for a_t, b_t is identical to moretrees:
   if (is.null(vi_params[["a_t"]])) {
     vi_params$a_t <- numeric(Fg)

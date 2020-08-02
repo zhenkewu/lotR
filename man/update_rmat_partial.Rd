@@ -5,7 +5,7 @@
 \title{Update the variational probabilities of each observation in one of K classes}
 \usage{
 update_rmat_partial(
-  known_ids,
+  unknown_ids,
   psi,
   g_psi,
   phi,
@@ -19,7 +19,7 @@ update_rmat_partial(
 )
 }
 \arguments{
-\item{known_ids}{a vector of integers representing subject ids}
+\item{unknown_ids}{a vector of integers representing subject ids with unkonwn class memberships}
 
 \item{psi, g_psi, phi, g_phi}{local variational parameters}
 

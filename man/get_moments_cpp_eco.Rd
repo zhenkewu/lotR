@@ -11,6 +11,7 @@ get_moments_cpp_eco(
   E_eta,
   E_eta_sq,
   prob,
+  prob_gamma,
   mu_gamma,
   sigma_gamma,
   mu_alpha,
@@ -25,6 +26,8 @@ get_moments_cpp_eco(
 \item{E_beta, E_beta_sq, E_eta, E_eta_sq}{moment updates produced by \code{\link{get_moments_cpp}}}
 
 \item{prob}{variational probabilities for \code{s_u}; length p}
+
+\item{prob_gamma}{should be fixed: \code{c(1,rep(0,p-1))}}
 
 \item{mu_gamma}{variational Gaussian means (for \code{s_u=1} component) for J*K
 logit(class-specific response probabilities); (J,K,p) array; In R, we used a list of p (J,K) matrices}
@@ -62,6 +65,8 @@ update only selected moments that need update when iterating over u (except for 
 (one-node version of \code{\link{get_moments_cpp}})
 }
 \examples{
+# illustrates the calculation of the various moments:
+
 prob = 0.2
 mu1 = 2
 mu0 = 0
@@ -69,7 +74,7 @@ mu0 = 0
 sigma1 = 3
 sigma0 = 1
 
-N = 1000000
+N = 10000
 s = rbinom(N,1,prob)
 y <- rep(NA,length(s))
 for (i in seq_along(s)){
@@ -79,7 +84,6 @@ for (i in seq_along(s)){
 
 var(s*y)
 prob*(sigma1+(1-prob)*mu1^2)
-
 
 mean(y^2)
 prob*(sigma1+mu1^2) + (1-prob)*sigma0

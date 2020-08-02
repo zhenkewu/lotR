@@ -82,6 +82,7 @@ double logsumexp_row(arma::rowvec logv_arma)
 //' Get all moments that need update when iterating over a total of p internal and leaf nodes
 //'
 //' @param prob variational probabilities for \code{s_u}; length p
+//' @param prob_gamma should be fixed: \code{c(1,rep(0,p-1))}
 //' @param mu_gamma variational Gaussian means (for \code{s_u=1} component) for J*K
 //' logit(class-specific response probabilities); (J,K,p) array; In R, we used a list of p (J,K) matrices
 //' @param sigma_gamma variational Gaussian variances (for \code{s_u=1} component)
@@ -113,6 +114,7 @@ double logsumexp_row(arma::rowvec logv_arma)
 //' @export
 // [[Rcpp::export]]
 List get_moments_cpp(arma::vec prob,
+                     arma::vec prob_gamma,
                      arma::cube mu_gamma,//J by K by p
                      arma::cube sigma_gamma,//J by K by p
                      arma::mat mu_alpha, // p by K-1
@@ -134,12 +136,16 @@ List get_moments_cpp(arma::vec prob,
   int n_anc=0;
   int uu=0;
   for (int v=0;v<pL;v++){
+    // E_beta.slice(v)    += mu_gamma.slice(0);
+    // E_beta_sq.slice(v) += sigma_gamma.slice(0); //not yet.
+
     arma::vec curr_anc = anc[v];
     n_anc = (int) cardanc(v);
     for (int u=0;u<n_anc;u++){
       uu =  (int) curr_anc(u)-1;
-      E_beta.slice(v)    += prob(uu)*mu_gamma.slice(uu);
-      E_beta_sq.slice(v) += prob(uu)*(sigma_gamma.slice(uu)+(1.0-prob(uu))*pow(mu_gamma.slice(uu),2.0)); //not yet.
+
+      E_beta.slice(v)    += prob_gamma(uu)*mu_gamma.slice(uu);
+      E_beta_sq.slice(v) += prob_gamma(uu)*(sigma_gamma.slice(uu)+(1.0-prob_gamma(uu))*pow(mu_gamma.slice(uu),2.0)); //not yet.
 
       E_eta.row(v)        += prob(uu)*mu_alpha.row(uu);
       E_eta_sq.row(v)     += prob(uu)*(Sigma_alpha.row(uu)+(1.0-prob(uu))*pow(mu_alpha.row(uu),2.0));
@@ -164,6 +170,7 @@ List get_moments_cpp(arma::vec prob,
 //' @param leaves_u the leaf descendant node ids for node u
 //' @param E_beta,E_beta_sq,E_eta,E_eta_sq moment updates produced by \code{\link{get_moments_cpp}}
 //' @param prob variational probabilities for \code{s_u}; length p
+//' @param prob_gamma should be fixed: \code{c(1,rep(0,p-1))}
 //' @inheritParams get_moments_cpp
 //' @return a List
 //'
@@ -186,6 +193,7 @@ List get_moments_cpp_eco(arma::vec leaves_u,
                          arma::mat  E_eta, // leaf level
                          arma::mat  E_eta_sq,
                          arma::vec prob,
+                         arma::vec prob_gamma,
                          arma::cube mu_gamma,//J by K by p
                          arma::cube sigma_gamma,//J by K by p
                          arma::mat mu_alpha, // p by K-1
@@ -203,13 +211,17 @@ List get_moments_cpp_eco(arma::vec leaves_u,
     E_eta.row(v)    *= 0.0;
     E_beta_sq.slice(v) *=0.0;
     E_eta_sq.row(v)    *=0.0;
+
+    // E_beta.slice(v)    += mu_gamma.slice(0);
+    // E_beta_sq.slice(v) += sigma_gamma.slice(0); //not yet.
+
     arma::vec curr_anc = anc[v];
     n_anc = (int) cardanc(v);
     for (int uu=0;uu<n_anc;uu++){
       u = (int) curr_anc(uu)-1;
-      E_beta.slice(v)    += 0.0+ prob(u)*mu_gamma.slice(u);
+      E_beta.slice(v)    += 0.0+ prob_gamma(u)*mu_gamma.slice(u);
+      E_beta_sq.slice(v) += 0.0+prob_gamma(u)*(sigma_gamma.slice(u)+(1.0-prob_gamma(u))*mu_gamma.slice(u)%mu_gamma.slice(u)); //not yet.
       E_eta.row(v)       += 0.0+ prob(u)*mu_alpha.row(u);
-      E_beta_sq.slice(v) += 0.0+prob(u)*(sigma_gamma.slice(u)+(1.0-prob(u))*mu_gamma.slice(u)%mu_gamma.slice(u)); //not yet.
       E_eta_sq.row(v)     += 0.0+prob(u)*(Sigma_alpha.row(u)+(1.0-prob(u))*(mu_alpha.row(u)%mu_alpha.row(u)));
     }
     E_beta_sq.slice(v)  += 0.0+E_beta.slice(v)%E_beta.slice(v);
@@ -373,7 +385,7 @@ arma::mat update_rmat(arma::cube psi, arma::cube g_psi,arma::mat phi, arma::mat 
 //'
 //' This function updates the N by K matrix \code{rmat} in the package
 //'
-//' @param known_ids a vector of integers representing subject ids
+//' @param unknown_ids a vector of integers representing subject ids with unkonwn class memberships
 //' @param psi,g_psi,phi,g_phi local variational parameters
 //' @param X transformed data: 2Y-1
 //' @param E_beta,E_eta,E_beta_sq,E_eta_sq moment updates produced by \code{\link{get_moments_cpp}}
@@ -386,7 +398,7 @@ arma::mat update_rmat(arma::cube psi, arma::cube g_psi,arma::mat phi, arma::mat 
 //' @importFrom Rcpp sourceCpp
 //' @export
 // [[Rcpp::export]]
-arma::mat update_rmat_partial(arma::vec known_ids,arma::cube psi, arma::cube g_psi,arma::mat phi, arma::mat g_phi,
+arma::mat update_rmat_partial(arma::vec unknown_ids,arma::cube psi, arma::cube g_psi,arma::mat phi, arma::mat g_phi,
                               arma::mat X,
                               arma::cube E_beta,arma::mat E_eta, arma::cube E_beta_sq,arma::mat E_eta_sq,
                               arma::vec v_lookup){
@@ -395,11 +407,14 @@ arma::mat update_rmat_partial(arma::vec known_ids,arma::cube psi, arma::cube g_p
   X = X+0.0;
   arma::mat res(n,K);res.zeros();
   arma::vec tmp(n);tmp.zeros();
-  int i_known = 0;
-  for (int i=0;i<n;i++){
+  int n_unknown = unknown_ids.size();
+  int i_unknown = 0;
+  int i = 0;
+  for (int i_unknown=0;i_unknown<n_unknown;i_unknown++){
+    i = unknown_ids(i_unknown) -1;
     v = v_lookup(i)-1;// get leaf id.
-    bool is_known = std::find(known_ids.begin(), known_ids.end(),i+1)!=known_ids.end();
-    if (is_known){ continue;}
+    // bool is_known = std::find(known_ids.begin(), known_ids.end(),i+1)!=known_ids.end();
+    //if (is_known){ continue;}
     // if (is_known){res(i,(int) known_Z(i_known,1)-1) = 1.0; ++i_known; continue;}
     for (int k=0;k<K;k++){
       for (int j=0;j<J;j++){

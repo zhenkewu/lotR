@@ -4,14 +4,7 @@
 \alias{design_tree}
 \title{Organize the data around the edge-weighted rooted tree}
 \usage{
-design_tree(
-  Y,
-  leaf_ids,
-  mytree,
-  rootnode = "Node1",
-  weighted_edge = FALSE,
-  Z_obs = NULL
-)
+design_tree(Y, leaf_ids, mytree, weighted_edge = FALSE, Z_obs = NULL)
 }
 \arguments{
 \item{Y}{N by J matrix of binary measurements}
@@ -20,8 +13,6 @@ design_tree(
 
 \item{mytree}{the tree (an \code{igraph} object) that contains the node,
 edge, edge-length information.}
-
-\item{rootnode}{a character string that indicates the name of the root node.}
 
 \item{weighted_edge}{logical: TRUE for incorporating the branch lengths -
 then the mytree must have this info; if FALSE, every branch, including

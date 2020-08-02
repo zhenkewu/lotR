@@ -18,7 +18,6 @@ if(getRversion() >= "2.15.1") utils::globalVariables(c("i"))
 #' hyperparameters \code{rho[f]}, \code{tau_1[f]}, and \code{tau_2[f]}. If \code{V(mytree)$levels} is \code{NULL},
 #' the default is two levels of hyperparameters: one for all leaf nodes, and one
 #' for all internal nodes. NB: this needs to be checked in the \code{\link{design_tree}}
-#' @param rootnode a character string indicating the root node
 #' @param weighted_edge default to \code{TRUE}, which indicates the model will
 #' use the values of branch lengths (\code{h_pau} of \code{V(mytree)}).
 #' @param Z_obs a matrix of two columns, first column is subject ids (of all samples),
@@ -119,7 +118,9 @@ if(getRversion() >= "2.15.1") utils::globalVariables(c("i"))
 #' @param allow_continue logical, TRUE to save results so can continue running the VI
 #' updates with the last iteration from the old results.
 #'
-#' @examples vignette('lotR')
+#' @example
+#'
+#' inst/example/lotR_simulated_example.R
 #'
 #' @return a list also of class "lcm_tree"
 #'
@@ -132,18 +133,17 @@ if(getRversion() >= "2.15.1") utils::globalVariables(c("i"))
 #' @export
 #' @family lcm_tree functions
 lcm_tree <- function(Y,leaf_ids,mytree,# may have unordered nodes.
-                     rootnode = "Node1",
                      weighted_edge = TRUE,
                      Z_obs = NULL,
                      ci_level = 0.95,
                      get_lcm_by_group = TRUE,
                      update_hyper_freq = 50,
                      print_freq = 10,
-                     quiet      = TRUE,
+                     quiet      = FALSE,
                      plot_fig   = FALSE,
                      shared_tau = FALSE,
                      hyper_fixed = list(K=3), # <-- modify default?
-                     tol = 1E-8,
+                     tol        = 1E-8,
                      tol_hyper = 1E-4,
                      max_iter = 5000,
                      nrestarts = 3,
@@ -181,7 +181,7 @@ lcm_tree <- function(Y,leaf_ids,mytree,# may have unordered nodes.
     }
 
   # construct designed data; here design_tree is going to reorder the nodes of the tree.
-  dsgn <- design_tree(Y,leaf_ids,mytree,rootnode,weighted_edge,Z_obs) # root_node,weighted_edge <--- need fixing.
+  dsgn <- design_tree(Y,leaf_ids,mytree,weighted_edge,Z_obs) # root_node,weighted_edge <--- need fixing.
 
   # Get hyper_fixed if not supplied:
   if (is.null(hyper_fixed$a) | is.null(hyper_fixed$b)) {
@@ -255,7 +255,7 @@ lcm_tree <- function(Y,leaf_ids,mytree,# may have unordered nodes.
   ## function for using a previous lcm_tree results to continue iterations;
   ## only useful when the previous result is not converged.
   if (allow_continue){ # here Y and leaf_ids may not be ordered....!!!
-    old_mod <- append(make_list(Y,leaf_ids,mytree,rootnode,weighted_edge,#ci_level = 0.95#get_ml = TRUE
+    old_mod <- append(make_list(Y,leaf_ids,mytree,weighted_edge,#ci_level = 0.95#get_ml = TRUE
                                 hyper_fixed,random_init_vals, # definitely fixed
                                 update_hyper_freq,
                                 print_freq # can use default, be better take the same values as here.

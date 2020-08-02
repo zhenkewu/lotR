@@ -73,7 +73,7 @@ fit_lcm_tree <- function(dsgn,
                           args = c(dsgn))
   vi_params   <- init$vi_params
   hyperparams <- init$hyperparams
-  cat("|--- Model Initialized.\n")
+  cat("\n|--- Model Initialized.\n")
 
   # initialize ELBO:
   ELBO_track <- numeric(max_iter)
@@ -173,6 +173,7 @@ fit_lcm_tree <- function(dsgn,
 #' @param ... other arguments for \code{\link[BayesLCA]{blca}}
 #' @importFrom BayesLCA blca
 #' @export
+
 lcm_by_group <- function(Y,leaf_ids,members_list,K,...){
   G <- length(unique(members_list))
   res <- vector("list",G)

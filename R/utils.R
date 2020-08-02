@@ -21,7 +21,7 @@ mexpit  <- function(v) exp(v - matrixStats::logSumExp(v))
 #'
 #' @export
 #' @family utility function
-logit   <- function(p) log(p)-log(1-p)
+logit   <- function(p) log(p) - log(1 - p)
 
 
 #' log(1+exp(x)) (copied from moretrees:)

@@ -53,7 +53,8 @@ its own level. Another example would be to have distinct sets of hyperparameters
 for leaf and non-leaf nodes. The levels are pre-specified, not estimated.}
 
 \item{vi_params}{the list of variational parameters. \code{mu_gamma},
-\code{mu_alpha}, \code{prob} (for s_u), \code{a_t}, \code{b_t},\code{sigma_gamma}, \code{Sigma_alpha}}
+\code{mu_alpha}, \code{prob} (for s_u), \code{a_t}, \code{b_t},\code{sigma_gamma}, \code{Sigma_alpha}
+\code{prob},\code{prob_gamma=c(1,rep(0,p-1))} (this is not updated).}
 
 \item{hyperparams}{the list of hyperparameters, \code{tau_1} and \code{tau_2} -
 these are initial specifications of the hyperparameters - they are updated by

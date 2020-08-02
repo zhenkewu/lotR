@@ -40,7 +40,7 @@ plot.lcm_tree <- function(x,
   #cols_g <- RColorBrewer::brewer.pal(length(levels(groups.df$Group)), "Set3")
 
   # Plot
-  p <- ggtree::ggtree(x$mytree, ladderize = F, layout = layout)  %<+% groups.df
+  p <- ggtree::ggtree(x$mytree, ladderize = FALSE, layout = layout)  %<+% groups.df
   if (horizontal) {
     p <- p + ggplot2::coord_flip() + ggplot2::scale_x_reverse()
     group.text.offset <- - group.text.offset
