@@ -98,11 +98,11 @@ design_tree <- function(Y,leaf_ids,mytree,weighted_edge=FALSE,Z_obs = NULL){ # b
   n  <- nrow(Y)
 
   # ancestor matrix:
-  A <- igraph::as_adjacency_matrix(mytree, sparse = T)
+  A <- igraph::as_adjacency_matrix(mytree, sparse = TRUE)
   A <- A[nodes, nodes] # re-order rows/columns to mirror nodes
   A <- Matrix::expm(Matrix::t(A))
   A[A > 0 ] <- 1
-  A <- Matrix::Matrix(A, sparse = T)
+  A <- Matrix::Matrix(A, sparse = TRUE)
 
   # Sort by leaf_ids, where order is specified by ordering in 'mytree':
   ord <- order(ordered(leaf_ids, levels = leaves)) # <--- leaves.
@@ -121,7 +121,7 @@ design_tree <- function(Y,leaf_ids,mytree,weighted_edge=FALSE,Z_obs = NULL){ # b
   names(ancestors) <- leaves
 
   # get lists of which units correspond to each leaf_ids
-  leaf_ids_units <- sapply(leaves, function(v) which(leaf_ids == v), simplify = F)
+  leaf_ids_units <- sapply(leaves, function(v) which(leaf_ids == v), simplify = FALSE)
   names(leaf_ids_units) <- leaves
 
   # get lists of leaf_ids are descendants of each node
@@ -131,7 +131,7 @@ design_tree <- function(Y,leaf_ids,mytree,weighted_edge=FALSE,Z_obs = NULL){ # b
   # leaf.descendants:
   leaf_ids_nodes <- sapply(descendants, function(d, leaves) which(leaves %in% d),
                            leaves = leaves,
-                           simplify = F)
+                           simplify = FALSE)
 
   # Change leaf_ids to integers
   leaf_ids <- sapply(leaf_ids, function(o) which(leaves == o))

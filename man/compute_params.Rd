@@ -2,7 +2,7 @@
 % Please edit documentation in R/summarize_results.R
 \name{compute_params}
 \alias{compute_params}
-\title{compute model summariies from the model outputs}
+\title{compute model summaries from the model outputs}
 \usage{
 compute_params(mod, dsgn, ci_level = 0.95)
 }
@@ -36,7 +36,7 @@ Named("eta_ciu")=eta_ciu
 }
 }
 \description{
-compute model summariies from the model outputs
+compute model summaries from the model outputs
 }
 \seealso{
 \code{\link{get_est_cpp}}

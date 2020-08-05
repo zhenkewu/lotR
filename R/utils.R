@@ -355,7 +355,7 @@ make_list <- function(...) {
 #'
 tsb <- function(u){
   K <- length(u)
-  if (u[K]!=1) {stop("==The last element of u must be 1 for truncated stick-breaking!==\n")}
+  if (abs(u[K]-1)>1e-6) {stop("==The last element of u must be 1 for truncated stick-breaking!==\n")}
   w <- rep(NA,K)
   w[1] <- u[1]
   for (k in 2:(K)){

@@ -237,6 +237,8 @@ List get_moments_cpp_eco(arma::vec leaves_u,
 }
 
 
+
+
 //' Summarize the posterior mean, sd and confidence interval
 //'
 //' @param node_select a vector of zeros and ones, indicating which nodes
@@ -296,14 +298,16 @@ List get_est_cpp(arma::vec node_select,
 
   int n_anc=0;
   int uu=0;
+  arma::vec prob_gamma(p);prob_gamma.zeros();
+  prob_gamma(0) = 1;
   NumericVector curr_anc(p);
   for (int v=0;v<pL;v++){
     curr_anc = anc[v];
     n_anc = (int) cardanc(v);
     for (int u=0;u<n_anc;u++){
       uu = (int) curr_anc(u)-1;
-      beta_est.slice(v)     += 0.0+node_select(uu)*mu_gamma.slice(uu);
-      beta_sd_est.slice(v)  += 0.0+node_select(uu)*sigma_gamma.slice(uu);
+      beta_est.slice(v)     += 0.0+prob_gamma(uu)*mu_gamma.slice(uu);
+      beta_sd_est.slice(v)  += 0.0+prob_gamma(uu)*sigma_gamma.slice(uu);
       eta_est.row(v)        += 0.0+node_select(uu)*mu_alpha.row(uu);
       eta_sd_est.row(v)     += 0.0+node_select(uu)*Sigma_alpha.row(uu);
     }

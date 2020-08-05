@@ -47,6 +47,9 @@ variational inference and can provide approximate posterior uncertainty quantifi
 Examples 
 ---------
 
+* A simple workflow using simulated data and a micky mouse tree can be run in `R`
+   by `example(lcm_tree)`
+
 * _lotR_ is self-adaptive: leaves close in the tree means they are more likely to be grouped together.
 ![](inst/example_figure/lotR_self_adaptive.png)
 

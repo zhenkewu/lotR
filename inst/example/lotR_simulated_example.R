@@ -86,7 +86,7 @@ V(tr)$levels[match(names(igraph::V(tr)[igraph::degree(tr, mode = "out") == 0]),
 
 data("lotR_example_data") # assumes a single pi for all observations.
 
-Y <- lotR_example_data$Y
+Y     <- lotR_example_data$Y
 Z_obs <- lotR_example_data$Z_obs
 curr_leaves <- lotR_example_data$curr_leaves
 tau <- lotR_example_data$truth$tau
@@ -128,14 +128,14 @@ mod0     <- lcm_tree(Y,curr_leaves,tr,
                      # hyperparams_init = list(tau_1=matrix(9/4,nrow=2,ncol=K-1),
                      #                          tau_2=array(9/4,c(2,J,K))),
                      vi_params_init = list(prob=rep(0.95,p)),
-                     random_init = TRUE,
+                     random_init = !TRUE,
                      nrestarts     = nrestarts,
                      quiet         = !TRUE,
                      plot_fig      = !TRUE,
                      shared_tau    = FALSE,
                      get_lcm_by_group = TRUE, #<--- check what are the prereq.
                      print_freq    = 10,update_hyper_freq = 50, max_iter = 5000,
-                     tol           = 1e-6,
+                     tol           = 1e-8,
                      tol_hyper     = 1e-4,
                      allow_continue = FALSE)#,
                      #log_restarts =!TRUE,
@@ -144,10 +144,7 @@ mod0     <- lcm_tree(Y,curr_leaves,tr,
 ###############################################################################
 # print out summaries of group specific estimates:
 ###############################################################################
-
-plot(mod0)
-
-
+plot(mod0,layout = "slanted", horizontal = FALSE)
 
 mod0$prob_est$pi_collapsed
 which(mod0$mod$vi_params$prob>0.5)

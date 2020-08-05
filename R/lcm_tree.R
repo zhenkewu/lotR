@@ -97,7 +97,7 @@ if(getRversion() >= "2.15.1") utils::globalVariables(c("i"))
 #' be chosen uniformly at random in the range \code{(tau_init * tau_lims[1], tau_init * tau_lims[2])},
 #' where \code{tau_init} is the initial value for \code{tau} either supplied in \code{hyperparams_init}
 #' or guessed using \code{\link{initialize_tree_lcm}}.}
-#' \item{\code{psi_sd_frac}}{a value between 0 and 1. The initial values for the auxillary parameters
+#' \item{\code{psi_sd_frac}}{a value between 0 and 1. The initial values for the auxiliary parameters
 #' \code{psi} will have a normal random variate added to them with standard deviation equal to
 #' \code{psi_sd_frac} multiplied by the initial value for eta either supplied in \code{hyperparams_init} or guessed
 #' using \code{\link{initialize_tree_lcm}}. Absolute values are then taken for any
@@ -120,7 +120,7 @@ if(getRversion() >= "2.15.1") utils::globalVariables(c("i"))
 #'
 #' @example
 #'
-#' inst/example/lotR_simulated_example.R
+#' inst/example/lotR_simulated_example_tree.R
 #'
 #' @return a list also of class "lcm_tree"
 #'

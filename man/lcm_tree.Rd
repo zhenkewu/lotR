@@ -152,7 +152,7 @@ and \code{tau_lims[2] > 1}. The initial values for the hyperparameter \code{tau}
 be chosen uniformly at random in the range \code{(tau_init * tau_lims[1], tau_init * tau_lims[2])},
 where \code{tau_init} is the initial value for \code{tau} either supplied in \code{hyperparams_init}
 or guessed using \code{\link{initialize_tree_lcm}}.}
-\item{\code{psi_sd_frac}}{a value between 0 and 1. The initial values for the auxillary parameters
+\item{\code{psi_sd_frac}}{a value between 0 and 1. The initial values for the auxiliary parameters
 \code{psi} will have a normal random variate added to them with standard deviation equal to
 \code{psi_sd_frac} multiplied by the initial value for eta either supplied in \code{hyperparams_init} or guessed
 using \code{\link{initialize_tree_lcm}}. Absolute values are then taken for any
@@ -187,14 +187,10 @@ wrapper function for fitting and summaries
 \examples{
 ### Example workflow of `lotR`
 ### Zhenke Wu | zhenkewu@gmail.com
-### August 02, 2020
+### August 04, 2020
+### This example has true parameters following the tree structured priors.
 rm(list=ls())
 library(lotR)
-
-# library(moretrees)
-# data("moretreesExampleEdgelist")
-# lotR_example_edges = moretreesExampleEdgelist
-# save(lotR_example_edges, file = "data/lotR_example_edges.rda", compress = "xz")
 
 data("lotR_example_edges")
 library(igraph)
@@ -212,82 +208,32 @@ ggtree(tr, ladderize = FALSE, layout = "slanted") +
   theme(plot.margin = unit(c(0, 1.5, 0, 0.2), "cm")) +
   coord_cartesian(clip = "off") + scale_y_reverse()
 
-# data("moretreesExampleData")
-# Xcase <- moretreesExampleData$Xcase
-# Xcontrol <- moretreesExampleData$Xcontrol
-# Wcase <- moretreesExampleData$Wcase
-# Wcontrol <- moretreesExampleData$Wcontrol
-# outcomes <- moretreesExampleData$outcomes
-leaves <- names(V(tr)[degree(tr, mode = "out") == 0])
+leaves <- names(igraph::V(tr)[degree(tr, mode = "out") == 0])
 
 # set levels: leaves 2, non-leaves 1
-V(tr)$levels <- rep(1,length(V(tr)))
-V(tr)$levels[match(names(igraph::V(tr)[igraph::degree(tr, mode = "out") == 0]),
-                               names(igraph::V(tr)))] <- 2
+igraph::V(tr)$levels <- rep(1,length(igraph::V(tr)))
+igraph::V(tr)$levels[match(names(igraph::V(tr)[igraph::degree(tr, mode = "out") == 0]),
+                   names(igraph::V(tr)))] <- 2
 
 ###############################################################################
 ## illustration of lotR on simulated data:
 ###############################################################################
-
-# # <------ DETAILS OF SIMULATED DATA:
-# # simulation truth:
-# tau   <- c(0.6,0.3,0.1)
-# theta <- rbind(rep(rep(c(0.9, 0.9), each = 1),9),
-#                rep(rep(c(0.5, 0.5), each = 1),9),
-#                rep(rep(c(0.1, 0.1), each = 1),9))
-#
-# # tau   <- c(0.5,0.3,0.15,0.05)
-# #
-# # theta <- rbind(rep(rep(c(0.9, 0.9), each = 1),9),
-# #                rep(rep(c(0.01, 0.01), each = 1),9),
-# #                rep(rep(c(0.5, 0.5), each = 1),9),
-# #                rep(rep(c(0.1, 0.7), each = 1),9)
-# # )
-#
-# image(t(theta))
-#
-# fold     <- 1
-# n        <- 1000
-# prop_obs <- 0.0
-# simu <- lotR_blca(n*fold, itemprob = theta, classprob = tau)
-# Y <- simu$x
-# Z <- simu$z
-# Z_obs  <- as.matrix(cbind(1:nrow(Y),Z))
-# if (prop_obs*nrow(Y)<1){
-#   Z_obs <- NULL
-# }else{
-#   Z_obs[-sort(sample(1:nrow(Y),floor(prop_obs*nrow(Y)),replace=FALSE)),2] <- NA
-# }
-#
-# curr_leaves <- sample(leaves,nrow(Y),replace = TRUE)
-#
-# lotR_example_data <- list(
-#   Y = Y,
-#   Z_obs = Z_obs,
-#   curr_leaves = curr_leaves,
-#   truth = make_list(tau,theta,prop_obs,Z)
-# )
-# # save the simulated data to the R package for illustration:
-# save(lotR_example_data, file = "data/lotR_example_data.rda", compress = "xz")
-# <------ DETAILS OF SIMULATED DATA.
-
-data("lotR_example_data") # assumes a single pi for all observations.
-
-Y <- lotR_example_data$Y
-Z_obs <- lotR_example_data$Z_obs
-curr_leaves <- lotR_example_data$curr_leaves
-tau <- lotR_example_data$truth$tau
-theta <- lotR_example_data$truth$theta
+data("lotR_example_data_tree") # assumes a single pi for all observations.
+Y     <- lotR_example_data_tree$Y
+Z_obs <- lotR_example_data_tree$Z_obs
+curr_leaves <- lotR_example_data_tree$curr_leaves
+theta <- lotR_example_data_tree$truth$itemprob
+pi_mat <- lotR_example_data_tree$truth$pi_mat
 # in the simulation, the 1st class has the highest level of probabilities,
 # so we will reorder obtained estimates to match the meaning of classes.
-Z     <- lotR_example_data$truth$Z
+Z     <- lotR_example_data_tree$truth$Z
 
 ## check if all leave names are present in the data.
 setequal(leaves, unique(curr_leaves))
 #> [1] TRUE
 knitr::kable(table(curr_leaves))
 
-K     <- length(tau)
+K     <- nrow(theta)
 p     <- length(V(tr))
 J     <- ncol(Y)
 
@@ -307,103 +253,28 @@ mod0     <- lcm_tree(Y,curr_leaves,tr,
                                           tau_update_levels = c(1,2),
                                           # should this be set as default?
                                           s_u_zeroset = NULL,
-                                          #s_u_oneset = NULL),
-                                          #s_u_zeroset = (1:p)[-c(1)],
                                           s_u_oneset = c(1)),
-                     # hyperparams_init = list(tau_1=rep(9/4,2),
-                     #                         tau_2=rep(9/4,2)),
-                     # hyperparams_init = list(tau_1=matrix(9/4,nrow=2,ncol=K-1),
-                     #                          tau_2=array(9/4,c(2,J,K))),
                      vi_params_init = list(prob=rep(0.95,p)),
-                     random_init = TRUE,
+                     random_init = !TRUE,
                      nrestarts     = nrestarts,
                      quiet         = !TRUE,
-                     plot_fig      = !TRUE,
+                     plot_fig      = TRUE,
                      shared_tau    = FALSE,
                      get_lcm_by_group = TRUE, #<--- check what are the prereq.
                      print_freq    = 10,update_hyper_freq = 50, max_iter = 5000,
                      tol           = 1e-6,
                      tol_hyper     = 1e-4,
                      allow_continue = FALSE)#,
-                     #log_restarts =!TRUE,
-                     #log_dir = log_dir)
+#log_restarts =!TRUE,
+#log_dir = log_dir)
 
 ###############################################################################
 # print out summaries of group specific estimates:
 ###############################################################################
-
-plot(mod0)
-
-
+plot(mod0,layout = "slanted", horizontal = FALSE)
 
 mod0$prob_est$pi_collapsed
 which(mod0$mod$vi_params$prob>0.5)
-
-
-###############################################################################
-# Compare with other existing methods (Variational Bayes and EM)
-# We can do this comparison because the simulation truth is a single LCM.
-# The lotR package can start from an unknown grouping, and shrink towards a
-# single group.
-###############################################################################
-
-# after we check the grouping is identical to truth, we
-# compare the proposed method against other methods (VB, EM):
-proposed <- mod0$prob_est$theta_collapsed
-image(proposed)
-ord_rearrange <- order(proposed[1,],decreasing =TRUE)
-proposed <- proposed[,ord_rearrange]
-
-# blca:
-# VB:
-fullLCM_vb <- BayesLCA::blca(dsgn0$Y,K,method="vb",verbose=FALSE)
-# EM:
-fullLCM_em <- BayesLCA::blca(dsgn0$Y,K,method="em",verbose=FALSE)
-
-#
-# compare via plots:
-#
-# png("inst/example_figure/comparison_with_std.png",width=10,height=9,units = "in",res=300)
-par(mfcol=c(3,3))
-image(t(theta),main="truth")
-
-# differences
-image((proposed-t(theta)),main="diff")
-hist((proposed-t(theta)),xlim=c(-1,1))
-
-image(proposed,main="proposed")
-image(t(fullLCM_vb$itemprob),main="BayesLCA package: vb")
-image(t(fullLCM_em$itemprob),main="BayesLCA package: em")
-
-# pi estimate:
-barplot(rbind(c(tau,rep(0,K-length(tau))),
-              # mod0$prob_est$pi_collapsed,
-              sort(mod0$prob_est$pi_collapsed,decreasing = TRUE),
-              fullLCM_vb$classprob,
-              fullLCM_em$classprob),
-        main="class probabilities", beside=TRUE)#,
-        #legend.text = c("truth","proposed","vb","em"))
-
-
-## individual-specific variational probabilities of belonging to each class:
-image(mod0$mod$vi_param$rmat[order(dsgn0$ord),ord_rearrange],
-      main="inferred individual class prob",
-      xlab="subjects",xaxt="n",yaxt="n")
-image(BayesLCA:::unMAP(Z),main="true individual class memberships",
-      xlab="subjects",xaxt="n",yaxt="n")
-# dev.off()
-
-plot(mod0$mod$ELBO_track,xlab="iteration",ylab="ELBO",
-     main="Evidence Lower Bound",type="l")
-
-# ## show the ELBO trajectory:
-# library(plotly)
-# tmp_df <- data.frame(iteration = 1:length(mod0$mod$ELBO_track),
-#                      ELBO=mod0$mod$ELBO_track)
-# plot_ly(tmp_df,x=~iteration,y = ~ELBO,type = 'scatter', mode = 'lines')
-
-
-
 
 }
 \concept{lcm_tree functions}

@@ -144,10 +144,10 @@ initialize_tree_lcm <- function(Y,A,Z_obs,
       tau          <- (tmp/sum(tmp))
       eta_map[v,]  <- logit(prob2stick(tau)[-length(tau)])
       beta_map[v,,] <- logit(pmin(pmax(mod$itemprob,0.01),0.99))
-      rm("tau")
       # cat("node ",v," initialized as:\n")
       # barplot(tau,main=v)
       # image(t(mod$itemprob),main=v)
+      rm("tau")
     }
     # replace infinite values:
     # beta_marg <- aperm(array(logit(pmin(pmax(colMeans(Y),0.001),0.9999)),
@@ -249,8 +249,9 @@ initialize_tree_lcm <- function(Y,A,Z_obs,
       if (!check) stop("[] Incompatible intial values for 'tau_1' - mlogit class probabilities (alpha).")
     }
     if (random_init){
-      hyperparams$tau_1 <- hyperparams$tau_1+matrix(runif(Fg*(K-1),min = tau*random_init_vals$tau_lims[1],
-                                                          max = tau*random_init_vals$tau_lims[2]),nrow=Fg,ncol=K-1)
+      hyperparams$tau_1 <- hyperparams$tau_1*matrix(runif(Fg*(K-1),
+                                                          min = random_init_vals$tau_lims[1],
+                                                          max = random_init_vals$tau_lims[2]),nrow=Fg,ncol=K-1)
     }
 
     if (is.null(hyperparams[["tau_2"]])){ # tau for gammas
@@ -266,8 +267,8 @@ initialize_tree_lcm <- function(Y,A,Z_obs,
       if (!check) stop("[] Incompatible intial values for 'tau_2' - logit response probabilities (gamma).")
     }
     if (random_init){
-      hyperparams$tau_2 <- hyperparams$tau_2+array(runif(Fg*J*K,min = tau*random_init_vals$tau_lims[1],
-                                                         max = tau*random_init_vals$tau_lims[2]),c(Fg,J,K))
+      hyperparams$tau_2 <- hyperparams$tau_2*array(runif(Fg*J*K,min = random_init_vals$tau_lims[1],
+                                                         max = random_init_vals$tau_lims[2]),c(Fg,J,K))
     }
   }
 
