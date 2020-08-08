@@ -120,14 +120,12 @@ get_moments_cpp_eco <- function(leaves_u, E_beta, E_beta_sq, E_eta, E_eta_sq, pr
 #' @return a list
 #' \describe{
 #'
-#' # response probability profiles:
 #' Named("beta_est")=beta_est,
 #' Named("beta_sd_est")=beta_sd_est,
 #' Named("beta_cil")=beta_cil,
 #' Named("beta_ciu")=beta_ciu,
 #'
 #'
-#' # class-specific prevalences:
 #' Named("eta_est")=eta_est,
 #' Named("eta_var_est")=eta_var_est,
 #' Named("eta_cil")=eta_cil,

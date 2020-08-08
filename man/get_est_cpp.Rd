@@ -44,12 +44,12 @@ of ancestors for each leaf node}
 }
 \value{
 a list
-\describe{response probability profiles:
+\describe{
 
 Named("beta_est")=beta_est,
 Named("beta_sd_est")=beta_sd_est,
 Named("beta_cil")=beta_cil,
-Named("beta_ciu")=beta_ciu,class-specific prevalences:
+Named("beta_ciu")=beta_ciu,
 
 Named("eta_est")=eta_est,
 Named("eta_var_est")=eta_var_est,
