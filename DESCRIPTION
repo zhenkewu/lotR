@@ -27,7 +27,7 @@ Imports:
     R.utils (>= 2.9.2),
     Matrix (>= 1.2-17),
     RColorBrewer(>= 1.1-2),
-    MASS(>= 7.3-51.6)
+    MASS(>= 7.3)
 Suggests:
     knitr,
     testthat,
