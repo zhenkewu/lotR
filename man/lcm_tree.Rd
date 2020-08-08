@@ -62,7 +62,7 @@ the second column is a mix of NA or integers: NA for unknown and integers for kn
 classes.}
 
 \item{ci_level}{A number between 0 and 1 giving the desired credible interval.
-For example, \code{ci_level = 0.95} (the default) returns a 95\\% credible interval}
+For example, \code{ci_level = 0.95} (the default) returns a 95\% credible interval}
 
 \item{get_lcm_by_group}{If \code{TRUE}, lotR will also return the maximum likelihood estimates of the
 coefficients for each leaf_ids group discovered by the model.

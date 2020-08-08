@@ -24,7 +24,7 @@ if(getRversion() >= "2.15.1") utils::globalVariables(c("i"))
 #' the second column is a mix of NA or integers: NA for unknown and integers for known
 #' classes.
 #' @param ci_level A number between 0 and 1 giving the desired credible interval.
-#' For example, `ci_level = 0.95` (the default) returns a 95\% credible interval
+#' For example, `ci_level = 0.95` (the default) returns a 95% credible interval
 #' @param get_lcm_by_group If `TRUE`, lotR will also return the maximum likelihood estimates of the
 #' coefficients for each leaf_ids group discovered by the model.
 #' Default is `TRUE`.

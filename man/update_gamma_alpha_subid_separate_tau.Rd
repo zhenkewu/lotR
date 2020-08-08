@@ -30,7 +30,7 @@ update_gamma_alpha_subid_separate_tau(
 
 \item{tau_2_t_u, tau_1_t_u}{variational Gaussian variances for gamma and alpha}
 
-\item{E_beta, E_zeta_u}{moment updates produced by \code{\link[=get_moments_cpp]{get_moments_cpp()}};
+\item{E_beta, E_zeta_u}{moment updates produced by \code{\link{get_moments_cpp}};
 \code{E_zeta_u} is directly calculated: \code{prob[u]*sigma_gamma[u,,]}}
 
 \item{X}{transformed data: 2Y-1}

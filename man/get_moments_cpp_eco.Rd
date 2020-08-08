@@ -23,7 +23,7 @@ get_moments_cpp_eco(
 \arguments{
 \item{leaves_u}{the leaf descendant node ids for node u}
 
-\item{E_beta, E_beta_sq, E_eta, E_eta_sq}{moment updates produced by \code{\link[=get_moments_cpp]{get_moments_cpp()}}}
+\item{E_beta, E_beta_sq, E_eta, E_eta_sq}{moment updates produced by \code{\link{get_moments_cpp}}}
 
 \item{prob}{variational probabilities for \code{s_u}; length p}
 
@@ -64,7 +64,7 @@ Named("E_eta_sq")=E_eta_sq);
 update only selected moments that need update when iterating over u (except for \code{rmat})
 }
 \details{
-(one-node version of \code{\link[=get_moments_cpp]{get_moments_cpp()}})
+(one-node version of \code{\link{get_moments_cpp}})
 }
 \examples{
 # illustrates the calculation of the various moments:

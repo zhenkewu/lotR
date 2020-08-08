@@ -7,7 +7,7 @@
 getC_separate_tau(u, g_phi, rmat, tau_1_t, h_pau, subject_ids, v_lookup)
 }
 \arguments{
-\item{u, g_phi, rmat, tau_1_t, h_pau, subject_ids, v_lookup}{see \code{\link[=getC]{getC()}}}
+\item{u, g_phi, rmat, tau_1_t, h_pau, subject_ids, v_lookup}{see \code{\link{getC}}}
 }
 \description{
 Initialize sigma alpha for distinct tau

@@ -103,7 +103,7 @@ compute_params <- function(mod,dsgn,ci_level=0.95){
 #' @param x Output from [lcm_tree()].
 #' @param ... Arguments passed to summary and printing methods.
 #' @return Summary showing, for each group of leaf nodes discovered by [lotR()],
-#' the classs prevalences, 95\% credible intervals, number of leaf nodes in
+#' the classs prevalences, 95% credible intervals, number of leaf nodes in
 #' per group, and number of observations per group.
 #'
 #' @family lcm_tree results

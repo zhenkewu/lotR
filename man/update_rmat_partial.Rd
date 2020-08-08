@@ -25,7 +25,7 @@ update_rmat_partial(
 
 \item{X}{transformed data: 2Y-1}
 
-\item{E_beta, E_eta, E_beta_sq, E_eta_sq}{moment updates produced by \code{\link[=get_moments_cpp]{get_moments_cpp()}}}
+\item{E_beta, E_eta, E_beta_sq, E_eta_sq}{moment updates produced by \code{\link{get_moments_cpp}}}
 
 \item{v_lookup}{a vector of length equal to the total number of rows in \code{X};
 each element is an integer, indicating which leaf does the observation belong to.}
