@@ -15,10 +15,10 @@
 #' @param fit fitted object
 #'
 #'
-#' @return a list; \code{x}: data; \code{z} a vector of integer indicators
+#' @return a list; `x`: data; `z` a vector of integer indicators
 #' of class membership.
 #'
-#' @seealso \code{\link[BayesLCA]{blca}}
+#' @seealso [BayesLCA::blca()]
 #' @importFrom stats rmultinom runif
 #' @export
 lotR_blca <- function (n, itemprob = 0.5, classprob = 1, fit = NULL)
@@ -55,10 +55,10 @@ lotR_blca <- function (n, itemprob = 0.5, classprob = 1, fit = NULL)
 #'
 #' @param n sample size
 #' @param itemprob item probabilities; this is shared across leaf nodes; K by J
-#' @param mytree see \code{\link{design_tree}}
+#' @param mytree see [design_tree()]
 #' @param pi_mat class probabilities for  pL leaf nodes; it is pL by K.
 #' @param h_pau a p-dim vector of positive values that indicates the branch lengths
-#' between a node \code{u} and its parent \code{pa(u)}
+#' between a node `u` and its parent `pa(u)`
 #'
 #' @return a list
 #' \describe{
@@ -66,11 +66,11 @@ lotR_blca <- function (n, itemprob = 0.5, classprob = 1, fit = NULL)
 #' \item{curr_leaves}{leaf names, need to be for each row of Y}
 #' \item{truth}{a list that contains the simulation truth:
 #' \itemize{
-#' \item \code{Z} true class indicators for all observations
-#' \item \code{itemprob} a K by J matrix of response probability profiles
-#' \item \code{pi_mat} the eta_v transformed to pi_v; pL by K
-#' \item \code{h_pau} a vector of p values, each representing the
-#' branch length between the node \code{u} and its parent node \code{pa(u)}
+#' \item `Z` true class indicators for all observations
+#' \item `itemprob` a K by J matrix of response probability profiles
+#' \item `pi_mat` the eta_v transformed to pi_v; pL by K
+#' \item `h_pau` a vector of p values, each representing the
+#' branch length between the node `u` and its parent node `pa(u)`
 #' }
 #' }
 #' }
@@ -126,10 +126,10 @@ lotR_blca <- function (n, itemprob = 0.5, classprob = 1, fit = NULL)
 #' # s = c(1, 1,1,0,0, rep(0,pL)) # effective nodes
 #' h_pau = rep(1,p)
 #'
-#' simulate_lcm_tree(n,itemprob,mytree,pi_mat,h_pau)
+#' lotR_example_data_tree <- simulate_lcm_tree(n,itemprob,mytree,pi_mat,h_pau)
 #' #save the simulated data to the R package for illustration:
-#' #save(lotR_example_data_tree, file = "data/lotR_example_data_tree.rda", compress = "xz")
-#' @seealso \code{\link[BayesLCA]{blca}}
+#' save(lotR_example_data_tree, file = "data/lotR_example_data_tree.rda", compress = "xz")
+#' @seealso [BayesLCA::blca()]
 #' @importFrom stats rmultinom runif
 #' @importFrom igraph V
 #' @export

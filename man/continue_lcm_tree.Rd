@@ -21,7 +21,7 @@ continue_lcm_tree(
 )
 }
 \arguments{
-\item{old_mod}{fitted object from \code{\link{lcm_tree}}; \code{lcm_tree} class}
+\item{old_mod}{fitted object from \code{\link[=lcm_tree]{lcm_tree()}}; \code{lcm_tree} class}
 
 \item{update_hyper_freq}{How frequently to update hyperparameters.
 Default = every 50 iterations.}
@@ -76,5 +76,5 @@ can definitely ignore this function, and use lcm_tree directly with various sett
 So this function is for lazy persons.
 }
 \seealso{
-\code{\link{lcm_tree}}
+\code{\link[=lcm_tree]{lcm_tree()}}
 }

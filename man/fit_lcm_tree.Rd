@@ -25,7 +25,7 @@ fit_lcm_tree(
 \arguments{
 \item{dsgn}{a list of data and other information organized according to the tree}
 
-\item{vi_params_init, hyperparams_init, random_init, random_init_vals, tol, tol_hyper, max_iter, print_freq, quiet, plot_fig, shared_tau, update_hyper_freq, hyper_fixed}{initial values and updating protocols. Explained more in the wrapper function \code{\link{lcm_tree}}}
+\item{vi_params_init, hyperparams_init, random_init, random_init_vals, tol, tol_hyper, max_iter, print_freq, quiet, plot_fig, shared_tau, update_hyper_freq, hyper_fixed}{initial values and updating protocols. Explained more in the wrapper function \code{\link[=lcm_tree]{lcm_tree()}}}
 }
 \value{
 a list with model updates; because the variational posterior

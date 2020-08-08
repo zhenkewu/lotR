@@ -5,7 +5,7 @@
 \title{estimate latent class models by pre-specified groups of observations,
 e.g., the ones obtained from the tree-shrunk LCM.}
 \usage{
-lcm_by_group(Y, leaf_ids, members_list, K, ...)
+lcm_by_group(Y, leaf_ids, members_list, K, ci_level, ...)
 }
 \arguments{
 \item{Y}{data}
@@ -17,7 +17,9 @@ groups of leaves}
 
 \item{K}{the number of classes}
 
-\item{...}{other arguments for \code{\link[BayesLCA]{blca}}}
+\item{ci_level}{a probability to indicate the credible interval's level}
+
+\item{...}{other arguments for \code{\link[BayesLCA:blca]{BayesLCA::blca()}}}
 }
 \description{
 estimate latent class models by pre-specified groups of observations,

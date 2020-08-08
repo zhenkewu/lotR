@@ -20,13 +20,13 @@ get_line1_2_13_subid(
 )
 }
 \arguments{
-\item{psi, g_psi, phi, g_phi}{see \code{\link{update_hyperparams}}}
+\item{psi, g_psi, phi, g_phi}{see \code{\link[=update_hyperparams]{update_hyperparams()}}}
 
 \item{rmat}{a matrix of variational probabilities of all observations
 belong to K classes; N by K; each row sums to 1}
 
 \item{E_beta, E_beta_sq, E_eta, E_eta_sq}{moments during
-VI updates from \code{\link{get_moments_cpp}}}
+VI updates from \code{\link[=get_moments_cpp]{get_moments_cpp()}}}
 
 \item{X}{transformed data: 2Y-1}
 

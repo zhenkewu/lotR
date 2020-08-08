@@ -1,7 +1,7 @@
-#' lotR:  \strong{l}atent class analysis of  \strong{o}bservations
-#' organized by  \strong{t}ree in  \strong{R}
+#' lotR:  **l**atent class analysis of  **o**bservations
+#' organized by  **t**ree in  **R**
 #'
-#' \code{lotR} is designed for analyzing multivariate binary observations
+#' `lotR` is designed for analyzing multivariate binary observations
 #' while integrating additional sample related information represented
 #' by each observation's membership in the leaves of a given tree. The
 #' observations that are closer in the tree are a priori more likely to be grouped
@@ -14,12 +14,12 @@
 #'
 #' @seealso
 #' \itemize{
-#' \item \url{https://github.com/zhenkewu/lotR} for the source code
-#' and system/software requirements to use \code{lotR} for your data.
+#' \item <https://github.com/zhenkewu/lotR> for the source code
+#' and system/software requirements to use `lotR` for your data.
 #' }
 #'
 #' @section main lotR wrapper function:
-#' \code{\link{lcm_tree}}
+#' [lcm_tree()]
 #'
 #' @docType package
 #' @name lotR

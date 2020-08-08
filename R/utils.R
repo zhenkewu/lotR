@@ -192,7 +192,7 @@ split_along_dim <- function(a, n){
 #' lower bound is quadratic in the exponent
 #'
 #' @param xi local variational parameter, positive value, this is where
-#' the \code{expit(xi) = lower_bd(xi)}
+#' the `expit(xi) = lower_bd(xi)`
 #'
 #' @return a positive value between 0 and 1
 #'
@@ -257,9 +257,9 @@ lower_bd <- function(xi){
 #' @references
 #' \itemize{
 #' \item Jaakkola, Tommi S., and Michael I. Jordan. "Bayesian parameter estimation via variational methods." Statistics and Computing 10.1 (2000): 25-37.
-#' \url{http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.399.9368&rep=rep1&type=pdf}
+#' <http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.399.9368&rep=rep1&type=pdf>
 #' \item Titsias M(2016). One-vs-each approximation to softmax for scalable estimation of probabilities. Advances in Neural Information Processing Systems.
-#' \url{https://papers.nips.cc/paper/6468-one-vs-each-approximation-to-softmax-for-scalable-estimation-of-probabilities.pdf}
+#' <https://papers.nips.cc/paper/6468-one-vs-each-approximation-to-softmax-for-scalable-estimation-of-probabilities.pdf>
 #'}
 #' @export
 #' @family VI functions
@@ -284,8 +284,8 @@ approx_sb <- function(x){
 #' derived from the names of the R objects.
 #'
 #' Roger Peng's listlabeling challenge from
-#' \url{http://simplystatistics.tumblr.com/post/11988685443/computing-on-the-language}.
-#' Code copied from \url{https://gist.github.com/ajdamico/1329117/0134148987859856fcecbe4446cfd37e500e4272}
+#' <http://simplystatistics.tumblr.com/post/11988685443/computing-on-the-language>.
+#' Code copied from <https://gist.github.com/ajdamico/1329117/0134148987859856fcecbe4446cfd37e500e4272>
 #'
 #' @param ... any R objects
 #'

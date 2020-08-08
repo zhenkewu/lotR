@@ -8,40 +8,40 @@
 #'
 #' @param Y N by J matrix of binary measurements
 #' @param leaf_ids This is a character string
-#' @param mytree the tree (an \code{igraph} object) that contains the node,
+#' @param mytree the tree (an `igraph` object) that contains the node,
 #'              edge, edge-length information.
 #' @param weighted_edge logical: TRUE for incorporating the branch lengths -
 #' then the mytree must have this info; if FALSE, every branch, including
 #' an imaginary rootnode to past branch, is set to have length 1.
-#' @param Z_obs Default is \code{NULL}, a two-column matrix of (id,class indicator)
-#' for a subset of people; # rows = # rows of Y; 2nd column is \code{NA} if
+#' @param Z_obs Default is `NULL`, a two-column matrix of (id,class indicator)
+#' for a subset of people; # rows = # rows of Y; 2nd column is `NA` if
 #' a person's class indicator is unknown.
-#' The rows will be reordered according to the reordered \code{Y}.
+#' The rows will be reordered according to the reordered `Y`.
 #'
 #' @return A list of data and tree information
 #' \itemize{
-#' \item \code{Y} A matrix of n by J; binary measurements with rows ordered by
+#' \item `Y` A matrix of n by J; binary measurements with rows ordered by
 #'       leaf ("leaf_ids") groups (e.g., information from phylogenetic tree).
-#' \item \code{A} A matrix of p by p; ancestor matrix
-#' \item \code{A_leaves} A matrix of pL by p; ancestor matrix only for leaves
-#' \item \code{leaf_ids} This is a vector of length n; ordered by the leaves as
+#' \item `A` A matrix of p by p; ancestor matrix
+#' \item `A_leaves` A matrix of pL by p; ancestor matrix only for leaves
+#' \item `leaf_ids` This is a vector of length n; ordered by the leaves as
 #'              specified by the tree.
-#' \item \code{leaf_ids_units} A list of length \code{p[L]}, each element
+#' \item `leaf_ids_units` A list of length `p[L]`, each element
 #'            is a numeric vector of subject ids belonging to each leaf ("leaf_ids")
-#' \item \code{leaf_ids_nodes} a list of length \code{p}, each element
+#' \item `leaf_ids_nodes` a list of length `p`, each element
 #'            is a numeric vector indicating the leaf nodes.
-#' \item \code{ancestors} a list of length \code{p[L]},
+#' \item `ancestors` a list of length `p[L]`,
 #'      each element is the numeric vector of ancestors
 #'      (including the leaf node as well).
-#' \item \code{edge_lengths} a list of length \code{p[L]},
+#' \item `edge_lengths` a list of length `p[L]`,
 #'       each element is a numeric vector of edge lengths from the root node
 #'       to the leaf.
-#' \item \code{h_pau} a numeric vector of length \code{p}; each value
-#' \item \code{v_units} a vector of length equal to the total number of rows in X;
+#' \item `h_pau` a numeric vector of length `p`; each value
+#' \item `v_units` a vector of length equal to the total number of rows in X;
 #' each element is an integer, indicating which leaf does the observation belong to.
-#' \item \code{subject_id_list} a list of length p; each element is a vector of subject ids
+#' \item `subject_id_list` a list of length p; each element is a vector of subject ids
 #' that are in the leaf descendants of node u (internal or leaf node)
-#' \item \code{ord} the permutation to order the original rows to produce the final ordering
+#' \item `ord` the permutation to order the original rows to produce the final ordering
 #' of the rows
 #' is the length between the node and its parent; the root node has no parent
 #' and the edge length is set to 1.

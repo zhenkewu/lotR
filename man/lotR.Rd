@@ -19,7 +19,7 @@ and can provide approximate posterior uncertainty quantification.
 }
 \section{main lotR wrapper function}{
 
-\code{\link{lcm_tree}}
+\code{\link[=lcm_tree]{lcm_tree()}}
 }
 
 \seealso{

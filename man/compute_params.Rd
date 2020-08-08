@@ -7,9 +7,9 @@
 compute_params(mod, dsgn, ci_level = 0.95)
 }
 \arguments{
-\item{mod}{output from \code{\link{lcm_tree}}}
+\item{mod}{output from \code{\link[=lcm_tree]{lcm_tree()}}}
 
-\item{dsgn}{output from \code{\link{design_tree}}}
+\item{dsgn}{output from \code{\link[=design_tree]{design_tree()}}}
 
 \item{ci_level}{credible interval level; default to 0.95}
 }
@@ -26,18 +26,18 @@ Named("eta_var_est")=eta_var_est,
 Named("eta_cil")=eta_cil,
 Named("eta_ciu")=eta_ciu
 
- prob_est$pi
- prob_est$theta
- prob_est$group
- prob_est$members
- prob_est$n_obs
- prob_est$theta_collapsed
- prob_est$pi_collapsed
+prob_est$pi
+prob_est$theta
+prob_est$group
+prob_est$members
+prob_est$n_obs
+prob_est$theta_collapsed
+prob_est$pi_collapsed
 }
 }
 \description{
 compute model summaries from the model outputs
 }
 \seealso{
-\code{\link{get_est_cpp}}
+\code{\link[=get_est_cpp]{get_est_cpp()}}
 }

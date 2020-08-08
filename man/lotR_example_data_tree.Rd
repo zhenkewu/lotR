@@ -6,13 +6,13 @@
 \title{Simulated multivariate binary data. (with tree structure)}
 \format{
 A named list with the following elements:
-see the returned values of \code{\link{simulate_lcm_tree}}
+see the returned values of \code{\link[=simulate_lcm_tree]{simulate_lcm_tree()}}
 }
 \usage{
 lotR_example_data_tree
 }
 \description{
-Simulated data for testing the \code{\link{lcm_tree}} function.
+Simulated data for testing the \code{\link[=lcm_tree]{lcm_tree()}} function.
 Used in the example.
 }
 \keyword{datasets}

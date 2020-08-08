@@ -58,7 +58,7 @@ for leaf and non-leaf nodes. The levels are pre-specified, not estimated.}
 
 \item{hyperparams}{the list of hyperparameters, \code{tau_1} and \code{tau_2} -
 these are initial specifications of the hyperparameters - they are updated by
- \code{tau_1_t}, \code{tau_2_t}; \code{psi}, \code{g_psi}, \code{phi}, \code{g_phi} (these
+\code{tau_1_t}, \code{tau_2_t}; \code{psi}, \code{g_psi}, \code{phi}, \code{g_phi} (these
 are not hyperparameters, but are updated with the same schedule as \code{tau_1_t} and \code{tau_2_t}).}
 
 \item{hyper_fixed}{a list of fixed hyperparameters, such as those
@@ -73,10 +73,10 @@ to choose the best converged values.}
 
 \item{random_init_vals}{NB: fill out specific elements}
 
-\item{subject_id_list, v_units, shared_tau}{see \code{\link{update_vi_params}}}
+\item{subject_id_list, v_units, shared_tau}{see \code{\link[=update_vi_params]{update_vi_params()}}}
 }
 \value{
-a list \code{vi_params,hyperparams} containing the initial values.
+a list \verb{vi_params,hyperparams} containing the initial values.
 }
 \description{
 Initialize the variational inferential algorithm for latent

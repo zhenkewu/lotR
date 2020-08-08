@@ -51,68 +51,68 @@ update_hyperparams(
 }
 \arguments{
 \item{Y}{outputs from
-\code{\link{design_tree}}, which reorders the nodes by internal and leaf nodes; the observations are also
+\code{\link[=design_tree]{design_tree()}}, which reorders the nodes by internal and leaf nodes; the observations are also
 ordered from low- to high-indexed leaf nodes.}
 
 \item{A}{outputs from
-\code{\link{design_tree}}, which reorders the nodes by internal and leaf nodes; the observations are also
+\code{\link[=design_tree]{design_tree()}}, which reorders the nodes by internal and leaf nodes; the observations are also
 ordered from low- to high-indexed leaf nodes.}
 
 \item{leaf_ids_units}{outputs from
-\code{\link{design_tree}}, which reorders the nodes by internal and leaf nodes; the observations are also
+\code{\link[=design_tree]{design_tree()}}, which reorders the nodes by internal and leaf nodes; the observations are also
 ordered from low- to high-indexed leaf nodes.}
 
 \item{ancestors}{outputs from
-\code{\link{design_tree}}, which reorders the nodes by internal and leaf nodes; the observations are also
+\code{\link[=design_tree]{design_tree()}}, which reorders the nodes by internal and leaf nodes; the observations are also
 ordered from low- to high-indexed leaf nodes.}
 
 \item{h_pau}{outputs from
-\code{\link{design_tree}}, which reorders the nodes by internal and leaf nodes; the observations are also
+\code{\link[=design_tree]{design_tree()}}, which reorders the nodes by internal and leaf nodes; the observations are also
 ordered from low- to high-indexed leaf nodes.}
 
 \item{levels}{outputs from
-\code{\link{design_tree}}, which reorders the nodes by internal and leaf nodes; the observations are also
+\code{\link[=design_tree]{design_tree()}}, which reorders the nodes by internal and leaf nodes; the observations are also
 ordered from low- to high-indexed leaf nodes.}
 
 \item{v_units}{outputs from
-\code{\link{design_tree}}, which reorders the nodes by internal and leaf nodes; the observations are also
+\code{\link[=design_tree]{design_tree()}}, which reorders the nodes by internal and leaf nodes; the observations are also
 ordered from low- to high-indexed leaf nodes.}
 
-\item{X}{computed from the data by \code{\link{lcm_tree}} at the beginning before the VI updates}
+\item{X}{computed from the data by \code{\link[=lcm_tree]{lcm_tree()}} at the beginning before the VI updates}
 
-\item{n}{computed from the data by \code{\link{lcm_tree}} at the beginning before the VI updates}
+\item{n}{computed from the data by \code{\link[=lcm_tree]{lcm_tree()}} at the beginning before the VI updates}
 
-\item{J}{computed from the data by \code{\link{lcm_tree}} at the beginning before the VI updates}
+\item{J}{computed from the data by \code{\link[=lcm_tree]{lcm_tree()}} at the beginning before the VI updates}
 
-\item{p}{computed from the data by \code{\link{lcm_tree}} at the beginning before the VI updates}
+\item{p}{computed from the data by \code{\link[=lcm_tree]{lcm_tree()}} at the beginning before the VI updates}
 
-\item{pL}{computed from the data by \code{\link{lcm_tree}} at the beginning before the VI updates}
+\item{pL}{computed from the data by \code{\link[=lcm_tree]{lcm_tree()}} at the beginning before the VI updates}
 
-\item{Fg}{computed from the data by \code{\link{lcm_tree}} at the beginning before the VI updates}
+\item{Fg}{computed from the data by \code{\link[=lcm_tree]{lcm_tree()}} at the beginning before the VI updates}
 
-\item{prob}{variational parameters updated by \code{\link{update_vi_params}}}
+\item{prob}{variational parameters updated by \code{\link[=update_vi_params]{update_vi_params()}}}
 
-\item{prob_gamma}{variational parameters updated by \code{\link{update_vi_params}}}
+\item{prob_gamma}{variational parameters updated by \code{\link[=update_vi_params]{update_vi_params()}}}
 
-\item{mu_gamma}{variational parameters updated by \code{\link{update_vi_params}}}
+\item{mu_gamma}{variational parameters updated by \code{\link[=update_vi_params]{update_vi_params()}}}
 
-\item{mu_alpha}{variational parameters updated by \code{\link{update_vi_params}}}
+\item{mu_alpha}{variational parameters updated by \code{\link[=update_vi_params]{update_vi_params()}}}
 
-\item{rmat}{variational parameters updated by \code{\link{update_vi_params}}}
+\item{rmat}{variational parameters updated by \code{\link[=update_vi_params]{update_vi_params()}}}
 
-\item{sigma_gamma}{variational parameters updated by \code{\link{update_vi_params}}}
+\item{sigma_gamma}{variational parameters updated by \code{\link[=update_vi_params]{update_vi_params()}}}
 
-\item{Sigma_alpha}{variational parameters updated by \code{\link{update_vi_params}}}
+\item{Sigma_alpha}{variational parameters updated by \code{\link[=update_vi_params]{update_vi_params()}}}
 
-\item{tau_1_t}{variational parameters updated by \code{\link{update_vi_params}}}
+\item{tau_1_t}{variational parameters updated by \code{\link[=update_vi_params]{update_vi_params()}}}
 
-\item{tau_2_t}{variational parameters updated by \code{\link{update_vi_params}}}
+\item{tau_2_t}{variational parameters updated by \code{\link[=update_vi_params]{update_vi_params()}}}
 
-\item{a_t}{variational parameters updated by \code{\link{update_vi_params}}}
+\item{a_t}{variational parameters updated by \code{\link[=update_vi_params]{update_vi_params()}}}
 
-\item{b_t}{variational parameters updated by \code{\link{update_vi_params}}}
+\item{b_t}{variational parameters updated by \code{\link[=update_vi_params]{update_vi_params()}}}
 
-\item{E_beta_sq, E_eta_sq, E_beta, E_eta}{moments computed by \code{\link{update_vi_params}}}
+\item{E_beta_sq, E_eta_sq, E_beta, E_eta}{moments computed by \code{\link[=update_vi_params]{update_vi_params()}}}
 
 \item{psi}{parameters updated by \code{update_hyperparams()}}
 
@@ -138,7 +138,7 @@ ordered from low- to high-indexed leaf nodes.}
 
 \item{update_hyper}{Logical, \code{TRUE} or \code{FALSE} to indicate
 whether to update \code{tau_1} and \code{tau_2}. This is computed at every iteration
-in \code{\link{fit_lcm_tree}}}
+in \code{\link[=fit_lcm_tree]{fit_lcm_tree()}}}
 
 \item{quiet}{default to \code{FALSE}, which prints intermediate updates of hyperparameters}
 }

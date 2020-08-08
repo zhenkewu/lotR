@@ -50,19 +50,19 @@ update_vi_params(
 }
 \arguments{
 \item{Y, A, leaf_ids_units, leaf_ids_nodes, ancestors, cardanc, v_units, h_pau, levels, subject_id_list}{outputs from
-\code{\link{design_tree}}, which reorders the nodes by internal and leaf nodes; the observations are also
+\code{\link[=design_tree]{design_tree()}}, which reorders the nodes by internal and leaf nodes; the observations are also
 ordered from low- to high-indexed leaf nodes.}
 
-\item{X, n, J, p, pL, Fg}{computed from the data by \code{\link{lcm_tree}} at the beginning before the VI updates}
+\item{X, n, J, p, pL, Fg}{computed from the data by \code{\link[=lcm_tree]{lcm_tree()}} at the beginning before the VI updates}
 
-\item{prob, prob_gamma, mu_gamma, mu_alpha, rmat, sigma_gamma, Sigma_alpha, tau_1_t, tau_2_t, a_t, b_t, }{variational parameters updated by \code{\link{update_vi_params}}}
+\item{prob, prob_gamma, mu_gamma, mu_alpha, rmat, sigma_gamma, Sigma_alpha, tau_1_t, tau_2_t, a_t, b_t, }{variational parameters updated by \code{\link[=update_vi_params]{update_vi_params()}}}
 
 \item{psi, g_psi, phi, g_phi, tau_1, tau_2, shared_tau}{parameters updated by \code{update_hyperparams()}}
 
 \item{a, b, K, s_u_zeroset, s_u_oneset, Z_obs}{fixed hyperparameters not to be updated.}
 }
 \description{
-Used by \code{\link{fit_lcm_tree}}, which also invoke \code{\link{update_hyperparams}}
+Used by \code{\link[=fit_lcm_tree]{fit_lcm_tree()}}, which also invoke \code{\link[=update_hyperparams]{update_hyperparams()}}
 to update hyperparameters and calculate evidence lower bound (ELBO)
 }
 \concept{Internal VI functions}

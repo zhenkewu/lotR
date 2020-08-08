@@ -27,21 +27,21 @@ The rows will be reordered according to the reordered \code{Y}.}
 A list of data and tree information
 \itemize{
 \item \code{Y} A matrix of n by J; binary measurements with rows ordered by
-      leaf ("leaf_ids") groups (e.g., information from phylogenetic tree).
+leaf ("leaf_ids") groups (e.g., information from phylogenetic tree).
 \item \code{A} A matrix of p by p; ancestor matrix
 \item \code{A_leaves} A matrix of pL by p; ancestor matrix only for leaves
 \item \code{leaf_ids} This is a vector of length n; ordered by the leaves as
-             specified by the tree.
+specified by the tree.
 \item \code{leaf_ids_units} A list of length \code{p[L]}, each element
-           is a numeric vector of subject ids belonging to each leaf ("leaf_ids")
+is a numeric vector of subject ids belonging to each leaf ("leaf_ids")
 \item \code{leaf_ids_nodes} a list of length \code{p}, each element
-           is a numeric vector indicating the leaf nodes.
+is a numeric vector indicating the leaf nodes.
 \item \code{ancestors} a list of length \code{p[L]},
-     each element is the numeric vector of ancestors
-     (including the leaf node as well).
+each element is the numeric vector of ancestors
+(including the leaf node as well).
 \item \code{edge_lengths} a list of length \code{p[L]},
-      each element is a numeric vector of edge lengths from the root node
-      to the leaf.
+each element is a numeric vector of edge lengths from the root node
+to the leaf.
 \item \code{h_pau} a numeric vector of length \code{p}; each value
 \item \code{v_units} a vector of length equal to the total number of rows in X;
 each element is an integer, indicating which leaf does the observation belong to.

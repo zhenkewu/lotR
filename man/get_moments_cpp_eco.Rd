@@ -23,7 +23,7 @@ get_moments_cpp_eco(
 \arguments{
 \item{leaves_u}{the leaf descendant node ids for node u}
 
-\item{E_beta, E_beta_sq, E_eta, E_eta_sq}{moment updates produced by \code{\link{get_moments_cpp}}}
+\item{E_beta, E_beta_sq, E_eta, E_eta_sq}{moment updates produced by \code{\link[=get_moments_cpp]{get_moments_cpp()}}}
 
 \item{prob}{variational probabilities for \code{s_u}; length p}
 
@@ -39,8 +39,10 @@ for J*K logit(class-specific response probabilities); (J,K,p) array}
 this is a p by K-1 matrix; in R, we used a list of p vectors (each of length K-1)}
 
 \item{Sigma_alpha}{variational Gaussian variances (for \code{s_u=1} component)
-- this is an array of dimension (K-1, K-1, p); in R, we used a list of p matrices,
-each of dimension K-1 by K-1.}
+\itemize{
+\item this is an array of dimension (K-1, K-1, p); in R, we used a list of p matrices,
+each of dimension K-1 by K-1.
+}}
 
 \item{anc}{a list of pL vectors, each vector has the node ids of the ancestors;
 lengths may differ. The ancestors include the node concerned.}
@@ -52,17 +54,17 @@ of ancestors for each leaf node}
 a List
 
 \describe{
-  return List::create(Named("E_beta")=E_beta,
-   Named("E_beta_sq")=E_beta_sq,
-   Named("E_eta")=E_eta,
-   Named("E_eta_sq")=E_eta_sq);
+return List::create(Named("E_beta")=E_beta,
+Named("E_beta_sq")=E_beta_sq,
+Named("E_eta")=E_eta,
+Named("E_eta_sq")=E_eta_sq);
 }
 }
 \description{
 update only selected moments that need update when iterating over u (except for \code{rmat})
 }
 \details{
-(one-node version of \code{\link{get_moments_cpp}})
+(one-node version of \code{\link[=get_moments_cpp]{get_moments_cpp()}})
 }
 \examples{
 # illustrates the calculation of the various moments:

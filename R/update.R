@@ -1,16 +1,16 @@
 #' update variational parameters in the latent class models with observations
 #' organized in a tree
 #'
-#' Used by \code{\link{fit_lcm_tree}}, which also invoke \code{\link{update_hyperparams}}
+#' Used by [fit_lcm_tree()], which also invoke [update_hyperparams()]
 #' to update hyperparameters and calculate evidence lower bound (ELBO)
 #'
 #' @param Y,A,leaf_ids_units,leaf_ids_nodes,ancestors,cardanc,v_units,h_pau,levels,subject_id_list outputs from
-#' \code{\link{design_tree}}, which reorders the nodes by internal and leaf nodes; the observations are also
+#' [design_tree()], which reorders the nodes by internal and leaf nodes; the observations are also
 #' ordered from low- to high-indexed leaf nodes.
-#' @param X,n,J,p,pL,Fg computed from the data by \code{\link{lcm_tree}} at the beginning before the VI updates
+#' @param X,n,J,p,pL,Fg computed from the data by [lcm_tree()] at the beginning before the VI updates
 #' @param  prob,prob_gamma,mu_gamma,mu_alpha,rmat,sigma_gamma,Sigma_alpha,tau_1_t,tau_2_t,a_t,b_t,
-#' variational parameters updated by \code{\link{update_vi_params}}
-#' @param psi,g_psi,phi,g_phi,tau_1,tau_2,shared_tau parameters updated by \code{update_hyperparams()}
+#' variational parameters updated by [update_vi_params()]
+#' @param psi,g_psi,phi,g_phi,tau_1,tau_2,shared_tau parameters updated by `update_hyperparams()`
 #' @param a,b,K,s_u_zeroset,s_u_oneset,Z_obs fixed hyperparameters not to be updated.
 #'
 #' @importFrom matrixStats logSumExp
@@ -150,12 +150,12 @@ update_vi_params <- function(Y,A,Z_obs,
 #' a tree
 #'
 #' @inheritParams update_vi_params
-#' @param update_hyper Logical, \code{TRUE} or \code{FALSE} to indicate
-#' whether to update \code{tau_1} and \code{tau_2}. This is computed at every iteration
-#' in \code{\link{fit_lcm_tree}}
-#' @param E_beta_sq,E_eta_sq,E_beta,E_eta moments computed by \code{\link{update_vi_params}}
+#' @param update_hyper Logical, `TRUE` or `FALSE` to indicate
+#' whether to update `tau_1` and `tau_2`. This is computed at every iteration
+#' in [fit_lcm_tree()]
+#' @param E_beta_sq,E_eta_sq,E_beta,E_eta moments computed by [update_vi_params()]
 #' @param tau_update_levels a numeric vector, specifies which levels of hyperparameters to update
-#' @param quiet default to \code{FALSE}, which prints intermediate updates of hyperparameters
+#' @param quiet default to `FALSE`, which prints intermediate updates of hyperparameters
 #'
 #' @importFrom matrixStats logSumExp
 #'

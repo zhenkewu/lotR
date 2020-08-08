@@ -35,15 +35,15 @@ logsumexp_row <- function(logv_arma) {
 #'
 #' Get all moments that need update when iterating over a total of p internal and leaf nodes
 #'
-#' @param prob variational probabilities for \code{s_u}; length p
-#' @param prob_gamma should be fixed: \code{c(1,rep(0,p-1))}
-#' @param mu_gamma variational Gaussian means (for \code{s_u=1} component) for J*K
+#' @param prob variational probabilities for `s_u`; length p
+#' @param prob_gamma should be fixed: `c(1,rep(0,p-1))`
+#' @param mu_gamma variational Gaussian means (for `s_u=1` component) for J*K
 #' logit(class-specific response probabilities); (J,K,p) array; In R, we used a list of p (J,K) matrices
-#' @param sigma_gamma variational Gaussian variances (for \code{s_u=1} component)
+#' @param sigma_gamma variational Gaussian variances (for `s_u=1` component)
 #' for J*K logit(class-specific response probabilities); (J,K,p) array
-#' @param mu_alpha variational Gaussian mean vectors (for \code{s_u=1} component) -
+#' @param mu_alpha variational Gaussian mean vectors (for `s_u=1` component) -
 #' this is a p by K-1 matrix; in R, we used a list of p vectors (each of length K-1)
-#' @param Sigma_alpha variational Gaussian variances (for \code{s_u=1} component)
+#' @param Sigma_alpha variational Gaussian variances (for `s_u=1` component)
 #' - this is an array of dimension (K-1, K-1, p); in R, we used a list of p matrices,
 #' each of dimension K-1 by K-1.
 #' @param anc a list of pL vectors, each vector has the node ids of the ancestors;
@@ -72,13 +72,13 @@ get_moments_cpp <- function(prob, prob_gamma, mu_gamma, sigma_gamma, mu_alpha, S
 
 #' Calculate variational moments during the updates (only for node u)
 #'
-#' update only selected moments that need update when iterating over u (except for \code{rmat})
+#' update only selected moments that need update when iterating over u (except for `rmat`)
 #'
-#' (one-node version of \code{\link{get_moments_cpp}})
+#' (one-node version of [get_moments_cpp()])
 #' @param leaves_u the leaf descendant node ids for node u
-#' @param E_beta,E_beta_sq,E_eta,E_eta_sq moment updates produced by \code{\link{get_moments_cpp}}
-#' @param prob variational probabilities for \code{s_u}; length p
-#' @param prob_gamma should be fixed: \code{c(1,rep(0,p-1))}
+#' @param E_beta,E_beta_sq,E_eta,E_eta_sq moment updates produced by [get_moments_cpp()]
+#' @param prob variational probabilities for `s_u`; length p
+#' @param prob_gamma should be fixed: `c(1,rep(0,p-1))`
 #' @inheritParams get_moments_cpp
 #' @return a List
 #'
@@ -102,28 +102,32 @@ get_moments_cpp_eco <- function(leaves_u, E_beta, E_beta_sq, E_eta, E_eta_sq, pr
 #'
 #' @param node_select a vector of zeros and ones, indicating which nodes
 #' are selected based on variational probability (prob > 0.5). Length = p
-#' @param mu_gamma variational Gaussian means (for \code{s_u=1} component) for J*K
+#' @param mu_gamma variational Gaussian means (for `s_u=1` component) for J*K
 #' logit(class-specific response probabilities); (J,K,p) array; In R, we used a list of p (J,K) matrices
-#' @param sigma_gamma variational Gaussian variances (for \code{s_u=1} component)
+#' @param sigma_gamma variational Gaussian variances (for `s_u=1` component)
 #' for J*K logit(class-specific response probabilities); (J,K,p) array
-#' @param mu_alpha variational Gaussian mean vectors (for \code{s_u=1} component) -
+#' @param mu_alpha variational Gaussian mean vectors (for `s_u=1` component) -
 #' this is a p by K-1 matrix; in R, we used a list of p vectors (each of length K-1)
-#' @param Sigma_alpha variational Gaussian variances (for \code{s_u=1} component)
+#' @param Sigma_alpha variational Gaussian variances (for `s_u=1` component)
 #' - this is an array of dimension (K-1, K-1, p); in R, we used a list of p matrices,
 #' each of dimension K-1 by K-1.
 #' @param anc a list of pL vectors, each vector has the node ids of the ancestors;
 #' lengths may differ. The ancestors include the node concerned.
 #' @param cardanc a numeric vector of length pL; integers. The number
 #' of ancestors for each leaf node
-#' @param z  = \code{ ci_level+(1-ci_level)/2}
+#' @param z  = ` ci_level+(1-ci_level)/2`
 #'
 #' @return a list
 #' \describe{
 #'
+#' # response probability profiles:
 #' Named("beta_est")=beta_est,
 #' Named("beta_sd_est")=beta_sd_est,
 #' Named("beta_cil")=beta_cil,
 #' Named("beta_ciu")=beta_ciu,
+#'
+#'
+#' # class-specific prevalences:
 #' Named("eta_est")=eta_est,
 #' Named("eta_var_est")=eta_var_est,
 #' Named("eta_cil")=eta_cil,
@@ -137,12 +141,12 @@ get_est_cpp <- function(node_select, mu_gamma, sigma_gamma, mu_alpha, Sigma_alph
 
 #' Update the variational probabilities of each observation in one of K classes
 #'
-#' This function updates the N by K matrix \code{rmat} in the package
+#' This function updates the N by K matrix `rmat` in the package
 #'
 #' @param psi,g_psi,phi,g_phi local variational parameters
 #' @param X transformed data: 2Y-1
-#' @param E_beta,E_eta,E_beta_sq,E_eta_sq moment updates produced by \code{\link{get_moments_cpp}}
-#' @param v_lookup a vector of length equal to the total number of rows in \code{X};
+#' @param E_beta,E_eta,E_beta_sq,E_eta_sq moment updates produced by [get_moments_cpp()]
+#' @param v_lookup a vector of length equal to the total number of rows in `X`;
 #' each element is an integer, indicating which leaf does the observation belong to.
 #'
 #' @return  N by K variational multinomial probabilities; row sums are 1s.
@@ -156,13 +160,13 @@ update_rmat <- function(psi, g_psi, phi, g_phi, X, E_beta, E_eta, E_beta_sq, E_e
 
 #' Update the variational probabilities of each observation in one of K classes
 #'
-#' This function updates the N by K matrix \code{rmat} in the package
+#' This function updates the N by K matrix `rmat` in the package
 #'
 #' @param unknown_ids a vector of integers representing subject ids with unkonwn class memberships
 #' @param psi,g_psi,phi,g_phi local variational parameters
 #' @param X transformed data: 2Y-1
-#' @param E_beta,E_eta,E_beta_sq,E_eta_sq moment updates produced by \code{\link{get_moments_cpp}}
-#' @param v_lookup a vector of length equal to the total number of rows in \code{X};
+#' @param E_beta,E_eta,E_beta_sq,E_eta_sq moment updates produced by [get_moments_cpp()]
+#' @param v_lookup a vector of length equal to the total number of rows in `X`;
 #' each element is an integer, indicating which leaf does the observation belong to.
 #'
 #' @return  N by K variational multinomial probabilities; row sums are 1s.
@@ -175,15 +179,15 @@ update_rmat_partial <- function(unknown_ids, psi, g_psi, phi, g_phi, X, E_beta, 
 }
 
 #' [update gamma and alpha together.]Update the variational mean and variance for logit of
-#' class-specific response probabilities (for the \code{s_u=1} component)
+#' class-specific response probabilities (for the `s_u=1` component)
 #'
 #' shared tau's
 #'
 #' @param u node id (internal or leaf node
 #' @param g_psi,g_phi g of local variational parameters
 #' @param tau_2_t_u,tau_1_t_u variational Gaussian variances for gamma and alpha
-#' @param E_beta,E_zeta_u moment updates produced by \code{\link{get_moments_cpp}};
-#' \code{E_zeta_u} is directly calculated: \code{prob[u]*sigma_gamma[u,,]}
+#' @param E_beta,E_zeta_u moment updates produced by [get_moments_cpp()];
+#' `E_zeta_u` is directly calculated: `prob[u]*sigma_gamma[u,,]`
 #' @param X transformed data: 2Y-1
 #' @param E_eta leaves' expected eta
 #' @param E_xi_u node u's expected xi
@@ -214,15 +218,15 @@ update_gamma_alpha_subid <- function(u, g_psi, g_phi, tau_2_t_u, tau_1_t_u, E_be
 }
 
 #' [update gamma and alpha together.]Update the variational mean and variance for logit of
-#' class-specific response probabilities (for the \code{s_u=1} component)
+#' class-specific response probabilities (for the `s_u=1` component)
 #'
 #' separate tau's
 #'
 #' @param u node id (internal or leaf node
 #' @param g_psi,g_phi g of local variational parameters
 #' @param tau_2_t_u,tau_1_t_u variational Gaussian variances for gamma and alpha
-#' @param E_beta,E_zeta_u moment updates produced by \code{\link{get_moments_cpp}};
-#' \code{E_zeta_u} is directly calculated: \code{prob[u]*sigma_gamma[u,,]}
+#' @param E_beta,E_zeta_u moment updates produced by [get_moments_cpp()];
+#' `E_zeta_u` is directly calculated: `prob[u]*sigma_gamma[u,,]`
 #' @param X transformed data: 2Y-1
 #' @param E_eta leaves' expected eta
 #' @param E_xi_u node u's expected xi
@@ -264,7 +268,7 @@ getC <- function(u, g_phi, rmat, tau_1_t, h_pau, subject_ids, v_lookup) {
 
 #' Initialize sigma alpha for distinct tau
 #'
-#' @param u,g_phi,rmat,tau_1_t,h_pau,subject_ids,v_lookup see \code{\link{getC}}
+#' @param u,g_phi,rmat,tau_1_t,h_pau,subject_ids,v_lookup see [getC()]
 #'
 #' @useDynLib lotR
 #' @importFrom Rcpp sourceCpp
@@ -275,11 +279,11 @@ getC_separate_tau <- function(u, g_phi, rmat, tau_1_t, h_pau, subject_ids, v_loo
 #' calculate line 1 and 2 and 13 of ELBO to assess convergence
 #' and choose among converged estimates from many restarts
 #'
-#' @param psi,g_psi,phi,g_phi see \code{\link{update_hyperparams}}
+#' @param psi,g_psi,phi,g_phi see [update_hyperparams()]
 #' @param rmat a matrix of variational probabilities of all observations
 #' belong to K classes; N by K; each row sums to 1
 #' @param E_beta,E_beta_sq,E_eta,E_eta_sq moments during
-#' VI updates from \code{\link{get_moments_cpp}}
+#' VI updates from [get_moments_cpp()]
 #' @param X transformed data: 2Y-1
 #' @param v_lookup a vector of indicators; of size N, each indicating the leaf id (from 1 to pL)
 #' for each sample.

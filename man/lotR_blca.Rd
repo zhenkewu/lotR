@@ -23,5 +23,5 @@ of class membership.
 Simulate from latent class models with subject-specific indicators
 }
 \seealso{
-\code{\link[BayesLCA]{blca}}
+\code{\link[BayesLCA:blca]{BayesLCA::blca()}}
 }

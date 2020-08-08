@@ -11,7 +11,7 @@ lcm_tree(
   weighted_edge = TRUE,
   Z_obs = NULL,
   ci_level = 0.95,
-  get_lcm_by_group = TRUE,
+  get_lcm_by_group = FALSE,
   update_hyper_freq = 50,
   print_freq = 10,
   quiet = FALSE,
@@ -52,7 +52,7 @@ an attribute \code{levels} containing integer values from 1 to \code{max(V(mytre
 In this case, the levels attribute specifies groups of nodes that share common
 hyperparameters \code{rho[f]}, \code{tau_1[f]}, and \code{tau_2[f]}. If \code{V(mytree)$levels} is \code{NULL},
 the default is two levels of hyperparameters: one for all leaf nodes, and one
-for all internal nodes. NB: this needs to be checked in the \code{\link{design_tree}}}
+for all internal nodes. NB: this needs to be checked in the \code{\link[=design_tree]{design_tree()}}}
 
 \item{weighted_edge}{default to \code{TRUE}, which indicates the model will
 use the values of branch lengths (\code{h_pau} of \code{V(mytree)}).}
@@ -62,7 +62,7 @@ the second column is a mix of NA or integers: NA for unknown and integers for kn
 classes.}
 
 \item{ci_level}{A number between 0 and 1 giving the desired credible interval.
-For example, \code{ci_level = 0.95} (the default) returns a 95\% credible interval}
+For example, \code{ci_level = 0.95} (the default) returns a 95\\% credible interval}
 
 \item{get_lcm_by_group}{If \code{TRUE}, lotR will also return the maximum likelihood estimates of the
 coefficients for each leaf_ids group discovered by the model.
@@ -89,7 +89,7 @@ parameters of the beta prior on rho for each level, where \code{L} is the
 number of levels.
 Default is \code{list(a = rep(1, L), b = rep(1, L), tau_update_levels = c(1,2))} (uniform hyperprior)
 Other options include specifying included or excluded nodes via
-e.g., \code{s_u_zeroset = (1:265)[-c(1)],s_u_oneset = c(1))} to fit a single
+e.g., \verb{s_u_zeroset = (1:265)[-c(1)],s_u_oneset = c(1))} to fit a single
 big LCM (collapsing all nodes except the root node, the first node)}
 
 \item{tol}{Convergence tolerance for the objective function.
@@ -130,13 +130,13 @@ Default is the working directory.}
 variational parameters and hyperparameters. Supplying good initial values can be challenging,
 and \code{lotR()} provides a way to guess initial values based on transformations
 of conditional logistic regression estimates of the effect sizes
-for each individual leaf_ids (see \code{\link{initialize_tree_lcm}}).
+for each individual leaf_ids (see \code{\link[=initialize_tree_lcm]{initialize_tree_lcm()}}).
 The most common use for \code{vi_params_init} and \code{hyperparams_init} is to supply starting
 values based on previous output from \code{lotR()};
 see the \code{vignette('lotR')} for examples.
 The user can provide initial values for all parameters or a subset.
 When initial values for one or more parameters are not
-supplied, the missing values will be filled in by \code{\link{initialize_tree_lcm}}.}
+supplied, the missing values will be filled in by \code{\link[=initialize_tree_lcm]{initialize_tree_lcm()}}.}
 
 \item{random_init}{If \code{TRUE}, some random variability will be added to the initial values.
 The default is \code{FALSE}, unless \code{nrestarts > 1}, in which case
@@ -149,19 +149,19 @@ the initial values:
 \describe{
 \item{\code{tau_lims}}{a vector of length 2, where \code{tau_lims[1]} is between 0 and 1,
 and \code{tau_lims[2] > 1}. The initial values for the hyperparameter \code{tau} will
-be chosen uniformly at random in the range \code{(tau_init * tau_lims[1], tau_init * tau_lims[2])},
+be chosen uniformly at random in the range \verb{(tau_init * tau_lims[1], tau_init * tau_lims[2])},
 where \code{tau_init} is the initial value for \code{tau} either supplied in \code{hyperparams_init}
-or guessed using \code{\link{initialize_tree_lcm}}.}
+or guessed using \code{\link[=initialize_tree_lcm]{initialize_tree_lcm()}}.}
 \item{\code{psi_sd_frac}}{a value between 0 and 1. The initial values for the auxiliary parameters
 \code{psi} will have a normal random variate added to them with standard deviation equal to
 \code{psi_sd_frac} multiplied by the initial value for eta either supplied in \code{hyperparams_init} or guessed
-using \code{\link{initialize_tree_lcm}}. Absolute values are then taken for any
-values of \code{psi} that are \code{< 0}.}
+using \code{\link[=initialize_tree_lcm]{initialize_tree_lcm()}}. Absolute values are then taken for any
+values of \code{psi} that are \verb{< 0}.}
 \item{\code{phi_sd_frac}}{same as above}.
 \item{\code{mu_gamma_sd_frac}}{a value between 0 and 1. The initial values for
 \code{mu} will have a normal random variate added to them with standard deviation equal to
 \code{mu_sd_frac} multiplied by the absolute value of the initial value for \code{mu_gamma_sd_frac} either supplied in
-\code{vi_params_init} or guessed using \code{\link{initialize_tree_lcm}}.}
+\code{vi_params_init} or guessed using \code{\link[=initialize_tree_lcm]{initialize_tree_lcm()}}.}
 \item{\code{mu_alpha_sd_frac}}{same as above.}
 \item{\code{u_sd_frac}}{a value between 0 and 1. The initial value for the node inclusion probabilities
 will first be transformed to the log odds scale to obtain \code{u}. A normal random variate will be
@@ -177,9 +177,9 @@ updates with the last iteration from the old results.}
 a list also of class "lcm_tree"
 
 \describe{
-  res <- make_list(mod,mod_restarts,mytree,dsgn,prob_est,est_ad_hoc)
-     class(res) <- c("lcm_tree","list")
-   }
+res <- make_list(mod,mod_restarts,mytree,dsgn,prob_est,est_ad_hoc)
+class(res) <- c("lcm_tree","list")
+}
 }
 \description{
 wrapper function for fitting and summaries
@@ -254,6 +254,8 @@ mod0     <- lcm_tree(Y,curr_leaves,tr,
                                           # should this be set as default?
                                           s_u_zeroset = NULL,
                                           s_u_oneset = c(1)),
+                     # hyperparams_init = list(tau_1=matrix(9/4,nrow=2,ncol=K-1),
+                     #                         tau_2=array(9/4,c(2,J,K))),
                      vi_params_init = list(prob=rep(0.95,p)),
                      random_init = !TRUE,
                      nrestarts     = nrestarts,
@@ -263,7 +265,7 @@ mod0     <- lcm_tree(Y,curr_leaves,tr,
                      get_lcm_by_group = TRUE, #<--- check what are the prereq.
                      print_freq    = 10,update_hyper_freq = 50, max_iter = 5000,
                      tol           = 1e-6,
-                     tol_hyper     = 1e-4,
+                     tol_hyper     = 1e-3,
                      allow_continue = FALSE)#,
 #log_restarts =!TRUE,
 #log_dir = log_dir)
@@ -273,8 +275,10 @@ mod0     <- lcm_tree(Y,curr_leaves,tr,
 ###############################################################################
 plot(mod0,layout = "slanted", horizontal = FALSE)
 
-mod0$prob_est$pi_collapsed
+print(mod0)
+
 which(mod0$mod$vi_params$prob>0.5)
+unique(lotR_example_data_tree$truth$pi_mat)
 
 }
 \concept{lcm_tree functions}

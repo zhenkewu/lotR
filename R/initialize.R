@@ -51,31 +51,31 @@
 #' node as 1.
 #' @param levels a numeric vector of integers from 1 to L, indicating for each node
 #' (leaf or internal node) which set of hyperparameters to use. For example,
-#' if we want the root node to have a separate \code{tau_1} and \code{tau_2}, can specify it to
+#' if we want the root node to have a separate `tau_1` and `tau_2`, can specify it to
 #' its own level. Another example would be to have distinct sets of hyperparameters
 #' for leaf and non-leaf nodes. The levels are pre-specified, not estimated.
-#' @param vi_params the list of variational parameters. \code{mu_gamma},
-#' \code{mu_alpha}, \code{prob} (for s_u), \code{a_t}, \code{b_t},\code{sigma_gamma}, \code{Sigma_alpha}
-#' \code{prob},\code{prob_gamma=c(1,rep(0,p-1))} (this is not updated).
-#' @param hyperparams the list of hyperparameters, \code{tau_1} and \code{tau_2} -
+#' @param vi_params the list of variational parameters. `mu_gamma`,
+#' `mu_alpha`, `prob` (for s_u), `a_t`, `b_t`,`sigma_gamma`, `Sigma_alpha`
+#' `prob`,`prob_gamma=c(1,rep(0,p-1))` (this is not updated).
+#' @param hyperparams the list of hyperparameters, `tau_1` and `tau_2` -
 #' these are initial specifications of the hyperparameters - they are updated by
-#'  \code{tau_1_t}, \code{tau_2_t}; \code{psi}, \code{g_psi}, \code{phi}, \code{g_phi} (these
-#' are not hyperparameters, but are updated with the same schedule as \code{tau_1_t} and \code{tau_2_t}).
+#'  `tau_1_t`, `tau_2_t`; `psi`, `g_psi`, `phi`, `g_phi` (these
+#' are not hyperparameters, but are updated with the same schedule as `tau_1_t` and `tau_2_t`).
 #' @param hyper_fixed a list of fixed hyperparameters, such as those
-#' in the Beta priors for \code{rho}, e.g., \code{list(a=c(1,1,99),b=c(1,1,1))},
-#' \code{K}, number of classes.
+#' in the Beta priors for `rho`, e.g., `list(a=c(1,1,99),b=c(1,1,1))`,
+#' `K`, number of classes.
 #' for three levels, where the first and second levels are uniform Beta, the third level
-#' has \code{Beta(99,1)} prior - this nearly ensures setting \code{s_u=1}.
-#' @param random_init logical; \code{TRUE} for adding additional variability to the
+#' has `Beta(99,1)` prior - this nearly ensures setting `s_u=1`.
+#' @param random_init logical; `TRUE` for adding additional variability to the
 #' initial values. This is needed if the algorithm needs multiple random starts
 #' to choose the best converged values.
 #' @param random_init_vals NB: fill out specific elements
-#' @param subject_id_list,v_units,shared_tau see \code{\link{update_vi_params}}
+#' @param subject_id_list,v_units,shared_tau see [update_vi_params()]
 #'
 #' @importFrom BayesLCA blca unMAP
 #' @importFrom stats runif rnorm
 #' @family internal function
-#' @return a list \code{vi_params,hyperparams} containing the initial values.
+#' @return a list `vi_params,hyperparams` containing the initial values.
 #'
 #' @export
 initialize_tree_lcm <- function(Y,A,Z_obs,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{update_gamma_alpha_subid}
 \alias{update_gamma_alpha_subid}
-\title{[update gamma and alpha together.]Update the variational mean and variance for logit of
+\title{\link{update gamma and alpha together.}Update the variational mean and variance for logit of
 class-specific response probabilities (for the \code{s_u=1} component)}
 \usage{
 update_gamma_alpha_subid(
@@ -30,7 +30,7 @@ update_gamma_alpha_subid(
 
 \item{tau_2_t_u, tau_1_t_u}{variational Gaussian variances for gamma and alpha}
 
-\item{E_beta, E_zeta_u}{moment updates produced by \code{\link{get_moments_cpp}};
+\item{E_beta, E_zeta_u}{moment updates produced by \code{\link[=get_moments_cpp]{get_moments_cpp()}};
 \code{E_zeta_u} is directly calculated: \code{prob[u]*sigma_gamma[u,,]}}
 
 \item{X}{transformed data: 2Y-1}
@@ -55,12 +55,12 @@ each element is an integer, indicating which leaf does the observation belong to
 \value{
 a list
 \describe{
-  \item{resA}{actually 1/A in the paper, this is variance}
-  \item{resB}{}
-  \item{logresBsq_o_A}{}
-  \item{resC}{actually 1/C in the paper, this is variance}
-  \item{resD}{}
-  \item{logresDsq_o_C}{}
+\item{resA}{actually 1/A in the paper, this is variance}
+\item{resB}{}
+\item{logresBsq_o_A}{}
+\item{resC}{actually 1/C in the paper, this is variance}
+\item{resD}{}
+\item{logresDsq_o_C}{}
 }
 }
 \description{

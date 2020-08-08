@@ -1,19 +1,19 @@
 #' Fit latent class model with tree-structured shrinkage over the observations
-#' (this function largely follows Thomas, E. \code{moretrees})
+#' (this function largely follows Thomas, E. `moretrees`)
 #'
 #'
 #' @param dsgn a list of data and other information organized according to the tree
 #' @param vi_params_init,hyperparams_init,random_init,random_init_vals,tol,tol_hyper,max_iter,print_freq,quiet,plot_fig,shared_tau,update_hyper_freq,hyper_fixed
-#' initial values and updating protocols. Explained more in the wrapper function \code{\link{lcm_tree}}
+#' initial values and updating protocols. Explained more in the wrapper function [lcm_tree()]
 #' @return a list with model updates; because the variational posterior
 #' is comprised of familiar distributional forms that can be  determined
 #' by the moments, the returned values are moments:
 #'
 #' \describe{
-#' \item{\code{vi_params}}{named list of final variational parameter estimates}
-#' \item{\code{hyperparams}}{named list of final hyperparameter estimates}
-#' \item{\code{hyper_fixed}}{named list of fixed hyperparameters}
-#' \item{\code{ELBO_track}}{numeric vector containing the values of the objective function
+#' \item{`vi_params`}{named list of final variational parameter estimates}
+#' \item{`hyperparams`}{named list of final hyperparameter estimates}
+#' \item{`hyper_fixed`}{named list of fixed hyperparameters}
+#' \item{`ELBO_track`}{numeric vector containing the values of the objective function
 #' (ELBO) at the end of every iteration}
 #' }
 #' @importFrom graphics barplot image
@@ -170,11 +170,12 @@ fit_lcm_tree <- function(dsgn,
 #' @param members_list a list, of length G, which is the number of unique
 #' groups of leaves
 #' @param K the number of classes
-#' @param ... other arguments for \code{\link[BayesLCA]{blca}}
+#' @param ci_level a probability to indicate the credible interval's level
+#' @param ... other arguments for [BayesLCA::blca()]
 #' @importFrom BayesLCA blca
 #' @export
 
-lcm_by_group <- function(Y,leaf_ids,members_list,K,...){
+lcm_by_group <- function(Y,leaf_ids,members_list,K,ci_level,...){
   G <- length(unique(members_list))
   res <- vector("list",G)
   for (g in 1:G){

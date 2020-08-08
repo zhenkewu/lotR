@@ -2,14 +2,14 @@ if(getRversion() >= "2.15.1") utils::globalVariables(c("Group"))
 
 #' plots the groups discovered by lcm_tree on the tree for observations.
 #'
-#' @param x Output from \code{moretrees()}
+#' @param x Output from `moretrees()`
 #' An object of class "moretrees_result".
 #' @param group.text.size Text size for the group labels
 #' @param group.text.offset Offset of the group label from the
 #' leaves of the tree
 #' @param legend.text.size Text size for legend
 #' @param layout Layout for the tree, most likely "rectangular" (the default)
-#' or "slanted", but see the \code{layout} option of \code{ggtree()} for more
+#' or "slanted", but see the `layout` option of `ggtree()` for more
 #' possibilities
 #' @param horizontal If TRUE (the default), the tree will be plotted with
 #' the root node at the top and all other nodes below. If FALSE, the tree

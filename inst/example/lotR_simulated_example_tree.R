@@ -67,6 +67,8 @@ mod0     <- lcm_tree(Y,curr_leaves,tr,
                                           # should this be set as default?
                                           s_u_zeroset = NULL,
                                           s_u_oneset = c(1)),
+                     # hyperparams_init = list(tau_1=matrix(9/4,nrow=2,ncol=K-1),
+                     #                         tau_2=array(9/4,c(2,J,K))),
                      vi_params_init = list(prob=rep(0.95,p)),
                      random_init = !TRUE,
                      nrestarts     = nrestarts,
@@ -76,7 +78,7 @@ mod0     <- lcm_tree(Y,curr_leaves,tr,
                      get_lcm_by_group = TRUE, #<--- check what are the prereq.
                      print_freq    = 10,update_hyper_freq = 50, max_iter = 5000,
                      tol           = 1e-6,
-                     tol_hyper     = 1e-4,
+                     tol_hyper     = 1e-3,
                      allow_continue = FALSE)#,
 #log_restarts =!TRUE,
 #log_dir = log_dir)
@@ -86,6 +88,8 @@ mod0     <- lcm_tree(Y,curr_leaves,tr,
 ###############################################################################
 plot(mod0,layout = "slanted", horizontal = FALSE)
 
-mod0$prob_est$pi_collapsed
+print(mod0)
+
 which(mod0$mod$vi_params$prob>0.5)
+unique(lotR_example_data_tree$truth$pi_mat)
 

@@ -11,7 +11,7 @@ simulate_lcm_tree(n, itemprob, mytree, pi_mat, h_pau)
 
 \item{itemprob}{item probabilities; this is shared across leaf nodes; K by J}
 
-\item{mytree}{see \code{\link{design_tree}}}
+\item{mytree}{see \code{\link[=design_tree]{design_tree()}}}
 
 \item{pi_mat}{class probabilities for  pL leaf nodes; it is pL by K.}
 
@@ -90,10 +90,10 @@ for (v in seq_along(leaves)){
 # s = c(1, 1,1,0,0, rep(0,pL)) # effective nodes
 h_pau = rep(1,p)
 
-simulate_lcm_tree(n,itemprob,mytree,pi_mat,h_pau)
+lotR_example_data_tree <- simulate_lcm_tree(n,itemprob,mytree,pi_mat,h_pau)
 #save the simulated data to the R package for illustration:
-#save(lotR_example_data_tree, file = "data/lotR_example_data_tree.rda", compress = "xz")
+save(lotR_example_data_tree, file = "data/lotR_example_data_tree.rda", compress = "xz")
 }
 \seealso{
-\code{\link[BayesLCA]{blca}}
+\code{\link[BayesLCA:blca]{BayesLCA::blca()}}
 }
