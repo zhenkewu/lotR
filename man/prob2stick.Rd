@@ -2,17 +2,22 @@
 % Please edit documentation in R/utils.R
 \name{prob2stick}
 \alias{prob2stick}
-\title{transform probability to stick proportions.}
+\title{transform a vector of probabilities that sum to one to stick proportions.}
 \usage{
 prob2stick(x)
 }
 \arguments{
-\item{x}{a vector of probabilities (K)}
+\item{x}{a vector of probabilities (K); sums to \code{1}}
 }
 \value{
 a vector K, with last element of 1; the elements are stick lengths in
 the remaining part
 }
 \description{
-transform probability to stick proportions.
+transform a vector of probabilities that sum to one to stick proportions.
+}
+\examples{
+
+prob2stick(c(0.5,0.2,0.3))
+
 }

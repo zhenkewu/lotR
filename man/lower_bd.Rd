@@ -8,10 +8,11 @@ lower_bd(xi)
 }
 \arguments{
 \item{xi}{local variational parameter, positive value, this is where
-the \code{expit(xi) = lower_bd(xi)}}
+the \code{expit(xi) = lower_bd(xi)}; this is where the quadratic
+and expit curve contact}
 }
 \value{
-a positive value between 0 and 1
+a positive value between \code{0} and \code{1}
 }
 \description{
 lower bound is quadratic in the exponent
@@ -33,6 +34,12 @@ for (i in 1:length(xi_seq)){
   legend("topleft",c("expit","bound"),col=c("orange","blue"),lty=c(1,1))
 }
 
+}
+\references{
+\itemize{
+\item Jaakkola, Tommi S., and Michael I. Jordan. "Bayesian parameter estimation via variational methods." Statistics and Computing 10.1 (2000): 25-37.
+\url{http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.399.9368&rep=rep1&type=pdf}
+}
 }
 \seealso{
 Other VI functions: 

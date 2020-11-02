@@ -58,9 +58,9 @@ design_tree <- function(Y,leaf_ids,mytree,weighted_edge=FALSE,Z_obs = NULL){ # b
   # rootnode="Node1"
   # weighted_edge <- FALSE
 
-  if (!is.character(leaf_ids)) stop("[lotR]leaf_ids is not a character object")
-  if (!igraph::is.igraph(mytree)) stop("[lotR]'mytree' is not a graph object")
-  if (!igraph::is.directed(mytree)) stop()
+  if (!is.character(leaf_ids)) stop("[lotR] leaf_ids is not a character object.")
+  if (!igraph::is.igraph(mytree)) stop("[lotR] 'mytree' is not a graph object.")
+  if (!igraph::is.directed(mytree)) stop("[lotR] 'mytree' is not directed.")
 
   cat("\n\n [lotR] tree ", c("does not have ", "has ")[weighted_edge+1], "weighed edges.\n\n")
 
@@ -68,7 +68,7 @@ design_tree <- function(Y,leaf_ids,mytree,weighted_edge=FALSE,Z_obs = NULL){ # b
   leaves <- names(igraph::V(mytree)[igraph::degree(mytree, mode = "out") == 0])
   rootnode <- names(igraph::V(mytree)[igraph::degree(mytree, mode = "in") == 0])
   if(!setequal(unique(leaf_ids), leaves))
-  {stop("[lotR]Not all leaf_ids are leaves of tree")}
+  {stop("[lotR] Not all `leaf_ids` are leaves of tree")}
 
   # Re-order nodes to have internal nodes first, then leaves: <------- ordered nodes.
   nodes <- c(nodes[!(nodes %in% leaves)], leaves)
@@ -79,12 +79,12 @@ design_tree <- function(Y,leaf_ids,mytree,weighted_edge=FALSE,Z_obs = NULL){ # b
     levels <- rep(1, length(nodes))
     levels[nodes %in% leaves] <- 2
   } else {
-    # Otherwise, use levels supplied
+    # Otherwise, use the levels supplied; can be a single level too:
     levels <- igraph::V(mytree)[nodes]$levels    # <--  ordered.
-    levels <- levels[match(names(igraph::V(mytree)), nodes)] # <--- ordered. same as above?
+    levels <- levels[match(names(igraph::V(mytree)), nodes)] # <--- ordered. same as above???
   }
   if (sum(table(levels) < 5) > 0) {
-    warning("[lotR]Some levels contain fewer than five nodes: this may lead to problems
+    warning("[lotR] Some levels contain fewer than five nodes: this may lead to problems
             with estimating variance parameters. Recommend increasing the number
             of nodes per level.")
     ## the variance parameter for the root node is diffuse enough that
@@ -130,8 +130,7 @@ design_tree <- function(Y,leaf_ids,mytree,weighted_edge=FALSE,Z_obs = NULL){ # b
 
   # leaf.descendants:
   leaf_ids_nodes <- sapply(descendants, function(d, leaves) which(leaves %in% d),
-                           leaves = leaves,
-                           simplify = FALSE)
+                           leaves = leaves,simplify = FALSE)
 
   # Change leaf_ids to integers
   leaf_ids <- sapply(leaf_ids, function(o) which(leaves == o))
@@ -151,7 +150,7 @@ design_tree <- function(Y,leaf_ids,mytree,weighted_edge=FALSE,Z_obs = NULL){ # b
   parent_nm <- c(rootnode,
                  names(unlist(lapply(igraph::ego(mytree, order = 1,
                                                  nodes = nodes, mode = "in")[-1],"[",-1))))
-  h_pau       <- rep(1,p)
+  h_pau       <- rep(1,p) # equally weighted with default lengths 1.
   if (weighted_edge){
     for (u in 2:p){
       res <- shortest_paths(mytree, # here we are using the original mytree, not "nodes" which is reordered.
@@ -162,7 +161,7 @@ design_tree <- function(Y,leaf_ids,mytree,weighted_edge=FALSE,Z_obs = NULL){ # b
       h_pau[u] <- E(mytree)$weight[sapply(res$epath[[1]],
                                           function(e) which(E(mytree) == e))]
     }
-    h_pau <- pmax(h_pau,1e-8) #<-----------------------------------------IS THIS A MUST?
+    h_pau <- pmax(h_pau,1e-8) # just to make the weights non-zero. <-----------------------------------------IS THIS A MUST?
   }
   #h_pau[1] <- mean(h_pau[-1])
 

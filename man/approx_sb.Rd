@@ -14,7 +14,7 @@ approximation to a vector of probabilities
 }
 \description{
 the lower bound is based on the best set of local variational parameters
-which are logit of the stick-breaking form of the supplied vector
+which comprise of logit of the stick-breaking form of the supplied vector
 }
 \examples{
 

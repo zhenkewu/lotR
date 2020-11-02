@@ -7,7 +7,8 @@
 logexpit(x)
 }
 \arguments{
-\item{x}{a number or a vector of numbers}
+\item{x}{a number or a vector of numbers
+a}
 }
 \description{
 log expit

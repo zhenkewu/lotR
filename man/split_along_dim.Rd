@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{split_along_dim}
 \alias{split_along_dim}
-\title{create a list along a dimension of an array}
+\title{create a list with members being the matrices along a specified dimension of an array}
 \usage{
 split_along_dim(a, n)
 }

@@ -36,30 +36,31 @@ lcm_tree(
 }
 \arguments{
 \item{Y}{An \code{n} x \code{J} matrix of binary (0 or 1) measurements,
-where each of n observation may belong to a leaf node; we hope to group n subjects into
-groups possibly coarser than the leaf-induced groups, and in each group, we have a homogeneous latent
-class model}
+where each of \code{n} observation may belong to a leaf node; we aim to group \code{n} subjects into
+groups that are possibly coarser than the leaf-induced groups, and in each group,
+we have a homogeneous latent class model}
 
 \item{leaf_ids}{Character vector of length \code{n}. \code{leaf_ids[i]} is a string indicating the
-leaf_ids experienced by unit \code{i}.}
+\code{leaf_id} for unit \code{i} (e.g., the sequence type of an E.coli isolate).}
 
 \item{mytree}{A directed \code{igraph} object. This is a tree representing the relationships
-among the leaf_ids. The leaves represent individual leaf_ids, and internal nodes
-represent leaf_ids categories consisting of their leaf descendants. All nodes
-of mytree must have unique names as given by \code{names(V(mytree))}. The names of the leaves must
-be equal to the unique elements of leaf_ids. The vertices of \code{mytree}, \code{V(mytree)}, may have
-an attribute \code{levels} containing integer values from 1 to \code{max(V(mytree)$levels)}.
-In this case, the levels attribute specifies groups of nodes that share common
-hyperparameters \code{rho[f]}, \code{tau_1[f]}, and \code{tau_2[f]}. If \code{V(mytree)$levels} is \code{NULL},
+among the \code{leaf_ids}. Every leaf node represents an \code{leaf_id}, and internal nodes
+represent leaf_ids subgroups consisting of their leaf descendants. All nodes
+of \code{mytree} must have unique names as given by \code{names(V(mytree))}. The names of the leaves must
+be equal to the number of unique elements of \code{leaf_ids}. The vertices of \code{mytree},
+\code{V(mytree)}, may have an attribute \code{levels} containing integer values from \code{1} to \code{max(V(mytree)$levels)}.
+In this case, the \code{levels} attribute specifies groups of nodes that share common
+hyperparameters \code{rho[f]}, \code{tau_1[f]}, and \code{tau_2[f]}, where \code{f} is an integer
+that represents a level. If \code{V(mytree)$levels} is \code{NULL},
 the default is two levels of hyperparameters: one for all leaf nodes, and one
-for all internal nodes. NB: this needs to be checked in the \code{\link[=design_tree]{design_tree()}}}
+for all internal nodes. NB: this needs to be checked in the \code{\link[=design_tree]{design_tree()}} # <----------??}
 
 \item{weighted_edge}{default to \code{TRUE}, which indicates the model will
 use the values of branch lengths (\code{h_pau} of \code{V(mytree)}).}
 
 \item{Z_obs}{a matrix of two columns, first column is subject ids (of all samples),
-the second column is a mix of NA or integers: NA for unknown and integers for known
-classes.}
+the second column is a mix of \code{NA} or integers: \code{NA} for unknown class memberships
+and integers for known classes.}
 
 \item{ci_level}{A number between 0 and 1 giving the desired credible interval.
 For example, \code{ci_level = 0.95} (the default) returns a 95\% credible interval}
@@ -74,18 +75,20 @@ Default = every 50 iterations.}
 \item{print_freq}{How often to print out iteration number and current value of epsilon
 (the difference in objective function value for the two most recent iterations).}
 
-\item{quiet}{default to FALSE, which prints empirical class probabilities and updates on
+\item{quiet}{default to \code{FALSE}, which prints empirical class probabilities and updates on
 tau's}
 
-\item{plot_fig}{plot figure about prob and response profile (1st node)}
+\item{plot_fig}{plot figure about \code{prob} (the probability of each node diffuse from
+the parent node, i.e., s_u=1 for using the slab component) and response profile (1st node)}
 
-\item{shared_tau}{logical: \code{TRUE} for sharing the tau_1 for alpha's in
-the same node; same for tau_2 (gamma's). Default is \code{FALSE}}
+\item{shared_tau}{logical: \code{TRUE} for sharing the \code{tau_1} for \code{alpha}'s in
+the same node; similarly for \code{tau_2} (\code{gamma}'s). Default is \code{FALSE}}
 
-\item{hyper_fixed}{Fixed values of hyperprior parameters for rho.
+\item{hyper_fixed}{Fixed values of hyperprior parameters for \code{rho}, the probability
+of a slab component (\code{s_u=1}).
 This should be a list with two elements:
-a and b, both numeric vectors of length \code{L}, representing the
-parameters of the beta prior on rho for each level, where \code{L} is the
+\code{a} and \code{b}, both numeric vectors of length \code{L}, representing the
+parameters of the beta prior on \code{rho} for each level, where \code{L} is the
 number of levels.
 Default is \code{list(a = rep(1, L), b = rep(1, L), tau_update_levels = c(1,2))} (uniform hyperprior)
 Other options include specifying included or excluded nodes via
@@ -95,21 +98,19 @@ big LCM (collapsing all nodes except the root node, the first node)}
 \item{tol}{Convergence tolerance for the objective function.
 Default is \code{1E-8}.}
 
-\item{tol_hyper}{The convergence tolerance for the objective function between
-between subsequent hyperparameter updates. Typically a more generous
-tolerance than \code{tol}.
-Default is \code{1E-4}.}
+\item{tol_hyper}{The convergence tolerance for the objective function
+between subsequent hyperparameter updates. Typically it is a more generous
+tolerance than \code{tol}. Default is \code{1E-4}.}
 
 \item{max_iter}{Maximum number of iterations of the VI algorithm.
-Default is 5000.}
+Default is \code{5000}. NB: check this number before package submission.}
 
-\item{nrestarts}{Number of random re-starts of the VI algorithm. The result that
-gives the highest value of the objective function will be returned.
-It is recommended to choose \code{nrestarts > 1}.
-The default is 3.}
+\item{nrestarts}{Number of random re-starts of the VI algorithm.
+The restart that gives the highest value of the objective function will
+be returned. It is recommended to choose \code{nrestarts > 1}; The default is \code{3}.}
 
-\item{keep_restarts}{If \code{TRUE}, the results from all random restarts will be returned.
-If \code{FALSE}, only the restart with the highest objective function is returned. '
+\item{keep_restarts}{If \code{TRUE}, the results from all random restarts
+will be returned. If \code{FALSE}, only the restart with the highest objective function is returned. '
 Default is \code{TRUE}.}
 
 \item{parallel}{If \code{TRUE}, the random restarts will be run in parallel.
@@ -117,8 +118,8 @@ It is recommended to first set the number of cores using \code{doParallel::regis
 Otherwise, the default number of cores specified by the \code{doParallel} package will be used.
 Default is \code{TRUE}.}
 
-\item{log_restarts}{If \code{TRUE}, when \code{nrestarts > 1} progress of each random restart will be
-logged to a text file in \code{log_dir}. If \code{FALSE} and \code{nrestarts > 1},
+\item{log_restarts}{If \code{TRUE}, when \code{nrestarts > 1} progress of each random
+restart will be logged to a text file in \code{log_dir}. If \code{FALSE} and \code{nrestarts > 1},
 progress will not be shown.
 If \code{nrestarts = 1}, progress will always be printed to the console.
 Default is \code{FALSE}.}
@@ -129,8 +130,7 @@ Default is the working directory.}
 \item{vi_params_init, hyperparams_init}{Named lists containing initial values for the
 variational parameters and hyperparameters. Supplying good initial values can be challenging,
 and \code{lotR()} provides a way to guess initial values based on transformations
-of conditional logistic regression estimates of the effect sizes
-for each individual leaf_ids (see \code{\link[=initialize_tree_lcm]{initialize_tree_lcm()}}).
+of latent class model estimates for each individual leaf_ids (see \code{\link[=initialize_tree_lcm]{initialize_tree_lcm()}}).
 The most common use for \code{vi_params_init} and \code{hyperparams_init} is to supply starting
 values based on previous output from \code{lotR()};
 see the \code{vignette('lotR')} for examples.
@@ -147,12 +147,12 @@ The amount of variability is determined by \code{random_init_vals}.}
 this is a list containing the following parameters for randomly permuting
 the initial values:
 \describe{
-\item{\code{tau_lims}}{a vector of length 2, where \code{tau_lims[1]} is between 0 and 1,
+\item{\code{tau_lims}}{a vector of length \code{2}, where \code{tau_lims[1]} is between \code{0} and \code{1},
 and \code{tau_lims[2] > 1}. The initial values for the hyperparameter \code{tau} will
 be chosen uniformly at random in the range \verb{(tau_init * tau_lims[1], tau_init * tau_lims[2])},
 where \code{tau_init} is the initial value for \code{tau} either supplied in \code{hyperparams_init}
 or guessed using \code{\link[=initialize_tree_lcm]{initialize_tree_lcm()}}.}
-\item{\code{psi_sd_frac}}{a value between 0 and 1. The initial values for the auxiliary parameters
+\item{\code{psi_sd_frac}}{a value between \code{0} and \code{1}. The initial values for the auxiliary parameters
 \code{psi} will have a normal random variate added to them with standard deviation equal to
 \code{psi_sd_frac} multiplied by the initial value for eta either supplied in \code{hyperparams_init} or guessed
 using \code{\link[=initialize_tree_lcm]{initialize_tree_lcm()}}. Absolute values are then taken for any
@@ -170,7 +170,7 @@ initial value for \code{u} either supplied in \code{vi_params_init} or guessed u
 \code{u} will then be transformed back to the probability scale.}
 }}
 
-\item{allow_continue}{logical, TRUE to save results so can continue running the VI
+\item{allow_continue}{logical, \code{TRUE} to save results so can continue running the VI
 updates with the last iteration from the old results.}
 }
 \value{
@@ -195,7 +195,7 @@ library(lotR)
 data("lotR_example_edges")
 library(igraph)
 tr <- graph_from_edgelist(lotR_example_edges, directed = TRUE) # Plot tree
-# here in this example, we use equal weighted edges.
+# Here in this example, we use equal weighted edges.
 
 # If needed, first install ggtree
 # if (!requireNamespace("BiocManager", quietly = TRUE))
@@ -280,5 +280,9 @@ print(mod0)
 which(mod0$mod$vi_params$prob>0.5)
 unique(lotR_example_data_tree$truth$pi_mat)
 
+}
+\seealso{
+Other lcm_tree functions: 
+\code{\link{continue_lcm_tree}()}
 }
 \concept{lcm_tree functions}

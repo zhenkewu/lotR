@@ -2,7 +2,7 @@
 % Please edit documentation in R/simulate.R
 \name{lotR_blca}
 \alias{lotR_blca}
-\title{Simulate from latent class models with subject-specific indicators}
+\title{Simulate data and subject-specific indicators from latent class models}
 \usage{
 lotR_blca(n, itemprob = 0.5, classprob = 1, fit = NULL)
 }
@@ -20,7 +20,7 @@ a list; \code{x}: data; \code{z} a vector of integer indicators
 of class membership.
 }
 \description{
-Simulate from latent class models with subject-specific indicators
+Simulate data and subject-specific indicators from latent class models
 }
 \seealso{
 \code{\link[BayesLCA:blca]{BayesLCA::blca()}}

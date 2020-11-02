@@ -7,7 +7,9 @@
 tsb(u)
 }
 \arguments{
-\item{u}{a vector of probabilities, with the last element 1.}
+\item{u}{a vector of probabilities, with the last element 1.
+Each element means the fraction of what is left to be broken. The last
+element is 1 because we truncate the length of the stick to be \code{length(u)}}
 }
 \value{
 a vector of the same length as u; sum to 1.

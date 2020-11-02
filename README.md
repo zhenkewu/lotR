@@ -42,6 +42,18 @@ variational inference and can provide approximate posterior uncertainty quantifi
     -  unknown cut level, which requires self-adaptive grouping of observations
 
 
+
+
+* The functions' relations in the package `lotR` can be visualized by
+
+```r
+library(DependenciesGraphs) # if not installed, try this-- devtools::install_github("datastorm-open/DependenciesGraphs")
+library(QualtricsTools) # devtools::install_github("emmamorgan-tufts/QualtricsTools")
+dep <- funDependencies('package:lotR','lcm_tree')
+plot(dep)
+```
+
+
 <div id='id-section3'/>
 
 Examples 

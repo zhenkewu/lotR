@@ -5,8 +5,7 @@
 #  3) simulate the data (multivariate binary at the tips)
 #######################################################################
 
-
-#' Simulate from latent class models with subject-specific indicators
+#' Simulate data and subject-specific indicators from latent class models
 #'
 #'
 #' @param n sample size
@@ -47,7 +46,7 @@ lotR_blca <- function (n, itemprob = 0.5, classprob = 1, fit = NULL)
 }
 
 
-#' Simulate from tree-structured latent class models with subject-specific indicators
+#' Simulate data and subject-specific indicators from tree-structured latent class models
 #'
 #' The observations belong to leaves that may further belong to a few groups, each
 #' with its own K-class probabilities. We assume all the leaves share the same
@@ -150,7 +149,7 @@ simulate_lcm_tree <- function (n, itemprob, mytree, pi_mat, h_pau)
   # simulate the observations leaf by leaf: Y, curr_leaves, truth (
   # - true set of nodes with non-trivial increment xi_u, i.e.,
   # alpha_u, the actual values of these increments, the eta_v which
-  # sums over all non-trivial ancectral nodes' value of alpha_u;
+  # sums over all non-trivial ancestral nodes' value of alpha_u;
   # - the eta_v transformed to pi_v;
   # - the class-specific response probabilities)
 
@@ -160,10 +159,10 @@ simulate_lcm_tree <- function (n, itemprob, mytree, pi_mat, h_pau)
   Z_sim <- list()
   curr_leaves_sim <- list()
   for (v in 1:pL){
-      simu <- lotR_blca(N_sim[v], itemprob = itemprob, classprob = pi_mat[v,])
-      Y_sim[[v]] <- simu$x
-      curr_leaves_sim[[v]] <- rep(v,N_sim[v])
-      Z_sim[[v]] <- simu$z
+    simu <- lotR_blca(N_sim[v], itemprob = itemprob, classprob = pi_mat[v,])
+    Y_sim[[v]] <- simu$x
+    curr_leaves_sim[[v]] <- rep(v,N_sim[v])
+    Z_sim[[v]] <- simu$z
   }
 
   Y <- do.call("rbind",Y_sim)

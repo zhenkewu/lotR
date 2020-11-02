@@ -2,7 +2,7 @@
 % Please edit documentation in R/simulate.R
 \name{simulate_lcm_tree}
 \alias{simulate_lcm_tree}
-\title{Simulate from tree-structured latent class models with subject-specific indicators}
+\title{Simulate data and subject-specific indicators from tree-structured latent class models}
 \usage{
 simulate_lcm_tree(n, itemprob, mytree, pi_mat, h_pau)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/lcm_tree.R
 \name{continue_lcm_tree}
 \alias{continue_lcm_tree}
-\title{continue from a previous model fits}
+\title{continue from a previous model fit}
 \usage{
 continue_lcm_tree(
   old_mod,
@@ -32,21 +32,19 @@ Default = every 50 iterations.}
 \item{tol}{Convergence tolerance for the objective function.
 Default is \code{1E-8}.}
 
-\item{tol_hyper}{The convergence tolerance for the objective function between
-between subsequent hyperparameter updates. Typically a more generous
-tolerance than \code{tol}.
-Default is \code{1E-4}.}
+\item{tol_hyper}{The convergence tolerance for the objective function
+between subsequent hyperparameter updates. Typically it is a more generous
+tolerance than \code{tol}. Default is \code{1E-4}.}
 
 \item{max_iter}{Maximum number of iterations of the VI algorithm.
-Default is 5000.}
+Default is \code{5000}. NB: check this number before package submission.}
 
-\item{nrestarts}{Number of random re-starts of the VI algorithm. The result that
-gives the highest value of the objective function will be returned.
-It is recommended to choose \code{nrestarts > 1}.
-The default is 3.}
+\item{nrestarts}{Number of random re-starts of the VI algorithm.
+The restart that gives the highest value of the objective function will
+be returned. It is recommended to choose \code{nrestarts > 1}; The default is \code{3}.}
 
-\item{keep_restarts}{If \code{TRUE}, the results from all random restarts will be returned.
-If \code{FALSE}, only the restart with the highest objective function is returned. '
+\item{keep_restarts}{If \code{TRUE}, the results from all random restarts
+will be returned. If \code{FALSE}, only the restart with the highest objective function is returned. '
 Default is \code{TRUE}.}
 
 \item{parallel}{If \code{TRUE}, the random restarts will be run in parallel.
@@ -54,8 +52,8 @@ It is recommended to first set the number of cores using \code{doParallel::regis
 Otherwise, the default number of cores specified by the \code{doParallel} package will be used.
 Default is \code{TRUE}.}
 
-\item{log_restarts}{If \code{TRUE}, when \code{nrestarts > 1} progress of each random restart will be
-logged to a text file in \code{log_dir}. If \code{FALSE} and \code{nrestarts > 1},
+\item{log_restarts}{If \code{TRUE}, when \code{nrestarts > 1} progress of each random
+restart will be logged to a text file in \code{log_dir}. If \code{FALSE} and \code{nrestarts > 1},
 progress will not be shown.
 If \code{nrestarts = 1}, progress will always be printed to the console.
 Default is \code{FALSE}.}
@@ -68,7 +66,7 @@ The default is \code{FALSE}, unless \code{nrestarts > 1}, in which case
 \code{random_init} will be set to \code{TRUE} and a warning message will be printed.
 The amount of variability is determined by \code{random_init_vals}.}
 
-\item{allow_continue}{logical, TRUE to save results so can continue running the VI
+\item{allow_continue}{logical, \code{TRUE} to save results so can continue running the VI
 updates with the last iteration from the old results.}
 }
 \description{
@@ -77,4 +75,8 @@ So this function is for lazy persons.
 }
 \seealso{
 \code{\link[=lcm_tree]{lcm_tree()}}
+
+Other lcm_tree functions: 
+\code{\link{lcm_tree}()}
 }
+\concept{lcm_tree functions}

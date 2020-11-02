@@ -57,7 +57,7 @@ log1p.exp.vec <- function(x){
 #' log expit
 #'
 #' @param x a number or a vector of numbers
-#'
+#'a
 #' @export
 #' @family utility function
 logexpit <- function(x) {
@@ -145,11 +145,16 @@ g_fun.vec <- function(eta){
   y
 }
 
-#' transform probability to stick proportions.
+#' transform a vector of probabilities that sum to one to stick proportions.
 #'
-#' @param x a vector of probabilities (K)
+#' @param x a vector of probabilities (K); sums to `1`
 #' @return a vector K, with last element of 1; the elements are stick lengths in
 #' the remaining part
+#'
+#' @examples
+#'
+#' prob2stick(c(0.5,0.2,0.3))
+#'
 #' @export
 prob2stick <- function(x){
   res <- x
@@ -161,7 +166,7 @@ prob2stick <- function(x){
 }
 
 
-#' create a list along a dimension of an array
+#' create a list with members being the matrices along a specified dimension of an array
 #'
 #' This is from a StackOverflow answer
 #'
@@ -192,9 +197,10 @@ split_along_dim <- function(a, n){
 #' lower bound is quadratic in the exponent
 #'
 #' @param xi local variational parameter, positive value, this is where
-#' the `expit(xi) = lower_bd(xi)`
+#' the `expit(xi) = lower_bd(xi)`; this is where the quadratic
+#' and expit curve contact
 #'
-#' @return a positive value between 0 and 1
+#' @return a positive value between `0` and `1`
 #'
 #' @examples
 #'
@@ -213,6 +219,11 @@ split_along_dim <- function(a, n){
 #'   legend("topleft",c("expit","bound"),col=c("orange","blue"),lty=c(1,1))
 #' }
 #'
+#' @references
+#' \itemize{
+#' \item Jaakkola, Tommi S., and Michael I. Jordan. "Bayesian parameter estimation via variational methods." Statistics and Computing 10.1 (2000): 25-37.
+#' <http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.399.9368&rep=rep1&type=pdf>
+#'}
 #' @export
 #' @family VI functions
 lower_bd <- function(xi){
@@ -226,7 +237,7 @@ lower_bd <- function(xi){
 #' lower bound of a vector of probabilities that sum to one
 #'
 #' the lower bound is based on the best set of local variational parameters
-#' which are logit of the stick-breaking form of the supplied vector
+#' which comprise of logit of the stick-breaking form of the supplied vector
 #'
 #' @param x a vector of probabilities that sum to one
 #'
@@ -337,6 +348,8 @@ make_list <- function(...) {
 #' generate stick-breaking prior (truncated) from a vector of random probabilities
 #'
 #' @param u a vector of probabilities, with the last element 1.
+#' Each element means the fraction of what is left to be broken. The last
+#' element is 1 because we truncate the length of the stick to be `length(u)`
 #'
 #' @return a vector of the same length as u; sum to 1.
 #'

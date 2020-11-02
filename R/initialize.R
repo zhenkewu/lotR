@@ -12,7 +12,7 @@
 #        rho_l - beta(a_l,b_l), the (a_l,b_l) are fixed.
 #
 # NB: 1) need good initialization and random initialization
-#     2) need to use fast code to fit LCM using particular groupings
+#     2) need to use fast code to fit LCM using particular groupings (BayesLCA)
 #     3) theoretically, only a subset of parameter/hyperparameters
 #        needs to be initialized, because some updates in the first iteration
 #       can produce a valid value. But for completeness, it makes
@@ -28,7 +28,6 @@
 #           initialize, update the model parameters and hyperparameters,
 #           summarize the posterior, compute separate LCMs based on the discovered
 #           grouping of the observations.
-#           (This needs to be a separate function - later)
 #######################################################################
 
 

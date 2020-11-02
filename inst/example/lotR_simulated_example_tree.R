@@ -8,7 +8,7 @@ library(lotR)
 data("lotR_example_edges")
 library(igraph)
 tr <- graph_from_edgelist(lotR_example_edges, directed = TRUE) # Plot tree
-# here in this example, we use equal weighted edges.
+# Here in this example, we use equal weighted edges.
 
 # If needed, first install ggtree
 # if (!requireNamespace("BiocManager", quietly = TRUE))
