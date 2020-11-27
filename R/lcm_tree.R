@@ -244,7 +244,10 @@ lcm_tree <- function(Y,leaf_ids,mytree,# may have unordered nodes.
   # compute the latent class prevalences and class-specific probabilities based
   # on the model output:
   # up to this point, we do not have dsgn in mod.
-  prob_est <- compute_params(mod,dsgn,ci_level)
+  tmp <- compute_params(mod,dsgn,ci_level)
+  prob_est <- tmp$prob_est
+  prob_est_indiv <- tmp$prob_est_indiv
+  rm(tmp)
 
   # get LCM result based on the groups formed by the output:
   if (!is.null(get_lcm_by_group) && get_lcm_by_group){
@@ -269,7 +272,7 @@ lcm_tree <- function(Y,leaf_ids,mytree,# may have unordered nodes.
   }
 
   res <- make_list(mod,mod_restarts,mytree,dsgn, # is mytree redundant, check dsgn.
-                   prob_est,ad_hoc_est)
+                   prob_est,ad_hoc_est,prob_est_indiv)
 
   class(res) <- c("lcm_tree","list")
   res

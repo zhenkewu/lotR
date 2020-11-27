@@ -10,7 +10,7 @@
 #'   \item{Y}{A matrix with n=1000 rows and J=18 columns.}
 #'   `Z_obs`{A two column integer matrix. The first column is from
 #'   1 to n. The second column is a mix of `NA` and integers between 1 and
-#'   K (number of latent classess). NA represents unobserved latent class
+#'   K (number of latent classess). `NA` represents unobserved latent class
 #'   membership; an integer represent observed latent class. `NULL` if
 #'   no observation has observed class membership.}
 #'   \item{curr_leaves}{A character vector of length n=1000.

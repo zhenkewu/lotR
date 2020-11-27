@@ -7,7 +7,7 @@
 \method{print}{summary.lcm_tree_long}(x, print_leaves = TRUE, digits = max(3L, getOption("digits") - 3L), ...)
 }
 \arguments{
-\item{x}{output from \code{summary.lcm_tree} with \code{compact = TRUE}.}
+\item{x}{output from \code{summary.lcm_tree} with \code{compact = FALSE}.}
 
 \item{print_leaves}{If \code{TRUE}, for each discovered group the full list
 of leaves will be printed. Set this to \code{FALSE} if these leaf lists

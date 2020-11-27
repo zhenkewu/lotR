@@ -21,7 +21,8 @@ Default is \code{FALSE}.}
 see \code{\link[=print.lcm_tree]{print.lcm_tree()}}
 }
 \description{
-\code{summary.lcm_tree} summarizes the results from \code{\link[=lcm_tree]{lcm_tree()}}.
+Will have some randomness associated with the uppper and lower bounds,
+because we simulated the Gaussian variables before converting to probabilities.
 }
 \seealso{
 Other lcm_tree results: 

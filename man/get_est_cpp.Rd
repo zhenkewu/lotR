@@ -2,10 +2,10 @@
 % Please edit documentation in R/RcppExports.R
 \name{get_est_cpp}
 \alias{get_est_cpp}
-\title{Summarize the posterior mean, sd and confidence interval}
+\title{Summarize the posterior mean, sd and confidence interval (grouped or individual leaf nodes)}
 \usage{
 get_est_cpp(
-  node_select,
+  prob,
   mu_gamma,
   sigma_gamma,
   mu_alpha,
@@ -16,8 +16,9 @@ get_est_cpp(
 )
 }
 \arguments{
-\item{node_select}{a vector of zeros and ones, indicating which nodes
-are selected based on variational probability (prob > 0.5). Length = p}
+\item{prob}{a vector of variational probability. Length = p.
+At the extremes, it can also be a vector of zeros and ones, indicating which nodes
+are selected based on variational probability (prob > 0.5).}
 
 \item{mu_gamma}{variational Gaussian means (for \code{s_u=1} component) for J*K
 logit(class-specific response probabilities); (J,K,p) array; In R, we used a list of p (J,K) matrices}
@@ -59,5 +60,5 @@ Named("eta_ciu")=eta_ciu
 }
 }
 \description{
-Summarize the posterior mean, sd and confidence interval
+Summarize the posterior mean, sd and confidence interval (grouped or individual leaf nodes)
 }

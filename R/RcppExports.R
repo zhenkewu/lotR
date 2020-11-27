@@ -98,10 +98,11 @@ get_moments_cpp_eco <- function(leaves_u, E_beta, E_beta_sq, E_eta, E_eta_sq, pr
     .Call('_lotR_get_moments_cpp_eco', PACKAGE = 'lotR', leaves_u, E_beta, E_beta_sq, E_eta, E_eta_sq, prob, prob_gamma, mu_gamma, sigma_gamma, mu_alpha, Sigma_alpha, anc, cardanc)
 }
 
-#' Summarize the posterior mean, sd and confidence interval
+#' Summarize the posterior mean, sd and confidence interval (grouped or individual leaf nodes)
 #'
-#' @param node_select a vector of zeros and ones, indicating which nodes
-#' are selected based on variational probability (prob > 0.5). Length = p
+#' @param prob a vector of variational probability. Length = p.
+#' At the extremes, it can also be a vector of zeros and ones, indicating which nodes
+#' are selected based on variational probability (prob > 0.5).
 #' @param mu_gamma variational Gaussian means (for \code{s_u=1} component) for J*K
 #' logit(class-specific response probabilities); (J,K,p) array; In R, we used a list of p (J,K) matrices
 #' @param sigma_gamma variational Gaussian variances (for \code{s_u=1} component)
@@ -133,8 +134,8 @@ get_moments_cpp_eco <- function(leaves_u, E_beta, E_beta_sq, E_eta, E_eta_sq, pr
 #'
 #' }
 #' @export
-get_est_cpp <- function(node_select, mu_gamma, sigma_gamma, mu_alpha, Sigma_alpha, anc, cardanc, z) {
-    .Call('_lotR_get_est_cpp', PACKAGE = 'lotR', node_select, mu_gamma, sigma_gamma, mu_alpha, Sigma_alpha, anc, cardanc, z)
+get_est_cpp <- function(prob, mu_gamma, sigma_gamma, mu_alpha, Sigma_alpha, anc, cardanc, z) {
+    .Call('_lotR_get_est_cpp', PACKAGE = 'lotR', prob, mu_gamma, sigma_gamma, mu_alpha, Sigma_alpha, anc, cardanc, z)
 }
 
 #' Update the variational probabilities of each observation in one of K classes

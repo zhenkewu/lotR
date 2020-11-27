@@ -92,12 +92,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // get_est_cpp
-List get_est_cpp(arma::vec node_select, arma::cube mu_gamma, arma::cube sigma_gamma, arma::mat mu_alpha, arma::mat Sigma_alpha, List anc, arma::vec cardanc, double z);
-RcppExport SEXP _lotR_get_est_cpp(SEXP node_selectSEXP, SEXP mu_gammaSEXP, SEXP sigma_gammaSEXP, SEXP mu_alphaSEXP, SEXP Sigma_alphaSEXP, SEXP ancSEXP, SEXP cardancSEXP, SEXP zSEXP) {
+List get_est_cpp(arma::vec prob, arma::cube mu_gamma, arma::cube sigma_gamma, arma::mat mu_alpha, arma::mat Sigma_alpha, List anc, arma::vec cardanc, double z);
+RcppExport SEXP _lotR_get_est_cpp(SEXP probSEXP, SEXP mu_gammaSEXP, SEXP sigma_gammaSEXP, SEXP mu_alphaSEXP, SEXP Sigma_alphaSEXP, SEXP ancSEXP, SEXP cardancSEXP, SEXP zSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec >::type node_select(node_selectSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type prob(probSEXP);
     Rcpp::traits::input_parameter< arma::cube >::type mu_gamma(mu_gammaSEXP);
     Rcpp::traits::input_parameter< arma::cube >::type sigma_gamma(sigma_gammaSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type mu_alpha(mu_alphaSEXP);
@@ -105,7 +105,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< List >::type anc(ancSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type cardanc(cardancSEXP);
     Rcpp::traits::input_parameter< double >::type z(zSEXP);
-    rcpp_result_gen = Rcpp::wrap(get_est_cpp(node_select, mu_gamma, sigma_gamma, mu_alpha, Sigma_alpha, anc, cardanc, z));
+    rcpp_result_gen = Rcpp::wrap(get_est_cpp(prob, mu_gamma, sigma_gamma, mu_alpha, Sigma_alpha, anc, cardanc, z));
     return rcpp_result_gen;
 END_RCPP
 }

@@ -1,8 +1,8 @@
 Package: lotR
 Type: Package
 Title: Latent class analysis with Observed Trees in R (lotR)
-Version: 0.6.6
-Date: 2020-08-08
+Version: 0.7.0
+Date: 2020-11-26
 Authors@R: c(
      person("Zhenke", "Wu", email="zhenkewu@umich.edu",role=c("cre","aut"),
      comment = c(ORCID = "0000-0001-7582-669X"))
@@ -27,7 +27,9 @@ Imports:
     R.utils (>= 2.9.2),
     Matrix (>= 1.2-17),
     RColorBrewer(>= 1.1-2),
-    MASS(>= 7.3)
+    MASS(>= 7.3),
+    RcppAlgos (>= 2.4.1),
+    mclust (>= 5.4.6)
 Suggests:
     knitr,
     testthat,

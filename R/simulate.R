@@ -127,7 +127,7 @@ lotR_blca <- function (n, itemprob = 0.5, classprob = 1, fit = NULL)
 #'
 #' lotR_example_data_tree <- simulate_lcm_tree(n,itemprob,mytree,pi_mat,h_pau)
 #' #save the simulated data to the R package for illustration:
-#' # save(lotR_example_data_tree, file = "data/lotR_example_data_tree.rda", compress = "xz")
+#' # save(lotR_example_data_tree, file = "data/lotR_example_data_tree2.rda", compress = "xz")
 #' @seealso [BayesLCA::blca()]
 #' @importFrom stats rmultinom runif
 #' @importFrom igraph V
@@ -173,6 +173,65 @@ simulate_lcm_tree <- function (n, itemprob, mytree, pi_mat, h_pau)
   make_list(Y,curr_leaves,truth)
 }
 
+#' Get optimal column permutation of a matrix B to match the matrix A
+#'
+#' Useful in simulations where the posterior sampling relabels the classes,
+#' which is equivalent and cannot be told apart by the likelihood only.
+#'
+#' @param A a matrix (e.g., truth)
+#' @param B another matrix (e.g., estimated); A and B must have the same dimensions;
+#' B's columns may be permutated to best match those of A.
+#'
+#' @return a permutation of columns of B (represented by a permuted `1:ncol(A)`)
+#'
+#' @examples
+#'
+#' A <- matrix(c(1,2,3,4,5,6),nrow=2,ncol=3)
+#' B <- A[,c(2,1,3)]
+#' opt_colpermB(A,B) # should expect c(2,1,3)
+#' @importFrom RcppAlgos permuteGeneral
+#' @export
+opt_colpermB <- function(A,B){
+  if (dim(A)[1]!=dim(B)[1] && dim(A)[2]!=dim(B)[2]){
+    stop("[lotR] matrix of different dimensions")}
+  n <- ncol(A)
+  col_perms  <- permuteGeneral(n, n)
+  dist_mat   <- apply(col_perms, 1, function(col) sum(abs(A- B[,col,drop=FALSE])^2))
+  optim_cols <- which.min(dist_mat)
+  col_perms[optim_cols, ]
+}
+
+#' Get optimal column permutation of a matrix B to match the matrix A
+#'
+#' Useful in simulations where the posterior sampling relabels the classes,
+#' which is equivalent and cannot be told apart by the likelihood only.
+#'
+#' @param A a matrix (e.g., truth)
+#' @param B another matrix (e.g., estimated); A and B must have the same dimensions;
+#' B's columns may be permutated to best match those of A.
+#'
+#' @return a list
+#' \describe{
+#' \item{rmse_total}{root mean squared error for all entries}
+#' \item{rmse_marg}{root mean squared error for all entries by column of A}
+#' \item{frac_bias}{root mean squared error for all entries}
+#' \item{frac_bias_marg}{root mean squared error for all entries by column of A}
+#' }
+#' @examples
+#'
+#' A <- matrix(c(1,2,3,4,5,6),nrow=2,ncol=3)
+#' B <- A
+#' rmse_bias_AB(A,B)
+#' @export
+rmse_bias_AB <- function(A,B){
+  if (dim(A)[1]!=dim(B)[1] && dim(A)[2]!=dim(B)[2]){
+    stop("[lotR] matrix of different dimensions")}
+  rmse_total <- sqrt(mean((A-B)^2))
+  rmse_marg <- sqrt(colMeans((A-B)^2))
+  frac_bias  <- mean(abs(A-B)/abs(A))
+  frac_bias_marg <- colMeans(abs(A-B)/abs(A))
+  make_list(rmse_total,rmse_marg,frac_bias,frac_bias_marg)
+}
 
 
 

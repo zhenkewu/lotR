@@ -94,7 +94,44 @@ compute_params <- function(mod,dsgn,ci_level=0.95){
   prob_est$eta_est_collapsed <- prob_est$eta_est[!duplicated(prob_est$pi),]
   prob_est$eta_sd_est_collapsed <- prob_est$eta_sd_est[!duplicated(prob_est$pi),]
   prob_est$ci_level <- ci_level
-  prob_est
+
+  ######################
+  ## --- individual node estimates (no grouping):
+  prob_est_indiv <- get_est_cpp(prob,
+                                array(unlist(mu_gamma),c(J,K,p)),
+                                aperm(sigma_gamma,c(2,3,1)),
+                                as.matrix(do.call("rbind",mu_alpha)),
+                                as.matrix(do.call("rbind",Sigma_alpha)),
+                                anc,cardanc,z)
+
+  prob_est_indiv$pi <- t(apply(prob_est_indiv$eta_est,1,function(u){tsb(c(expit(u),1))}))
+  # the following are assuming a single set of class-specific response probability
+  # profiles:
+  prob_est_indiv$theta <- expit(prob_est_indiv$beta_est)[,,1]
+  prob_est_indiv$beta_est <- prob_est_indiv$beta_est[,,1]
+  prob_est_indiv$beta_sd_est <- prob_est_indiv$beta_sd_est[,,1]
+  prob_est_indiv$beta_cil <- prob_est_indiv$beta_cil[,,1]
+  prob_est_indiv$beta_ciu <- prob_est_indiv$beta_ciu[,,1]
+
+  prob_est_indiv$ci_level <- ci_level
+
+  rslt <- vector("list",nrow(prob_est_indiv$eta_est))
+  ## get credible intervals on the pie scales:
+  for (v in 1:nrow(prob_est_indiv$eta_est)){
+    tmp_post_simu <- apply(cbind(expit(MASS::mvrnorm(10000,prob_est_indiv$eta_est[v,],diag((prob_est_indiv$eta_sd_est[v,])^2))),1),1,tsb)
+    ci_mat <- apply(tmp_post_simu,1,stats::quantile,c((1-prob_est_indiv$ci_level)/2,prob_est_indiv$ci_level+(1-prob_est_indiv$ci_level)/2))
+
+    rslt[[v]] <- matrix(NA,nrow=K,ncol=3)
+    colnames(rslt[[v]]) <- c("est_pi","cil_pi","ciu_pi")
+    for (k in 1:K){# for each class:
+      rslt[[v]][k,] <- cbind(prob_est_indiv$pi[v,k],ci_mat[1,k],ci_mat[2,k])
+    }
+  }
+  prob_est_indiv$rslt <- rslt
+
+  ## --- end of individual node estimates (no grouping)
+
+  make_list(prob_est,prob_est_indiv)
 }
 
 
@@ -116,6 +153,9 @@ print.lcm_tree <- function(x, ...){
 
 
 #' `summary.lcm_tree` summarizes the results from [lcm_tree()].
+#'
+#' Will have some randomness associated with the uppper and lower bounds,
+#' because we simulated the Gaussian variables before converting to probabilities.
 #'
 #' @param object Output from [lcm_tree()].
 #' An object of class "lcm_tree".# coeff_type Either "lcm_tree" or "ad_hoc"
@@ -224,9 +264,9 @@ summary.lcm_tree <- function(object,
 #' @export
 #' @family lcm_tree results
 print.summary.lcm_tree_compact <- function(x,
-                                            print_leaves = TRUE,
-                                            digits = max(3L, getOption("digits") - 3L),
-                                            ...) {
+                                           print_leaves = TRUE,
+                                           digits = max(3L, getOption("digits") - 3L),
+                                           ...) {
   if (!print_leaves) x$est$leaves <- NULL
 
   if (x$coeff_type == "lcm_tree") {
@@ -247,7 +287,7 @@ print.summary.lcm_tree_compact <- function(x,
 #' `print.summary.lcm_tree_compact` is a print method for class
 #' `summary.lcm_tree_compact`.
 #'
-#' @param x output from `summary.lcm_tree` with `compact = TRUE`.
+#' @param x output from `summary.lcm_tree` with `compact = FALSE`.
 #' @param print_leaves If `TRUE`, for each discovered group the full list
 #' of leaves will be printed. Set this to `FALSE` if these leaf lists
 #' make output difficult to read.
@@ -258,15 +298,16 @@ print.summary.lcm_tree_compact <- function(x,
 #' @export
 #' @family lcm_tree results
 print.summary.lcm_tree_long <- function(x,
-                                         print_leaves = TRUE,
-                                         digits = max(3L, getOption("digits") - 3L),
-                                         ...) {
+                                        print_leaves = TRUE,
+                                        digits = max(3L, getOption("digits") - 3L),
+                                        ...) {
 
   cat("Group-specific class prevalence estimates for the", length(x), "groups discovered by lcm_tree\n")
-  cat(paste0("Credible interval level: ", x$ci_level))
+  cat(paste0("Credible interval level: ", x$ci_level),"\n")
   if (x$coeff_type == "lcm_tree") {
     cat("Showing latent class model estimates for discovered groups; not ad hoc.\n\n")
   }
+  # remove some information that is not to be tabulated:
   x$coeff_type <- NULL
   x$ci_level  <- NULL
 

@@ -236,10 +236,11 @@ List get_moments_cpp_eco(arma::vec leaves_u,
   );
 }
 
-//' Summarize the posterior mean, sd and confidence interval
+//' Summarize the posterior mean, sd and confidence interval (grouped or individual leaf nodes)
 //'
-//' @param node_select a vector of zeros and ones, indicating which nodes
-//' are selected based on variational probability (prob > 0.5). Length = p
+//' @param prob a vector of variational probability. Length = p.
+//' At the extremes, it can also be a vector of zeros and ones, indicating which nodes
+//' are selected based on variational probability (prob > 0.5).
 //' @param mu_gamma variational Gaussian means (for \code{s_u=1} component) for J*K
 //' logit(class-specific response probabilities); (J,K,p) array; In R, we used a list of p (J,K) matrices
 //' @param sigma_gamma variational Gaussian variances (for \code{s_u=1} component)
@@ -272,7 +273,7 @@ List get_moments_cpp_eco(arma::vec leaves_u,
 //' }
 //' @export
 // [[Rcpp::export]]
-List get_est_cpp(arma::vec node_select,
+List get_est_cpp(arma::vec prob,
                  arma::cube mu_gamma,//J by K by p
                  arma::cube sigma_gamma,//J by K by p
                  arma::mat  mu_alpha, // p by K-1
@@ -306,9 +307,9 @@ List get_est_cpp(arma::vec node_select,
     for (int u=0;u<n_anc;u++){
       uu = (int) curr_anc(u)-1;
       beta_est.slice(v)     += 0.0+prob_gamma(uu)*mu_gamma.slice(uu);
-      beta_sd_est.slice(v)  += 0.0+prob_gamma(uu)*sigma_gamma.slice(uu);
-      eta_est.row(v)        += 0.0+node_select(uu)*mu_alpha.row(uu);
-      eta_sd_est.row(v)     += 0.0+node_select(uu)*Sigma_alpha.row(uu);
+      beta_sd_est.slice(v)  += 0.0+prob_gamma(uu)*sigma_gamma.slice(uu);// this is sd, not sq. Var_q[gamma_u |s_u = 1]
+      eta_est.row(v)        += 0.0+prob(uu)*mu_alpha.row(uu);
+      eta_sd_est.row(v)     += 0.0+prob(uu)*(Sigma_alpha.row(uu)+(1.0-prob(uu))*pow(mu_alpha.row(uu),2.0));
     }
     beta_sd_est.slice(v) = 0.0+pow(beta_sd_est.slice(v),0.5);
     eta_sd_est.row(v)   = 0.0+pow(eta_sd_est.row(v),0.5);
@@ -328,6 +329,7 @@ List get_est_cpp(arma::vec node_select,
                       Named("eta_ciu")=eta_ciu
   );
 }
+
 
 //' Update the variational probabilities of each observation in one of K classes
 //'

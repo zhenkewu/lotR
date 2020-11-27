@@ -92,7 +92,7 @@ h_pau = rep(1,p)
 
 lotR_example_data_tree <- simulate_lcm_tree(n,itemprob,mytree,pi_mat,h_pau)
 #save the simulated data to the R package for illustration:
-# save(lotR_example_data_tree, file = "data/lotR_example_data_tree.rda", compress = "xz")
+# save(lotR_example_data_tree, file = "data/lotR_example_data_tree2.rda", compress = "xz")
 }
 \seealso{
 \code{\link[BayesLCA:blca]{BayesLCA::blca()}}
