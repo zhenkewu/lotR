@@ -263,7 +263,7 @@ mod0     <- lcm_tree(Y,curr_leaves,tr,
                      plot_fig      = TRUE,
                      shared_tau    = FALSE,
                      get_lcm_by_group = TRUE, #<--- check what are the prereq.
-                     print_freq    = 10,update_hyper_freq = 50, max_iter = 500,
+                     print_freq    = 10,update_hyper_freq = 50, max_iter = 200,
                      tol           = 1e-7,
                      tol_hyper     = 1e-4,
                      allow_continue = FALSE)#,
