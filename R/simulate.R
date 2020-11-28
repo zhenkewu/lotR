@@ -173,6 +173,35 @@ simulate_lcm_tree <- function (n, itemprob, mytree, pi_mat, h_pau)
   make_list(Y,curr_leaves,truth)
 }
 
+
+
+#' generate all permutations of 1 to n
+#'
+#' Copied from Museful's solution from here
+#' <https://stackoverflow.com/questions/11095992/generating-all-distinct-permutations-of-a-list-in-r>
+#' This also mimics `RcppAlgos::permuteGeneral(n,n)`
+#'
+#' @param n an integer
+#'
+#' @examples
+#' permutations(3)
+#'
+#' @returns a matrix of n columns and `factorial(n)` rows
+permutations <- function(n){
+  if(n==1){
+    return(matrix(1))
+  } else {
+    sp <- permutations(n-1)
+    p <- nrow(sp)
+    A <- matrix(nrow=n*p,ncol=n)
+    for(i in 1:n){
+      A[(i-1)*p+1:p,] <- cbind(i,sp+(sp>=i))
+    }
+    return(A)
+  }
+}
+
+
 #' Get optimal column permutation of a matrix B to match the matrix A
 #'
 #' Useful in simulations where the posterior sampling relabels the classes,
@@ -189,13 +218,12 @@ simulate_lcm_tree <- function (n, itemprob, mytree, pi_mat, h_pau)
 #' A <- matrix(c(1,2,3,4,5,6),nrow=2,ncol=3)
 #' B <- A[,c(2,1,3)]
 #' opt_colpermB(A,B) # should expect c(2,1,3)
-#' @importFrom RcppAlgos permuteGeneral
 #' @export
 opt_colpermB <- function(A,B){
   if (dim(A)[1]!=dim(B)[1] && dim(A)[2]!=dim(B)[2]){
     stop("[lotR] matrix of different dimensions")}
   n <- ncol(A)
-  col_perms  <- permuteGeneral(n, n)
+  col_perms  <- permutations(n)
   dist_mat   <- apply(col_perms, 1, function(col) sum(abs(A- B[,col,drop=FALSE])^2))
   optim_cols <- which.min(dist_mat)
   col_perms[optim_cols, ]
