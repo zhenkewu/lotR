@@ -349,12 +349,13 @@ for (g in 1:G){# for each true group
       # Did the ad hoc group-specific LCM cover the truth?
       # NB: this is not done yet; we have point estimates,
       # but not yet extracted the posterior sd yet.
+      cat("True Group: ", g, "\n")
+      print(data.frame(truth = round(lotR_example_data_tree$truth$pi_mat[v,],3),
+                       covered=covered))
+      cat("----------\n")
     }
   }
-  cat("True Group: ", g, "\n")
-  print(data.frame(truth = round(lotR_example_data_tree$truth$pi_mat[v,],3),
-                   covered=covered))
-  cat("----------\n")
+
 }
 
 

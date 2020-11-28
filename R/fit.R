@@ -143,12 +143,12 @@ fit_lcm_tree <- function(dsgn,
       # if criterion 3, fill in results until just before the
       # next hyperparameter update (or max_iter, whichever comes first)
       if (criterion3) { # is the current update good enough?
-        if (i<2*update_hyper_freq){ # if update_hyper, but not yet 2*update_hyper_freq:
-          # criterion4 <- (abs(ELBO_track[i] - init$hyperparams$ELBO) < tol_hyper) |
-          #   (abs(ELBO_track[i] - ELBO_track[1]) < tol_hyper)
-          # if (criterion4)
-          break
-        }
+        # if (i<2*update_hyper_freq){ # if update_hyper, but not yet 2*update_hyper_freq:
+        #   # criterion4 <- (abs(ELBO_track[i] - init$hyperparams$ELBO) < tol_hyper) |
+        #   #   (abs(ELBO_track[i] - ELBO_track[1]) < tol_hyper)
+        #   # if (criterion4)
+        #   break
+        # }
         i2 <- min(ceiling(i / update_hyper_freq) * update_hyper_freq - 1,
                   max_iter)
         ELBO_track[(i + 1):i2] <- hyperparams$ELBO  # can send this iteration much later; so appears updating more frequent than specified.
