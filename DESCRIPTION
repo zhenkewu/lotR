@@ -28,8 +28,7 @@ Imports:
     Matrix (>= 1.2-17),
     RColorBrewer(>= 1.1-2),
     MASS(>= 7.3),
-    RcppAlgos (>= 2.4.1),
-    mclust (>= 5.4.6)
+    RcppAlgos (>= 2.4.1)
 Suggests:
     knitr,
     testthat,
