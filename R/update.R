@@ -119,7 +119,12 @@ update_vi_params <- function(Y,A,Z_obs,
         0.5*sum(log(tau_1_t[[u]]*h_pau[u]))+0.5*sum(log(Sigma_alpha[[u]]))+
         0.5*exp(logSumExp(c(gamma_alpha_update$logresDsq_o_C)))
     }
-    prob[u] <- expit(w_u)
+
+    if ((!is.null(s_u_oneset) && !(u%in%s_u_oneset)) &
+        (!is.null(s_u_zeroset) && !u%in%s_u_zeroset)){
+      prob[u] <- expit(w_u)
+    }
+    #print(prob)
 
     # updating ancestral node will impact the variational moments of the descendants:
     moments_cpp <- get_moments_cpp_eco(leaf_ids_nodes[[u]],
