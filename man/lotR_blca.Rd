@@ -22,6 +22,11 @@ of class membership.
 \description{
 Simulate data and subject-specific indicators from latent class models
 }
+\examples{
+
+lotR_blca(10,matrix(0.5,nrow=3,ncol=20),c(0.98,0.01,0.01))
+
+}
 \seealso{
 \code{\link[BayesLCA:blca]{BayesLCA::blca()}}
 }

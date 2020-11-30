@@ -17,6 +17,10 @@
 #' @return a list; `x`: data; `z` a vector of integer indicators
 #' of class membership.
 #'
+#' @examples
+#'
+#' lotR_blca(10,matrix(0.5,nrow=3,ncol=20),c(0.98,0.01,0.01))
+#'
 #' @seealso [BayesLCA::blca()]
 #' @importFrom stats rmultinom runif
 #' @export
@@ -38,9 +42,11 @@ lotR_blca <- function (n, itemprob = 0.5, classprob = 1, fit = NULL)
   ind <- c(0, cumsum(classvec))
   z <- rep(NA,n)
   for (g in 1:G) {
+    if (ind[g]<ind[g+1]){
     x[(ind[g] + 1):ind[g + 1], ] <- t(t(x[(ind[g] +
                                              1):ind[g + 1], ]) < itemprob[g, ]) * 1
     z[(ind[g] + 1):ind[g + 1]] <- g
+    }
   }
   make_list(x,z)
 }
