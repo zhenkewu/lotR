@@ -267,6 +267,32 @@ rmse_bias_AB <- function(A,B){
   make_list(rmse_total,rmse_marg,frac_bias,frac_bias_marg)
 }
 
+#' calculate the misclassification rates
+#'
+#' the first is the truth, the second is the estimated ones
+#'
+#' @param a truth class labels
+#' @param b estimated class labels; a and b are of the same length
+#'
+#' @return the overall and the class-specific misclassification errors
+#' @examples
+#'
+#' compute_misrate(c(1,1,1,2,2,2,3,3,3),c(1,1,1,1,2,2,2,2,2))
+#' @export
+compute_misrate <- function(a,b){
+  if (length(a)!=length(b)){stop("[lotR] the two vectors are of distinct lengths")}
+  K <- length(unique(a))
+  res <- matrix(NA,nrow=K,ncol=K)
+  for (k1 in 1:K){
+    for (k2 in 1:K){
+      res[k1,k2] <- sum(a==k1 & b==k2)
+    }
+  }
+  n <- length(a)
+  c(1-sum(res[cbind(1:K,1:K)])/n,1-(res/rowSums(res))[cbind(1:K,1:K)])
+}
+
+
 
 
 
