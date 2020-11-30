@@ -120,9 +120,12 @@ update_vi_params <- function(Y,A,Z_obs,
         0.5*exp(logSumExp(c(gamma_alpha_update$logresDsq_o_C)))
     }
 
-    if ((!is.null(s_u_oneset) && !(u%in%s_u_oneset)) &
-        (!is.null(s_u_zeroset) && !u%in%s_u_zeroset)){
-      prob[u] <- expit(w_u)
+    prob[u] <- expit(w_u)
+    if (!is.null(s_u_oneset) && u%in%s_u_oneset){
+      prob[u] <- 1
+    }
+    if (!is.null(s_u_zeroset) && !u%in%s_u_zeroset){
+      prob[u] <- 0
     }
     #print(prob)
 
