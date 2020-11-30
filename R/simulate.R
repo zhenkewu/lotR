@@ -193,6 +193,7 @@ simulate_lcm_tree <- function (n, itemprob, mytree, pi_mat, h_pau)
 #' permutations(3)
 #'
 #' @returns a matrix of n columns and `factorial(n)` rows
+#' @export
 permutations <- function(n){
   if(n==1){
     return(matrix(1))

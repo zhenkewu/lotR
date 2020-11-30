@@ -59,6 +59,8 @@ plot(dep)
 Examples 
 ---------
 
+* main function `example(lcm_tree)`
+
 * A simple workflow using simulated data and a micky mouse tree can be run in `R`
    by `example(lcm_tree)`
 
