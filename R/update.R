@@ -124,7 +124,7 @@ update_vi_params <- function(Y,A,Z_obs,
     if (!is.null(s_u_oneset) && u%in%s_u_oneset){
       prob[u] <- 1
     }
-    if (!is.null(s_u_zeroset) && !u%in%s_u_zeroset){
+    if (!is.null(s_u_zeroset) && u%in%s_u_zeroset){
       prob[u] <- 0
     }
     #print(prob)
