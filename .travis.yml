@@ -7,6 +7,9 @@ os:
   - linux
   - osx
 
+r:
+  - release
+
 osx_image: xcode12.2
 
 before_install:
