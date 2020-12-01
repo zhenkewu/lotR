@@ -4,7 +4,7 @@
 \alias{simulate_lcm_tree}
 \title{Simulate data and subject-specific indicators from tree-structured latent class models}
 \usage{
-simulate_lcm_tree(n, itemprob, mytree, pi_mat, h_pau)
+simulate_lcm_tree(n, itemprob, mytree, pi_mat, h_pau, balanced = TRUE)
 }
 \arguments{
 \item{n}{sample size}
@@ -17,6 +17,9 @@ simulate_lcm_tree(n, itemprob, mytree, pi_mat, h_pau)
 
 \item{h_pau}{a p-dim vector of positive values that indicates the branch lengths
 between a node \code{u} and its parent \code{pa(u)}}
+
+\item{balanced}{by default is \code{TRUE} to uniformly assign observations to the leaf nodes;
+otherwise set this to \code{FALSE}.}
 }
 \value{
 a list

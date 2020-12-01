@@ -64,6 +64,8 @@ lotR_blca <- function (n, itemprob = 0.5, classprob = 1, fit = NULL)
 #' @param pi_mat class probabilities for  pL leaf nodes; it is pL by K.
 #' @param h_pau a p-dim vector of positive values that indicates the branch lengths
 #' between a node `u` and its parent `pa(u)`
+#' @param balanced by default is `TRUE` to uniformly assign observations to the leaf nodes;
+#' otherwise set this to `FALSE`.
 #'
 #' @return a list
 #' \describe{
@@ -138,7 +140,7 @@ lotR_blca <- function (n, itemprob = 0.5, classprob = 1, fit = NULL)
 #' @importFrom stats rmultinom runif
 #' @importFrom igraph V
 #' @export
-simulate_lcm_tree <- function (n, itemprob, mytree, pi_mat, h_pau)
+simulate_lcm_tree <- function (n, itemprob, mytree, pi_mat, h_pau,balanced=TRUE)
 {
   # a few quick calculations:
   K <- nrow(itemprob)
@@ -148,8 +150,13 @@ simulate_lcm_tree <- function (n, itemprob, mytree, pi_mat, h_pau)
   p  <- length(V(mytree))
 
   # simulate number of observations for each leaf node:
-  N_sim <- 1:pL
-  N_sim <- c(N_sim,sample(1:pL,size=n-pL,prob=rep(1/pL,pL),replace=TRUE)) # even leafs.
+  N_sim <- rep(1:pL,each=2) #at least two observations per leaf node.
+  prob_vec <- rep(1/pL,pL)
+  if (!balanced){
+      prob_vec <- rep(c(1,4), c(floor(pL/2),pL-floor(pL/2))) # currently 1:4 ratio.
+      prob_vec <- prob_vec/sum(prob_vec)
+    }
+  N_sim <- c(N_sim,sample(1:pL,size=n-2*pL,prob=prob_vec,replace=TRUE)) # even leafs.
   N_sim <- as.integer(table(sort(N_sim)))
 
   # simulate the observations leaf by leaf: Y, curr_leaves, truth (
