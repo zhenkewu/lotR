@@ -249,6 +249,7 @@ lcm_tree <- function(Y,leaf_ids,mytree,# may have unordered nodes.
   prob_est_indiv <- tmp$prob_est_indiv
   rm(tmp)
 
+  ad_hoc_est <- NULL
   # get LCM result based on the groups formed by the output:
   if (!is.null(get_lcm_by_group) && get_lcm_by_group){
     ad_hoc_est <- lcm_by_group(dsgn$Y,names(dsgn$leaf_ids),

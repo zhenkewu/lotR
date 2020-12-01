@@ -190,7 +190,7 @@ design_tree <- function(Y,leaf_ids,mytree,weighted_edge=FALSE,Z_obs = NULL){ # b
   # print(subject_id_list)
   make_list(Y,A,A_leaves,rootnode,
             leaf_ids,leaf_ids_units,leaf_ids_nodes,
-            ancestors,edge_lengths,h_pau,
+            ancestors,edge_lengths,h_pau, # h_pau is used in fitting, so it can be that h_pau are 1s but the edge lengths are weighted.
             levels,v_units,subject_id_list,Z_obs,ord)
 }
 

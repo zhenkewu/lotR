@@ -159,10 +159,18 @@ which(mod0$mod$vi_params$prob>0.5)
 
 # after we check the grouping is identical to truth, we
 # compare the proposed method against other methods (VB, EM):
-proposed <- mod0$prob_est$theta_collapsed
-image(proposed)
-ord_rearrange <- order(proposed[1,],decreasing =TRUE)
-proposed <- proposed[,ord_rearrange]
+
+
+# permute the estimated classes to best match the truth in terms of the response
+# probability profiles.
+itemprob_truth   <- t(theta)
+itemprob_est     <- mod0$prob_est$theta_collapsed
+# we set prob_gamma to be all zero except for the root node;
+# so theta_collapsed is just the shared response probability profiles.
+ord_rearrange      <- opt_colpermB(itemprob_truth,itemprob_est)
+# permute estimated classes to best match truth.
+
+proposed <- itemprob_est[,ord_rearrange]
 
 # blca:
 # VB:
