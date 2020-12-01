@@ -32,7 +32,6 @@ Suggests:
     knitr,
     testthat,
     bibtex,
-    knitcitations,
     rmarkdown,
     ars(>= 0.5),
     RcppArmadillo(>= 0.8.300.1.0)
