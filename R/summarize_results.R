@@ -10,9 +10,14 @@
 
 #' compute model summaries from the model outputs
 #'
-#' @param mod output from [lcm_tree()]
+#' This function is used in the wrapper function [lcm_tree()]
+#'
+#' @param mod output from [fit_lcm_tree()]
 #' @param dsgn output from [design_tree()]
 #' @param ci_level credible interval level; default to 0.95
+#' @param B Default is `10000`; the number of random multivariate
+#' Gaussian eta (K-1 dimensional) for producing posterior summaries
+#' of the stick-breaking transformed probabilities (K dimensional)
 #'
 #' @return a list
 #' \describe{
@@ -37,7 +42,7 @@
 #'
 #' @seealso [get_est_cpp()]
 #' @export
-compute_params <- function(mod,dsgn,ci_level=0.95){
+compute_params <- function(mod,dsgn,ci_level=0.95,B=10000){
   # <---- delete when fdinishing testing.
   # mod = mod0$mod
   # dsgn= mod0$dsgn
@@ -79,6 +84,8 @@ compute_params <- function(mod,dsgn,ci_level=0.95){
   #prob_est <- mod0$prob_est
   grp <- round(prob_est$eta_est[,1],6) # <-- this is currently quite ad hoc.
   prob_est$group <- as.integer(factor(grp,levels=unique(grp)))
+  # this is likely better because it is not on probability scale, which
+  # reflects true diffusion on the eta scale.
 
   prob_est$members <- vector("list",length(unique(prob_est$group)))
   for (i in 1:length(unique(prob_est$group))){
@@ -90,13 +97,14 @@ compute_params <- function(mod,dsgn,ci_level=0.95){
   # output estimates from collapsed groups:
   prob_est$theta_collapsed <- prob_est$theta
   # prob_est$theta_collapsed <- prob_est$theta[,,!duplicated(prob_est$pi)]
-  prob_est$pi_collapsed <- prob_est$pi[!duplicated(prob_est$pi),]
-  prob_est$eta_est_collapsed <- prob_est$eta_est[!duplicated(prob_est$pi),]
-  prob_est$eta_sd_est_collapsed <- prob_est$eta_sd_est[!duplicated(prob_est$pi),]
+  prob_est$pi_collapsed <- prob_est$pi[!duplicated(prob_est$group),,drop=FALSE]
+  prob_est$eta_est_collapsed <- prob_est$eta_est[!duplicated(prob_est$group),,drop=FALSE]
+  prob_est$eta_sd_est_collapsed <- prob_est$eta_sd_est[!duplicated(prob_est$group),,drop=FALSE]
   prob_est$ci_level <- ci_level
 
-  ######################
-  ## --- individual node estimates (no grouping):
+  ##################################################################################
+  ## individual node estimates (no grouping): no posterior median model selection
+  ##################################################################################
   prob_est_indiv <- get_est_cpp(prob,
                                 array(unlist(mu_gamma),c(J,K,p)),
                                 aperm(sigma_gamma,c(2,3,1)),
@@ -118,7 +126,7 @@ compute_params <- function(mod,dsgn,ci_level=0.95){
   rslt <- vector("list",nrow(prob_est_indiv$eta_est))
   ## get credible intervals on the pie scales:
   for (v in 1:nrow(prob_est_indiv$eta_est)){
-    tmp_post_simu <- apply(cbind(expit(MASS::mvrnorm(10000,prob_est_indiv$eta_est[v,],diag((prob_est_indiv$eta_sd_est[v,])^2))),1),1,tsb)
+    tmp_post_simu <- apply(cbind(expit(MASS::mvrnorm(B,prob_est_indiv$eta_est[v,],diag((prob_est_indiv$eta_sd_est[v,])^2,K-1,K-1))),1),1,tsb)
     ci_mat <- apply(tmp_post_simu,1,stats::quantile,c((1-prob_est_indiv$ci_level)/2,prob_est_indiv$ci_level+(1-prob_est_indiv$ci_level)/2))
 
     rslt[[v]] <- matrix(NA,nrow=K,ncol=3)
@@ -129,7 +137,9 @@ compute_params <- function(mod,dsgn,ci_level=0.95){
   }
   prob_est_indiv$rslt <- rslt
 
-  ## --- end of individual node estimates (no grouping)
+  ##################################################################################
+  ## ///END///individual node estimates (no grouping): no posterior median model selection
+  ##################################################################################
 
   make_list(prob_est,prob_est_indiv)
 }
@@ -140,7 +150,7 @@ compute_params <- function(mod,dsgn,ci_level=0.95){
 #' @param x Output from [lcm_tree()].
 #' @param ... Arguments passed to summary and printing methods.
 #' @return Summary showing, for each group of leaf nodes discovered by [lotR()],
-#' the classs prevalences, 95% credible intervals, number of leaf nodes in
+#' the class prevalences, 95% credible intervals, number of leaf nodes in
 #' per group, and number of observations per group.
 #'
 #' @family lcm_tree results
@@ -154,7 +164,7 @@ print.lcm_tree <- function(x, ...){
 
 #' `summary.lcm_tree` summarizes the results from [lcm_tree()].
 #'
-#' Will have some randomness associated with the uppper and lower bounds,
+#' Will have some randomness associated with the upper and lower bounds,
 #' because we simulated the Gaussian variables before converting to probabilities.
 #'
 #' @param object Output from [lcm_tree()].
@@ -163,6 +173,8 @@ print.lcm_tree <- function(x, ...){
 #' Only works well when the dimension of the variables is low
 #' (say, < 4); otherwise the table takes up too much horizontal space.
 #' Default is `FALSE`.
+#' @param B Default `10000`: The number of random multivariate Gaussian for logit of V in stick breaking
+#' parameterization; used for obtaining the posterior distribution of `pi_v`
 #' @param ... Not used.
 #' @return see [print.lcm_tree()]
 #'
@@ -170,6 +182,7 @@ print.lcm_tree <- function(x, ...){
 #' @export
 summary.lcm_tree <- function(object,
                              compact = FALSE,
+                             B = 10000,
                              ...) {
   # # <----- temporary during package building.
   # object = mod0
@@ -179,8 +192,8 @@ summary.lcm_tree <- function(object,
 
   coeff_type = "lcm_tree"
   # Get estimates
-  K  <-  ncol(object$prob$pi)
-  pL <-  nrow(object$prob$pi)
+  K  <-  ncol(object$prob_est$pi)
+  pL <-  nrow(object$prob_est$pi)
   p  <-  length(object$mod$vi_params$tau_1_t)
 
   if (coeff_type == "lcm_tree") {
@@ -203,7 +216,7 @@ summary.lcm_tree <- function(object,
       # simulate the lower and upper intervals in probability scales.
       tmp_main <- matrix(NA,nrow=length(est$group),ncol=3*K)
       for (g in seq_along(est$group)){
-        tmp_post_simu <- apply(cbind(expit(MASS::mvrnorm(10000,est$eta_est_collapsed[g,],diag((est$eta_sd_est_collapsed[g,])^2))),1),1,tsb)
+        tmp_post_simu <- apply(cbind(expit(MASS::mvrnorm(B,est$eta_est_collapsed[g,],diag((est$eta_sd_est_collapsed[g,])^2,K-1,K-1))),1),1,tsb)
         ci_mat <- apply(tmp_post_simu,1,stats::quantile,c((1-est$ci_level)/2,est$ci_level+(1-est$ci_level)/2))
         for (k in 1:K){
           tmp_main[g,(3*k-2):(3*k)] <- cbind(est$pi_collapsed[g,k],ci_mat[1,k],ci_mat[2,k])
@@ -233,7 +246,7 @@ summary.lcm_tree <- function(object,
                       n_obs = est$n_obs[g],
                       leaves = est$leaves[g])
 
-    tmp_post_simu <- apply(cbind(expit(MASS::mvrnorm(10000,est$eta_est_collapsed[g,],diag((est$eta_sd_est_collapsed[g,])^2))),1),1,tsb)
+    tmp_post_simu <- apply(cbind(expit(MASS::mvrnorm(B,est$eta_est_collapsed[g,],diag((est$eta_sd_est_collapsed[g,])^2,K-1,K-1))),1),1,tsb)
     ci_mat <- apply(tmp_post_simu,1,stats::quantile,c((1-est$ci_level)/2,est$ci_level+(1-est$ci_level)/2))
     grps[[g]]$est <-t( rbind(est$pi_collapsed[g,],ci_mat))
     colnames(grps[[g]]$est) <- c("est_pi","cil_pi","ciu_pi")

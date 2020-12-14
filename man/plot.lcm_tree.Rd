@@ -4,35 +4,18 @@
 \alias{plot.lcm_tree}
 \title{plots the groups discovered by lcm_tree on the tree for observations.}
 \usage{
-\method{plot}{lcm_tree}(
-  x,
-  group.text.size = 4,
-  group.text.offset = 0.1,
-  legend.text.size = 10,
-  layout = "rectangular",
-  horizontal = TRUE,
-  ...
-)
+\method{plot}{lcm_tree}(x, layout = "circular", colnames_offset_y = 0, heatmap_width = 1, ...)
 }
 \arguments{
 \item{x}{Output from \code{moretrees()}
 An object of class "moretrees_result".}
 
-\item{group.text.size}{Text size for the group labels}
+\item{layout}{layout for the tree, by default it is \code{"circular"};
+other layouts such as \code{"rectangular"} can run, but currently has issues.}
 
-\item{group.text.offset}{Offset of the group label from the
-leaves of the tree}
+\item{colnames_offset_y}{default is \code{0}; see \code{gheatmap} from \code{ggtree}.}
 
-\item{legend.text.size}{Text size for legend}
-
-\item{layout}{Layout for the tree, most likely "rectangular" (the default)
-or "slanted", but see the \code{layout} option of \code{ggtree()} for more
-possibilities}
-
-\item{horizontal}{If TRUE (the default), the tree will be plotted with
-the root node at the top and all other nodes below. If FALSE, the tree
-will be plotted with the root node to the left and all other nodes to
-the right.}
+\item{heatmap_width}{default is \code{1}; see \code{gheatmap} from \code{ggtree}.}
 
 \item{...}{Not used.}
 }

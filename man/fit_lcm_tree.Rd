@@ -3,7 +3,7 @@
 \name{fit_lcm_tree}
 \alias{fit_lcm_tree}
 \title{Fit latent class model with tree-structured shrinkage over the observations
-(this function largely follows Thomas, E. \code{moretrees})}
+(this function largely follows Thomas, E.'s well-written package \code{moretrees})}
 \usage{
 fit_lcm_tree(
   dsgn,
@@ -23,14 +23,14 @@ fit_lcm_tree(
 )
 }
 \arguments{
-\item{dsgn}{a list of data and other information organized according to the tree}
+\item{dsgn}{a list of data organized according to the tree (see \code{\link[=design_tree]{design_tree()}})}
 
 \item{vi_params_init, hyperparams_init, random_init, random_init_vals, tol, tol_hyper, max_iter, print_freq, quiet, plot_fig, shared_tau, update_hyper_freq, hyper_fixed}{initial values and updating protocols. Explained more in the wrapper function \code{\link[=lcm_tree]{lcm_tree()}}}
 }
 \value{
-a list with model updates; because the variational posterior
+a list with model updates. Because the variational posterior
 is comprised of familiar distributional forms that can be  determined
-by the moments, the returned values are moments:
+by the moments, the returned values are these moments:
 
 \describe{
 \item{\code{vi_params}}{named list of final variational parameter estimates}
@@ -42,6 +42,6 @@ by the moments, the returned values are moments:
 }
 \description{
 Fit latent class model with tree-structured shrinkage over the observations
-(this function largely follows Thomas, E. \code{moretrees})
+(this function largely follows Thomas, E.'s well-written package \code{moretrees})
 }
 \concept{internal VI functions}

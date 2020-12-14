@@ -238,10 +238,13 @@ initialize_tree_lcm <- function(Y,A,Z_obs,
     if (is.null(hyperparams[["tau_1"]])){ # tau for alphas.
       hyperparams$tau_1 <- matrix(NA,nrow=Fg,ncol=K-1)
 
+      meanfun<- rowMeans
+      if (K==2){meanfun<-mean}
       for (l in 1:Fg){
-        hyperparams$tau_1[l,]  <- rowMeans(mapply(function(v1,v2){v1^2/v2},
+        hyperparams$tau_1[l,]  <- meanfun(mapply(function(v1,v2){v1^2/v2},
                                                                 v1 = vi_params$mu_alpha[levels==l],
-                                                                v2 = h_pau[levels==l]))} # <--- this has problem if K=2; so need to fix.
+                                                                v2 = h_pau[levels==l]))
+        } # <--- this has problem if K=2; so need to fix.
 
     }else{
       check <- sum(abs(dim(hyperparams[["tau_1"]]) - c(Fg,K-1))<0.1)==2
@@ -445,19 +448,18 @@ initialize_tree_lcm <- function(Y,A,Z_obs,
 
   } else{ # DISTINCT TAU ----------------------->
     if (is.null(vi_params[["tau_1_t"]])){ # just read in initial tau_1's:
-      vi_params$tau_1_t <- split_along_dim(hyperparams$tau_1[levels,],1)
+      vi_params$tau_1_t <- split_along_dim(hyperparams$tau_1[levels,,drop=FALSE],1)
     } else{
-      check <- is.numeric(vi_params$tau_1_t) &&
-        length(vi_params$tau_1_t) == p &&
-        sum(lapply(vi_params$tau_1_t,function(v) sum(v>0)==K-1)) == p
+      check <- length(vi_params$tau_1_t) == p &&
+        sum(unlist(lapply(vi_params$tau_1_t,function(v) sum(v>0)==K-1))) == p# <--- NB: need fixing!
       if (!check) stop("Incompatible intial values for 'tau_1_t'; for alpha")
     }
 
     if (is.null(vi_params[["tau_2_t"]])){
-      vi_params$tau_2_t <- split_along_dim(hyperparams$tau_2[levels,,],1)
+      vi_params$tau_2_t <- split_along_dim(hyperparams$tau_2[levels,,,drop=FALSE],1)
     } else{
       check <- length(vi_params$tau_2_t) == p &&
-        sum(lapply(vi_params$tau_2_t,function(v) sum(v>0)==K*J)) == p
+        sum(unlist(lapply(vi_params$tau_2_t,function(v) sum(v>0)==K*J))) == p
       if (!check) stop("Incompatible intial values for 'tau_2_t'; for gamma")
     }
   }

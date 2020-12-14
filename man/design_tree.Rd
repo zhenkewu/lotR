@@ -2,55 +2,59 @@
 % Please edit documentation in R/design_tree.R
 \name{design_tree}
 \alias{design_tree}
-\title{Organize the data around the edge-weighted rooted tree}
+\title{Organize the data around the rooted binary weighted tree}
 \usage{
 design_tree(Y, leaf_ids, mytree, weighted_edge = FALSE, Z_obs = NULL)
 }
 \arguments{
-\item{Y}{N by J matrix of binary measurements}
+\item{Y}{\code{N} by \code{J} binary data matrix; rows for subjects; columns
+for binary measurements/features}
 
-\item{leaf_ids}{This is a character string}
+\item{leaf_ids}{Character string for leaf nodes for each observation}
 
-\item{mytree}{the tree (an \code{igraph} object) that contains the node,
-edge, edge-length information.}
+\item{mytree}{a tree (an \code{igraph} object) that contains the node,
+edge, edge-length ("weight") information.}
 
-\item{weighted_edge}{logical: TRUE for incorporating the branch lengths -
-then the mytree must have this info; if FALSE, every branch, including
-an imaginary rootnode to past branch, is set to have length 1.}
+\item{weighted_edge}{logical: \code{TRUE} for using the branch lengths then
+the \code{mytree} must have this info; if \code{FALSE}, every edge, including
+an imaginary edge leading to the root node, is set to have length \code{1}.}
 
-\item{Z_obs}{Default is \code{NULL}, a two-column matrix of (id,class indicator)
-for a subset of people; # rows = # rows of Y; 2nd column is \code{NA} if
-a person's class indicator is unknown.
-The rows will be reordered according to the reordered \code{Y}.}
+\item{Z_obs}{Default is \code{NULL}; A two-column matrix of (id, class indicator);
+the number of rows equals the number of observations;
+an entry of 2nd column is \code{NA} if the subject
+in that row has an unknown class indicator.
+Importantly, the rows will be reordered according to the reordered \code{Y}.}
 }
 \value{
-A list of data and tree information
+A list of data and tree information for model fitting
 \itemize{
-\item \code{Y} A matrix of n by J; binary measurements with rows ordered by
-leaf ("leaf_ids") groups (e.g., information from phylogenetic tree).
-\item \code{A} A matrix of p by p; ancestor matrix
-\item \code{A_leaves} A matrix of pL by p; ancestor matrix only for leaves
-\item \code{leaf_ids} This is a vector of length n; ordered by the leaves as
-specified by the tree.
-\item \code{leaf_ids_units} A list of length \code{p[L]}, each element
-is a numeric vector of subject ids belonging to each leaf ("leaf_ids")
+\item \code{Y} A matrix of \code{N} by \code{J}; binary measurements with rows ordered by
+leaf groups  (\code{leaf_ids}).
+\item \code{A} A matrix of \code{p} by \code{p}; each column contains some \code{1}s, indicating
+the node in that column is an ancestor of the node represented in the row.
+Ancestor of a node include that node itself.
+\item \code{A_leaves} A matrix of \code{pL} by \code{p}; A submatrix of \code{A} that represents
+the ancestor matrix but only for leaves
+\item \code{leaf_ids} A vector of \code{N}integers; ordered by the leaves as
+specified by \code{mytree}.
+\item \code{leaf_ids_units} A list of length \code{pL}, each element
+is a vector of subject ids belonging to each leaf node
 \item \code{leaf_ids_nodes} a list of length \code{p}, each element
-is a numeric vector indicating the leaf nodes.
-\item \code{ancestors} a list of length \code{p[L]},
-each element is the numeric vector of ancestors
-(including the leaf node as well).
-\item \code{edge_lengths} a list of length \code{p[L]},
+is a vector of integers (between \code{1} and \code{pL}; id
+is only for leaf nodes) indicating the leaf nodes.
+\item \code{ancestors} a list of length \code{pL},
+each element is the vector of ancestors (between \code{1} and \code{p}; id is among
+all nodes)
+\item \code{edge_lengths} a list of length \code{pL},
 each element is a numeric vector of edge lengths from the root node
-to the leaf.
-\item \code{h_pau} a numeric vector of length \code{p}; each value
-\item \code{v_units} a vector of length equal to the total number of rows in X;
-each element is an integer, indicating which leaf does the observation belong to.
-\item \code{subject_id_list} a list of length p; each element is a vector of subject ids
-that are in the leaf descendants of node u (internal or leaf node)
-\item \code{ord} the permutation to order the original rows to produce the final ordering
-of the rows
-is the length between the node and its parent; the root node has no parent
-and the edge length is set to 1.
+to the leaf. It is computed based on \code{E(mytree)$weight}. It is \code{NULL}
+if \code{E(mytree)$weight} is \code{NULL}
+\item \code{h_pau} a numeric vector of length \code{p}; each value is
+the edge length from u to its parent (if u is a root node, then the value is 1).
+This vector by default is all \code{1}s. If \code{weighted_edge=TRUE}, \code{h_pau}
+is set to \code{E(mytree)$weight}, the input edge weights.
+\item \code{v_units} a vector of length equal to the total number of rows in \code{Y};
+each element is an integer between \verb{1 and }pL\verb{, indicating which leaf does the observation belong to. \\item }subject_id_list\verb{a list of length}p\verb{; each element is a vector of subject ids that are in the leaf descendants of node }u\verb{(internal or leaf node) \\item}ord\verb{the permutation to order the original rows to produce the final ordering of the rows of}Y`.
 }
 }
 \description{

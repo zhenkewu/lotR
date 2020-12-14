@@ -170,17 +170,17 @@ lcm_tree <- function(Y,leaf_ids,mytree,# may have unordered nodes.
                             log_dir, "/restart_i_log.txt\n", sep = "")
 
   # Fill in some arguments
-  if (nrestarts > 1 & !random_init) {
+  if (nrestarts > 1 & !random_init) { # force random starts if nstarts>1.
     message("[lotR] Setting 'random_init = TRUE' since nrestarts > 1\n")
     random_init <- TRUE
   }
   if (nrestarts == 1) parallel <- FALSE
 
-  if (log_restarts){
-      message("[lotR] Setting 'plot_fig = TRUE', since 'log_restarts = TRUE'\n")
-    }
+  # if (log_restarts){
+  #     message("[lotR] Setting 'plot_fig = TRUE', since 'log_restarts = TRUE'\n")
+  #   }
 
-  # construct designed data; here design_tree reorders the nodes of the tree.
+  # construct designed data; here `design_tree` reorders the nodes of the tree.
   dsgn <- design_tree(Y,leaf_ids,mytree,weighted_edge,Z_obs) # root_node,weighted_edge <--- need fixing.
 
   # Get hyper_fixed if not supplied:
@@ -188,11 +188,12 @@ lcm_tree <- function(Y,leaf_ids,mytree,# may have unordered nodes.
     L             <- max(dsgn$levels)
     hyper_fixed   <- append(hyper_fixed,list(a = rep(1, L)))
     hyper_fixed$b <- rep(1, L)
-    warning("[lotR] No fixed hyperparameters supplied; we set a_l=b_l=1 for all levels of hyperparameters.")
+    warning("[lotR] No fixed hyperparameters (a,b) supplied; we set a_l=b_l=1 for all levels of hyperparameters.")
   }
 
   if (is.null(hyper_fixed$K)) {
-    warning("[lotR] No fixed # of classes supplied; supply a named element `K` in the list 'hyper_fixed'.")
+    warning("[lotR] No fixed # of classes supplied;
+            supply a named element `K` in the list 'hyper_fixed'.")
   }
 
   # Setting up parallelization

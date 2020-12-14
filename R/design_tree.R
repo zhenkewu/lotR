@@ -2,49 +2,59 @@
 # functions to organize data around the tree structure
 #######################################################################
 
-#' Organize the data around the edge-weighted rooted tree
+#' Organize the data around the rooted binary weighted tree
 #'
 #' NB: currently this minimally built; need some checking functions
 #'
-#' @param Y N by J matrix of binary measurements
-#' @param leaf_ids This is a character string
-#' @param mytree the tree (an `igraph` object) that contains the node,
-#'              edge, edge-length information.
-#' @param weighted_edge logical: TRUE for incorporating the branch lengths -
-#' then the mytree must have this info; if FALSE, every branch, including
-#' an imaginary rootnode to past branch, is set to have length 1.
-#' @param Z_obs Default is `NULL`, a two-column matrix of (id,class indicator)
-#' for a subset of people; # rows = # rows of Y; 2nd column is `NA` if
-#' a person's class indicator is unknown.
-#' The rows will be reordered according to the reordered `Y`.
+#' @param Y `N` by `J` binary data matrix; rows for subjects; columns
+#' for binary measurements/features
+#' @param leaf_ids Character string for leaf nodes for each observation
+#' @param mytree a tree (an `igraph` object) that contains the node,
+#'              edge, edge-length ("weight") information.
+#' @param weighted_edge logical: `TRUE` for using the branch lengths then
+#' the `mytree` must have this info; if `FALSE`, every edge, including
+#' an imaginary edge leading to the root node, is set to have length `1`.
+#' @param Z_obs Default is `NULL`; A two-column matrix of (id, class indicator);
+#' the number of rows equals the number of observations;
+#' an entry of 2nd column is `NA` if the subject
+#' in that row has an unknown class indicator.
+#' Importantly, the rows will be reordered according to the reordered `Y`.
 #'
-#' @return A list of data and tree information
+#' @return A list of data and tree information for model fitting
 #' \itemize{
-#' \item `Y` A matrix of n by J; binary measurements with rows ordered by
-#'       leaf ("leaf_ids") groups (e.g., information from phylogenetic tree).
-#' \item `A` A matrix of p by p; ancestor matrix
-#' \item `A_leaves` A matrix of pL by p; ancestor matrix only for leaves
-#' \item `leaf_ids` This is a vector of length n; ordered by the leaves as
-#'              specified by the tree.
-#' \item `leaf_ids_units` A list of length `p[L]`, each element
-#'            is a numeric vector of subject ids belonging to each leaf ("leaf_ids")
+#' \item `Y` A matrix of `N` by `J`; binary measurements with rows ordered by
+#'       leaf groups  (`leaf_ids`).
+#' \item `A` A matrix of `p` by `p`; each column contains some `1`s, indicating
+#' the node in that column is an ancestor of the node represented in the row.
+#' Ancestor of a node include that node itself.
+#' \item `A_leaves` A matrix of `pL` by `p`; A submatrix of `A` that represents
+#' the ancestor matrix but only for leaves
+#' \item `leaf_ids` A vector of `N`integers; ordered by the leaves as
+#'              specified by `mytree`.
+#' \item `leaf_ids_units` A list of length `pL`, each element
+#'            is a vector of subject ids belonging to each leaf node
 #' \item `leaf_ids_nodes` a list of length `p`, each element
-#'            is a numeric vector indicating the leaf nodes.
-#' \item `ancestors` a list of length `p[L]`,
-#'      each element is the numeric vector of ancestors
-#'      (including the leaf node as well).
-#' \item `edge_lengths` a list of length `p[L]`,
+#'            is a vector of integers (between `1` and `pL`; id
+#'            is only for leaf nodes) indicating the leaf nodes.
+#' \item `ancestors` a list of length `pL`,
+#'      each element is the vector of ancestors (between `1` and `p`; id is among
+#'      all nodes)
+#' \item `edge_lengths` a list of length `pL`,
 #'       each element is a numeric vector of edge lengths from the root node
-#'       to the leaf.
-#' \item `h_pau` a numeric vector of length `p`; each value
-#' \item `v_units` a vector of length equal to the total number of rows in X;
-#' each element is an integer, indicating which leaf does the observation belong to.
-#' \item `subject_id_list` a list of length p; each element is a vector of subject ids
-#' that are in the leaf descendants of node u (internal or leaf node)
-#' \item `ord` the permutation to order the original rows to produce the final ordering
-#' of the rows
-#' is the length between the node and its parent; the root node has no parent
-#' and the edge length is set to 1.
+#'       to the leaf. It is computed based on `E(mytree)$weight`. It is `NULL`
+#'       if `E(mytree)$weight` is `NULL`
+#' \item `h_pau` a numeric vector of length `p`; each value is
+#' the edge length from u to its parent (if u is a root node, then the value is 1).
+#' This vector by default is all `1`s. If `weighted_edge=TRUE`, `h_pau`
+#' is set to `E(mytree)$weight`, the input edge weights.
+#' \item `v_units` a vector of length equal to the total number of rows in `Y`;
+#' each element is an integer between `1 and `pL`,
+#' indicating which leaf does the observation belong to.
+#' \item `subject_id_list` a list of length `p`; each element is a vector of
+#' subject ids
+#' that are in the leaf descendants of node `u` (internal or leaf node)
+#' \item `ord` the permutation to order the original rows to produce the final
+#' ordering of the rows of `Y`.
 #' }
 #' @export
 #' @import igraph
@@ -58,12 +68,13 @@ design_tree <- function(Y,leaf_ids,mytree,weighted_edge=FALSE,Z_obs = NULL){ # b
   # rootnode="Node1"
   # weighted_edge <- FALSE
 
-  if (!is.character(leaf_ids)) stop("[lotR] leaf_ids is not a character object.")
+  if (!is.character(leaf_ids)) stop("[lotR] `leaf_ids` is not a character object.")
   if (!igraph::is.igraph(mytree)) stop("[lotR] 'mytree' is not a graph object.")
   if (!igraph::is.directed(mytree)) stop("[lotR] 'mytree' is not directed.")
 
-  cat("\n\n [lotR] tree ", c("does not have ", "has ")[weighted_edge+1], "weighed edges.\n\n")
+  cat("\n\n [lotR] ", c("unweighted", "weighted")[weighted_edge+1], "tree...\n\n")
 
+  # extract nodes:
   nodes  <- names(igraph::V(mytree))
   leaves <- names(igraph::V(mytree)[igraph::degree(mytree, mode = "out") == 0])
   rootnode <- names(igraph::V(mytree)[igraph::degree(mytree, mode = "in") == 0])
@@ -87,9 +98,6 @@ design_tree <- function(Y,leaf_ids,mytree,weighted_edge=FALSE,Z_obs = NULL){ # b
     warning("[lotR] Some levels contain fewer than five nodes: this may lead to problems
             with estimating variance parameters. Recommend increasing the number
             of nodes per level.")
-    ## the variance parameter for the root node is diffuse enough that
-    ## it is to be not too informative about the actual values of the mean for the
-    ## root node.
   }
 
   # sizes:
@@ -98,11 +106,32 @@ design_tree <- function(Y,leaf_ids,mytree,weighted_edge=FALSE,Z_obs = NULL){ # b
   n  <- nrow(Y)
 
   # ancestor matrix:
-  A <- igraph::as_adjacency_matrix(mytree, sparse = TRUE)
+  A <- igraph::as_adjacency_matrix(mytree, sparse = TRUE) # directed graph; upper diag mat
   A <- A[nodes, nodes] # re-order rows/columns to mirror nodes
-  A <- Matrix::expm(Matrix::t(A))
+  A <- Matrix::expm(Matrix::t(A)) # get ancestors: lower diag mat (1: column j is anc for the row)
   A[A > 0 ] <- 1
   A <- Matrix::Matrix(A, sparse = TRUE)
+
+
+  # 16 x 16 sparse Matrix of class "dtCMatrix"
+  # [[ suppressing 16 column names ‘7.4’, ‘7.4.1’, ‘7.4.2’ ... ]]
+  #
+  # 7.4     1 . . . . . . . . . . . . . . .
+  # 7.4.1   1 1 . . . . . . . . . . . . . .
+  # 7.4.2   1 . 1 . . . . . . . . . . . . .
+  # 7.4.3   1 . . 1 . . . . . . . . . . . .
+  # 7.4.4   1 . . . 1 . . . . . . . . . . .
+  # 7.4.1.1 1 1 . . . 1 . . . . . . . . . .
+  # 7.4.1.2 1 1 . . . . 1 . . . . . . . . .
+  # 7.4.1.3 1 1 . . . . . 1 . . . . . . . .
+  # 7.4.2.0 1 . 1 . . . . . 1 . . . . . . .
+  # 7.4.2.1 1 . 1 . . . . . . 1 . . . . . .
+  # 7.4.2.2 1 . 1 . . . . . . . 1 . . . . .
+  # 7.4.3.0 1 . . 1 . . . . . . . 1 . . . .
+  # 7.4.3.1 1 . . 1 . . . . . . . . 1 . . .
+  # 7.4.3.2 1 . . 1 . . . . . . . . . 1 . .
+  # 7.4.4.1 1 . . . 1 . . . . . . . . . 1 .
+  # 7.4.4.2 1 . . . 1 . . . . . . . . . . 1
 
   # Sort by leaf_ids, where order is specified by ordering in 'mytree':
   ord <- order(ordered(leaf_ids, levels = leaves)) # <--- leaves.

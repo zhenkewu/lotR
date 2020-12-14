@@ -144,7 +144,8 @@ mod0     <- lcm_tree(Y,curr_leaves,tr,
 ###############################################################################
 # print out summaries of group specific estimates:
 ###############################################################################
-plot(mod0,layout = "slanted", horizontal = FALSE)
+# plot(mod0,layout = "slanted", horizontal = FALSE)
+plot(mod0)
 
 mod0$prob_est$pi_collapsed
 which(mod0$mod$vi_params$prob>0.5)

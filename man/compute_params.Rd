@@ -4,14 +4,18 @@
 \alias{compute_params}
 \title{compute model summaries from the model outputs}
 \usage{
-compute_params(mod, dsgn, ci_level = 0.95)
+compute_params(mod, dsgn, ci_level = 0.95, B = 10000)
 }
 \arguments{
-\item{mod}{output from \code{\link[=lcm_tree]{lcm_tree()}}}
+\item{mod}{output from \code{\link[=fit_lcm_tree]{fit_lcm_tree()}}}
 
 \item{dsgn}{output from \code{\link[=design_tree]{design_tree()}}}
 
 \item{ci_level}{credible interval level; default to 0.95}
+
+\item{B}{Default is \code{10000}; the number of random multivariate
+Gaussian eta (K-1 dimensional) for producing posterior summaries
+of the stick-breaking transformed probabilities (K dimensional)}
 }
 \value{
 a list
@@ -36,7 +40,7 @@ prob_est$pi_collapsed
 }
 }
 \description{
-compute model summaries from the model outputs
+This function is used in the wrapper function \code{\link[=lcm_tree]{lcm_tree()}}
 }
 \seealso{
 \code{\link[=get_est_cpp]{get_est_cpp()}}

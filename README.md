@@ -68,7 +68,7 @@ Examples
 ![](inst/example_figure/lotR_self_adaptive.png)
 
 * _lotR_ produces similar results as `BayesLCA` on fully collapsed tree (ignoring tree information)
-![](inst/example_figure/comparison_with_std.png)
+![](inst/example_figure/comparison_with_std_frozen.png)
 
 
 

@@ -4,7 +4,7 @@
 \alias{summary.lcm_tree}
 \title{\code{summary.lcm_tree} summarizes the results from \code{\link[=lcm_tree]{lcm_tree()}}.}
 \usage{
-\method{summary}{lcm_tree}(object, compact = FALSE, ...)
+\method{summary}{lcm_tree}(object, compact = FALSE, B = 10000, ...)
 }
 \arguments{
 \item{object}{Output from \code{\link[=lcm_tree]{lcm_tree()}}.
@@ -15,13 +15,16 @@ Only works well when the dimension of the variables is low
 (say, < 4); otherwise the table takes up too much horizontal space.
 Default is \code{FALSE}.}
 
+\item{B}{Default \code{10000}: The number of random multivariate Gaussian for logit of V in stick breaking
+parameterization; used for obtaining the posterior distribution of \code{pi_v}}
+
 \item{...}{Not used.}
 }
 \value{
 see \code{\link[=print.lcm_tree]{print.lcm_tree()}}
 }
 \description{
-Will have some randomness associated with the uppper and lower bounds,
+Will have some randomness associated with the upper and lower bounds,
 because we simulated the Gaussian variables before converting to probabilities.
 }
 \seealso{

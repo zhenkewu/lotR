@@ -1,13 +1,12 @@
 #' Fit latent class model with tree-structured shrinkage over the observations
-#' (this function largely follows Thomas, E. `moretrees`)
+#' (this function largely follows Thomas, E.'s well-written package `moretrees`)
 #'
-#'
-#' @param dsgn a list of data and other information organized according to the tree
+#' @param dsgn a list of data organized according to the tree (see [design_tree()])
 #' @param vi_params_init,hyperparams_init,random_init,random_init_vals,tol,tol_hyper,max_iter,print_freq,quiet,plot_fig,shared_tau,update_hyper_freq,hyper_fixed
 #' initial values and updating protocols. Explained more in the wrapper function [lcm_tree()]
-#' @return a list with model updates; because the variational posterior
+#' @return a list with model updates. Because the variational posterior
 #' is comprised of familiar distributional forms that can be  determined
-#' by the moments, the returned values are moments:
+#' by the moments, the returned values are these moments:
 #'
 #' \describe{
 #' \item{`vi_params`}{named list of final variational parameter estimates}
@@ -61,7 +60,7 @@ fit_lcm_tree <- function(dsgn,
   #dsgn$maxnv          <- max(unlist(lapply(dsgn$leaf_ids_units,length)))
   #-------------------------------END OF DESIGN PADDING--------------------------
 
-  if (!quiet){cat("\n [lotR] Branch lengths: `h_pau`: \n");print(dsgn$h_pau)}
+  if (!quiet){cat("\n [lotR] Working weights (edge lengths): `h_pau`: \n");print(dsgn$h_pau)}
   # initialize: ----------------------
   init <- R.utils::doCall(initialize_tree_lcm,
                           vi_params   = vi_params_init,

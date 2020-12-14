@@ -13,7 +13,7 @@
 }
 \value{
 Summary showing, for each group of leaf nodes discovered by \code{\link[=lotR]{lotR()}},
-the classs prevalences, 95\% credible intervals, number of leaf nodes in
+the class prevalences, 95\% credible intervals, number of leaf nodes in
 per group, and number of observations per group.
 }
 \description{

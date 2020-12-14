@@ -10,7 +10,7 @@
 #'   \item{Y}{A matrix with n=1000 rows and J=18 columns.}
 #'   `Z_obs`{A two column integer matrix. The first column is from
 #'   1 to n. The second column is a mix of `NA` and integers between 1 and
-#'   K (number of latent classess). `NA` represents unobserved latent class
+#'   K (number of latent classes). `NA` represents unobserved latent class
 #'   membership; an integer represent observed latent class. `NULL` if
 #'   no observation has observed class membership.}
 #'   \item{curr_leaves}{A character vector of length n=1000.
@@ -47,9 +47,21 @@
 #' Simulated multivariate binary data. (with tree structure)
 #'
 #' Simulated data for testing the [lcm_tree()] function.
-#' Used in the example.
+#' Used in the example. (K=3)
 #'
 #' @format A named list with the following elements:
 #' see the returned values of [simulate_lcm_tree()]
 #' @seealso [simulate_lcm_tree()]
 "lotR_example_data_tree"
+
+
+#' Simulated multivariate binary data. (with tree structure)
+#'
+#' Simulated data for testing the [lcm_tree()] function.
+#' Used in the example. (K=2)
+#'
+#' @format A named list with the following elements:
+#' see the returned values of [simulate_lcm_tree()]
+#' @seealso [simulate_lcm_tree()]
+"lotR_example_data_tree_K2"
+
