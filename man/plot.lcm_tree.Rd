@@ -4,16 +4,25 @@
 \alias{plot.lcm_tree}
 \title{plots the groups discovered by lcm_tree on the tree for observations.}
 \usage{
-\method{plot}{lcm_tree}(x, layout = "circular", colnames_offset_y = 0, heatmap_width = 1, ...)
+\method{plot}{lcm_tree}(
+  x,
+  layout = "circular",
+  colnames_offset_y = 0,
+  font_size = 4,
+  heatmap_width = 1,
+  ...
+)
 }
 \arguments{
-\item{x}{Output from \code{moretrees()}
+\item{x}{An \code{lcm_tree} class object; Output from \code{lcm_tree()}
 An object of class "moretrees_result".}
 
 \item{layout}{layout for the tree, by default it is \code{"circular"};
 other layouts such as \code{"rectangular"} can run, but currently has issues.}
 
 \item{colnames_offset_y}{default is \code{0}; see \code{gheatmap} from \code{ggtree}.}
+
+\item{font_size}{default is \code{4}; see \code{gheatmap} from \code{ggtree}}
 
 \item{heatmap_width}{default is \code{1}; see \code{gheatmap} from \code{ggtree}.}
 
@@ -29,4 +38,7 @@ plots the groups discovered by lcm_tree on the tree for observations.
 \examples{
 # See vignette
 
+}
+\references{
+\url{https://guangchuangyu.github.io/ggtree-book/chapter-ggtree.html#tree-annotation-using-data-from-evolutionary-analysis-software}
 }

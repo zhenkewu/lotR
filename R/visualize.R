@@ -1,16 +1,21 @@
-if(getRversion() >= "2.15.1") utils::globalVariables(c("Group","Group_nm","name"))
+if(getRversion() >= "2.15.1") utils::globalVariables(c("Group","Group_nm","name","j","probability","class"))
 
 #' plots the groups discovered by lcm_tree on the tree for observations.
 #'
-#' @param x Output from `moretrees()`
+#' @param x An `lcm_tree` class object; Output from `lcm_tree()`
 #' An object of class "moretrees_result".
 #' @param layout layout for the tree, by default it is `"circular"`;
 #' other layouts such as `"rectangular"` can run, but currently has issues.
 #' @param colnames_offset_y default is `0`; see `gheatmap` from `ggtree`.
 #' @param heatmap_width default is `1`; see `gheatmap` from `ggtree`.
+#' @param font_size default is `4`; see `gheatmap` from `ggtree`
 #' @param ... Not used.
 #' @return A plot showing the groups discovered by MOReTreeS on the original
 #' leaf_ids tree.
+#'
+#' @references
+#' <https://guangchuangyu.github.io/ggtree-book/chapter-ggtree.html#tree-annotation-using-data-from-evolutionary-analysis-software>
+#'
 #' @examples
 #' # See vignette
 #'
@@ -28,6 +33,7 @@ plot.lcm_tree <- function(x,
                           # legend.text.size = 10,
                           layout = "circular",
                           colnames_offset_y=0,
+                          font_size=4,
                           heatmap_width = 1,
                           ...) {
 
@@ -64,8 +70,8 @@ plot.lcm_tree <- function(x,
    p <- gheatmap(p, heatmapData, offset = 12,color=NULL,
            colnames_position="top",
            colnames_angle=90, colnames_offset_y = 0,
-           hjust=0, font.size=heatmap_width,width=heatmap_width)+
-    scale_fill_gradientn(colours=topo.colors(100),na.value = "transparent",
+           hjust=0, font.size=font_size,width=heatmap_width)+
+    scale_fill_gradientn(colours=rev(topo.colors(100)),na.value = "transparent",
                          breaks=c(0,0.5,1),labels=c(0,0.5,1),
                          limits=c(0,1))
    p
@@ -74,6 +80,39 @@ plot.lcm_tree <- function(x,
   return(p)
 }
 
+
+
+#' plots the estimated response probabilities by class
+#'
+#' This estimated by [lcm_tree()]
+#'
+#' @param x An `lcm_tree` class object; Output from `lcm_tree()`
+#' @return A plot showing the groups discovered by MOReTreeS on the original
+#' leaf_ids tree.
+#'
+#' @examples
+#' # See vignette
+#'
+#' @importFrom reshape2 melt
+#' @import ggplot2
+#' @importFrom grDevices colorRampPalette topo.colors
+#' @importFrom RColorBrewer brewer.pal
+#' @export
+plot_est_resp <- function(x){
+  est_resp_prob_mat   <- as.data.frame(x$prob_est$theta)
+  colnames(est_resp_prob_mat) <- paste("class",1:x$mod$hyper_fixed$K,sep="")
+  est_resp_prob_mat$j <- 1:nrow(est_resp_prob_mat)
+
+  df2 <- melt(est_resp_prob_mat, id.vars='j',value.name = "probability",variable.name = "class")
+
+  pal <- topo.colors(100)[c(1,100)]
+
+  p2  <- ggplot(df2, aes(x=j, y=probability, fill=class)) +
+    geom_bar(stat='identity', position=position_dodge(0.7),colour="black",width=0.7)+
+    scale_fill_manual(values = pal)+theme_bw()+coord_fixed(ratio=4)
+
+  return(p2)
+}
 
 
 ###### @param group.text.size Text size for the group labels
