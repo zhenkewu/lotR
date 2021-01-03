@@ -98,10 +98,15 @@ plot.lcm_tree <- function(x,
 #' @importFrom grDevices colorRampPalette topo.colors
 #' @importFrom RColorBrewer brewer.pal
 #' @export
-plot_est_resp <- function(x){
+plot_est_resp <- function(x,xlab_nm="feature"){
   est_resp_prob_mat   <- as.data.frame(x$prob_est$theta)
   colnames(est_resp_prob_mat) <- paste("class",1:x$mod$hyper_fixed$K,sep="")
   est_resp_prob_mat$j <- 1:nrow(est_resp_prob_mat)
+
+
+  # est_resp_prob_mat  <- cbind(est_resp_prob_mat,x$prob_est$beta_est,x$prob_est$beta_sd_est)
+  # colnames(est_resp_prob_mat)[-(1:(x$mod$hyper_fixed$K+1))] <-
+  #   paste(paste("class",1:x$mod$hyper_fixed$K,sep=""),rep(c("est","sd"),each=2),sep="_")
 
   df2 <- melt(est_resp_prob_mat, id.vars='j',value.name = "probability",variable.name = "class")
 
@@ -109,7 +114,9 @@ plot_est_resp <- function(x){
 
   p2  <- ggplot(df2, aes(x=j, y=probability, fill=class)) +
     geom_bar(stat='identity', position=position_dodge(0.7),colour="black",width=0.7)+
-    scale_fill_manual(values = pal)+theme_bw()+coord_fixed(ratio=4)
+    scale_fill_manual(values = pal)+theme_bw()+
+    xlab(xlab_nm)+
+    theme(axis.title=element_text(size=20))#+coord_fixed(ratio=4)+
 
   return(p2)
 }

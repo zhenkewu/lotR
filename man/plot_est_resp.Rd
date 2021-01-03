@@ -4,7 +4,7 @@
 \alias{plot_est_resp}
 \title{plots the estimated response probabilities by class}
 \usage{
-plot_est_resp(x)
+plot_est_resp(x, xlab_nm = "feature")
 }
 \arguments{
 \item{x}{An \code{lcm_tree} class object; Output from \code{lcm_tree()}}

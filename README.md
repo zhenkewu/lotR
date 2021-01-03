@@ -7,6 +7,15 @@ zhenkewu badges:
 
 **Maintainer**: Zhenke Wu, zhenkewu@umich.edu
 
+
+**References**: If you are using **lotR** for tree-integrative latent class analysis, 
+please cite the following preprint:
+
+|       | Citation     | Paper Link
+| -------------  | -------------  | -------------  |
+| Bayesian tree-integrative LCM    | Li M, Park D, Aziz M, Liu CM, Price L, Wu Z (2021+). Integrating Sample Similarity Information into Latent Class Models: A Tree-Structured Shrinkage Approach.. Working Paper.   |[Link](https://zhenkewu.com/papers/tree_lcm)| 
+
+
 ## Table of content
 - [1. Installation](#id-section1)
 - [2. Overview](#id-section2)
