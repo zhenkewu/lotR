@@ -87,6 +87,7 @@ plot.lcm_tree <- function(x,
 #' This estimated by [lcm_tree()]
 #'
 #' @param x An `lcm_tree` class object; Output from `lcm_tree()`
+#' @param xlab_nm x axis name; a character string
 #' @return A plot showing the groups discovered by MOReTreeS on the original
 #' leaf_ids tree.
 #'

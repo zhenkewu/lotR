@@ -8,6 +8,8 @@ plot_est_resp(x, xlab_nm = "feature")
 }
 \arguments{
 \item{x}{An \code{lcm_tree} class object; Output from \code{lcm_tree()}}
+
+\item{xlab_nm}{x axis name; a character string}
 }
 \value{
 A plot showing the groups discovered by MOReTreeS on the original
