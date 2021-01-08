@@ -134,9 +134,9 @@ initialize_tree_lcm <- function(Y,A,Z_obs,
       sub_id <- match(Z_obs[!is.na(Z_obs[,2]),1],units) # which in units are in Z_obs.
       if (!is.null(Z_obs) && sum(!is.na(sub_id))>0){
         goodstart <- start_class_member_prob[units,,drop=FALSE]
-        mod <- blca(Y[units,,drop=FALSE],K,method="vb",verbose=FALSE,start.vals = goodstart)#)) # <---- This has random intialization, causing different initialization.
+        mod <- blca(Y[units,,drop=FALSE],K,method="em",verbose=FALSE,start.vals = goodstart)#)) # <---- This has random intialization, causing different initialization.
       } else{
-        mod <- blca(Y[units,,drop=FALSE],K,method="vb",verbose=FALSE,start.vals="single")
+        mod <- blca(Y[units,,drop=FALSE],K,method="em",verbose=FALSE,start.vals="single")
       }
       # but this should not matter if hyperparams and vi_params are provided.
       tmp          <- sapply(mod$classprob,function(s) min(max(s,0.01),0.99))
