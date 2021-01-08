@@ -111,7 +111,7 @@ plot_est_resp <- function(x,xlab_nm="feature"){
 
   df2 <- melt(est_resp_prob_mat, id.vars='j',value.name = "probability",variable.name = "class")
 
-  pal <- topo.colors(100)[c(1,100)]
+  pal <- topo.colors(100)[seq(1,100,length=x$mod$hyper_fixed$K)]
 
   p2  <- ggplot(df2, aes(x=j, y=probability, fill=class)) +
     geom_bar(stat='identity', position=position_dodge(0.7),colour="black",width=0.7)+
