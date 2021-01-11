@@ -14,8 +14,7 @@
 )
 }
 \arguments{
-\item{x}{An \code{lcm_tree} class object; Output from \code{lcm_tree()}
-An object of class "moretrees_result".}
+\item{x}{An \code{lcm_tree} class object; Output from \code{lcm_tree()}}
 
 \item{layout}{layout for the tree, by default it is \code{"circular"};
 other layouts such as \code{"rectangular"} can run, but currently has issues.}

@@ -3,7 +3,6 @@ if(getRversion() >= "2.15.1") utils::globalVariables(c("Group","Group_nm","name"
 #' plots the groups discovered by lcm_tree on the tree for observations.
 #'
 #' @param x An `lcm_tree` class object; Output from `lcm_tree()`
-#' An object of class "moretrees_result".
 #' @param layout layout for the tree, by default it is `"circular"`;
 #' other layouts such as `"rectangular"` can run, but currently has issues.
 #' @param colnames_offset_y default is `0`; see `gheatmap` from `ggtree`.
@@ -50,6 +49,7 @@ plot.lcm_tree <- function(x,
 
   thetree_here <- as.phylo(x$mytree) # add the edge weights to the transformed object;
   thetree_here$edge.length <- E(x$mytree)$weight
+  if (is.null(E(x$mytree)$weight)){thetree_here$edge.length <- x$dsgn$h_pau[-1]}
   thetree_edge_scaled <- thetree_here
   thetree_edge_scaled$edge.length <- thetree_here$edge.length*0.5/median(thetree_here$edge.length)
   p <- ggtree(thetree_edge_scaled,layout=layout) %<+% classprob +
@@ -76,6 +76,86 @@ plot.lcm_tree <- function(x,
                          limits=c(0,1))
    p
 
+  # Return
+  return(p)
+}
+
+#' plots the groups discovered by lcm_tree on the tree for observations.
+#'
+#' @param x An `lcm_tree` class object; Output from `lcm_tree()`
+#' @param group.text.size Text size for the group labels
+#' @param group.text.offset Offset of the group label from the
+#' leaves of the tree
+#' @param legend.text.size Text size for legend
+#' @param layout Layout for the tree, most likely "rectangular" (the default)
+#' or "slanted", but see the `layout` option of `ggtree()` for more
+#' possibilities
+#' @param horizontal If TRUE (the default), the tree will be plotted with
+#' the root node at the top and all other nodes below. If FALSE, the tree
+#' will be plotted with the root node to the left and all other nodes to
+#' the right.
+#' @param ... Not used.
+#'
+#' @references
+#' <https://guangchuangyu.github.io/ggtree-book/chapter-ggtree.html#tree-annotation-using-data-from-evolutionary-analysis-software>
+#'
+#' @examples
+#' # See vignette
+#'
+#' @import ggtree
+#' @importFrom igraph E
+#' @importFrom ape as.phylo
+#' @importFrom stats median
+#' @importFrom ggplot2 scale_fill_gradientn
+#' @importFrom grDevices colorRampPalette topo.colors
+#' @importFrom RColorBrewer brewer.pal
+#' @export
+plot_noncir <- function(x,
+                     group.text.size = 4,
+                     group.text.offset = 0.1,
+                     legend.text.size = 10,
+                     layout = "rectangular",
+                     horizontal = FALSE,
+                     ...) {
+  # the following is from moretrees:
+  # Get data.frame with groups info
+
+  # x = mod0
+  # group.text.size = 4
+  # group.text.offset = 0.1
+  # legend.text.size = 10
+  # layout = "slanted"#"rectangular"
+  # horizontal = !TRUE
+
+  x$mytree <- set.vertex.attribute(x$mytree, "name", value=paste("",1:length(V(x$mytree)),sep=""))
+
+  leaves <- names(igraph::V(x$mytree)[igraph::degree(x$mytree, mode = "out") == 0])
+  groups.df <- data.frame(leaves = leaves, Group = as.factor(x$prob_est$group))
+  cols_g <- colorRampPalette(brewer.pal(9, "Set1"))(length(unique(x$prob_est$group)))
+  #cols_g <- RColorBrewer::brewer.pal(length(levels(groups.df$Group)), "Set3")
+
+  # Plot
+  p <- ggtree::ggtree(x$mytree, ladderize = FALSE, layout = layout)  %<+% groups.df
+  if (horizontal) {
+    p <- p + ggplot2::coord_flip() + ggplot2::scale_x_reverse()
+    group.text.offset <- - group.text.offset
+  }
+  p <- p + ggtree::geom_tippoint(ggplot2::aes(color = Group),
+                                 shape = 15, size = 4) +
+    geom_nodelab(geom = "label")+
+    geom_tiplab(geom = "label",hjust=1.6)+
+    ggtree::geom_tiplab(ggplot2::aes(label = Group), size = group.text.size,
+                        offset = group.text.offset,
+                        vjust = 0.5,
+                        hjust = 0.5)+
+    ggplot2::theme(legend.text = ggplot2::element_text(size = legend.text.size),
+                   legend.title = ggplot2::element_text(size = legend.text.size))+
+    scale_y_reverse()
+  if (length(cols_g) == length(levels(groups.df$Group))) {
+    p <- p + ggplot2::scale_color_manual(values = cols_g)
+  }
+
+  p
   # Return
   return(p)
 }
