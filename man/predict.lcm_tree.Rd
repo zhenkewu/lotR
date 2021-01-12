@@ -2,7 +2,8 @@
 % Please edit documentation in R/predict.R
 \name{predict.lcm_tree}
 \alias{predict.lcm_tree}
-\title{plots the groups discovered by lcm_tree on the tree for observations.}
+\title{approximate predictive class probabilities for a new observation in
+a leaf}
 \usage{
 \method{predict}{lcm_tree}(object, dat_pred = NULL, leaf_ids = NULL, collapsed = TRUE, ...)
 }
@@ -28,5 +29,6 @@ each row correspond to a vector of predicted probabilities of
 an observation in each class.
 }
 \description{
-plots the groups discovered by lcm_tree on the tree for observations.
+approximate predictive class probabilities for a new observation in
+a leaf
 }

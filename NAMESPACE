@@ -2,6 +2,7 @@
 
 S3method(log1p,exp.vec)
 S3method(plot,lcm_tree)
+S3method(predict,blca)
 S3method(predict,lcm_tree)
 S3method(print,lcm_tree)
 S3method(print,summary.lcm_tree_compact)
