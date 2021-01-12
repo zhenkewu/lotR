@@ -17,6 +17,7 @@
 #' an observation in each class.
 #'
 #' @importFrom matrixStats logSumExp
+#' @rdname predict.lcm_tree
 #' @export
 predict.lcm_tree <- function(object,
                              dat_pred=NULL,leaf_ids=NULL,collapsed=TRUE,
@@ -85,6 +86,7 @@ predict.lcm_tree <- function(object,
 #' an observation in each class.
 #'
 #' @importFrom matrixStats logSumExp
+#' @rdname predict.blca
 #' @export
 predict.blca <- function(object,
                          dat_pred=NULL,
