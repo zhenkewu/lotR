@@ -91,6 +91,7 @@ update_vi_params <- function(Y,A,Z_obs,
       mu_alpha[[u]]    <-  c(gamma_alpha_update$resD)*c(gamma_alpha_update$resC)
       Sigma_alpha[[u]] <-  c(gamma_alpha_update$resC)
 
+
       # update w_u, q_t(s_u)
       w_u   <- digamma(a_t[levels[u]])-digamma(b_t[levels[u]])-
         # 0.5*J*K*log(tau_2_t[u]*h_pau[u])+0.5*sum(log(sigma_gamma[u,,]))+
@@ -111,6 +112,7 @@ update_vi_params <- function(Y,A,Z_obs,
       sigma_gamma[u,,] <-   gamma_alpha_update$resA
       mu_alpha[[u]]    <-  c(gamma_alpha_update$resD)*c(gamma_alpha_update$resC)
       Sigma_alpha[[u]] <-  c(gamma_alpha_update$resC)
+      # print(gamma_alpha_update)
 
       # update w_u, q_t(s_u)
       w_u   <- digamma(a_t[levels[u]])-digamma(b_t[levels[u]])-
@@ -128,7 +130,6 @@ update_vi_params <- function(Y,A,Z_obs,
       prob[u] <- 0
     }
     #print(prob)
-
     # updating ancestral node will impact the variational moments of the descendants:
     moments_cpp <- get_moments_cpp_eco(leaf_ids_nodes[[u]],
                                        E_beta,E_beta_sq,E_eta,E_eta_sq,
@@ -141,7 +142,10 @@ update_vi_params <- function(Y,A,Z_obs,
     E_eta_sq       <- moments_cpp$E_eta_sq
     E_beta         <- moments_cpp$E_beta
     E_eta          <- moments_cpp$E_eta
+
   }
+
+
 
   # update variational parameters for q_t(rho):
   for (l in 1:Fg){

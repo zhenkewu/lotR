@@ -150,7 +150,8 @@ fit_lcm_tree <- function(dsgn,
         # }
         i2 <- min(ceiling(i / update_hyper_freq) * update_hyper_freq - 1,
                   max_iter)
-        ELBO_track[(i + 1):i2] <- hyperparams$ELBO  # can send this iteration much later; so appears updating more frequent than specified.
+        ELBO_track[(i + 1):i2] <- ELBO_track[i]   # can send this iteration much later; so appears updating more frequent than specified.
+        #ELBO_track[(i + 1):i2] <- hyperparams$ELBO  # can send this iteration much later; so appears updating more frequent than specified.
         i <- i2
       }
     }
