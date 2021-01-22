@@ -357,7 +357,6 @@ print.summary.lcm_tree_long <- function(x,
 #' for features (of the same dimension as in the training data)
 #' @param theta_mat a `J` by `K` matrix of positive response probabilities
 #' @param pi_vec a `K`-vector that sum to one; latent class proportions.
-#' @param ... Other parameters
 #'
 #' @return log likelihood
 #'

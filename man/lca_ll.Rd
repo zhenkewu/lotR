@@ -13,8 +13,6 @@ for features (of the same dimension as in the training data)}
 \item{theta_mat}{a \code{J} by \code{K} matrix of positive response probabilities}
 
 \item{pi_vec}{a \code{K}-vector that sum to one; latent class proportions.}
-
-\item{...}{Other parameters}
 }
 \value{
 log likelihood
