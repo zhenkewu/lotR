@@ -4,7 +4,15 @@
 \alias{simulate_lcm_tree}
 \title{Simulate data and subject-specific indicators from tree-structured latent class models}
 \usage{
-simulate_lcm_tree(n, itemprob, mytree, pi_mat, h_pau, balanced = TRUE)
+simulate_lcm_tree(
+  n,
+  itemprob,
+  mytree,
+  pi_mat,
+  h_pau,
+  balanced = TRUE,
+  ratio = 4
+)
 }
 \arguments{
 \item{n}{sample size}
@@ -20,6 +28,9 @@ between a node \code{u} and its parent \code{pa(u)}}
 
 \item{balanced}{by default is \code{TRUE} to uniformly assign observations to the leaf nodes;
 otherwise set this to \code{FALSE}.}
+
+\item{ratio}{for a pair of leaves; the sample ratios (larger vs smaller ones);
+in the event of an odd number of leaves; the smaller leaf in the pair is kept.}
 }
 \value{
 a list

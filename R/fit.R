@@ -123,6 +123,7 @@ fit_lcm_tree <- function(dsgn,
       }
       if (plot_fig){
         barplot(vi_params$prob)
+        abline(h=0.5,col="purple",lty=2)
         image(expit(vi_params$mu_gamma[[1]])) # root node.
       }
     }

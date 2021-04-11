@@ -34,6 +34,7 @@ plot.lcm_tree <- function(x,
                           colnames_offset_y=0,
                           font_size=4,
                           heatmap_width = 1,
+                          add_scale=FALSE,
                           ...) {
 
   classprob <- data.frame(x$prob_est$pi)
@@ -60,6 +61,10 @@ plot.lcm_tree <- function(x,
     geom_tiplab2(aes(label=name,color=Group), align=T, linetype=NA,
                  size=3, offset=7, hjust=0.5)
 
+  if (add_scale){
+  p <- p+geom_treescale()
+  }
+
   heatmapData <- classprob[,1+(1:x$mod$hyper_fixed$K)]
   rownames(heatmapData) <- classprob$name
 
@@ -75,7 +80,6 @@ plot.lcm_tree <- function(x,
                          breaks=c(0,0.5,1),labels=c(0,0.5,1),
                          limits=c(0,1))
    p
-
   # Return
   return(p)
 }

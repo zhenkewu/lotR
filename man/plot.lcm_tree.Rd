@@ -10,6 +10,7 @@
   colnames_offset_y = 0,
   font_size = 4,
   heatmap_width = 1,
+  add_scale = FALSE,
   ...
 )
 }

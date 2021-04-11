@@ -66,6 +66,8 @@ lotR_blca <- function (n, itemprob = 0.5, classprob = 1, fit = NULL)
 #' between a node `u` and its parent `pa(u)`
 #' @param balanced by default is `TRUE` to uniformly assign observations to the leaf nodes;
 #' otherwise set this to `FALSE`.
+#' @param ratio for a pair of leaves; the sample ratios (larger vs smaller ones);
+#' in the event of an odd number of leaves; the smaller leaf in the pair is kept.
 #'
 #' @return a list
 #' \describe{
@@ -140,7 +142,7 @@ lotR_blca <- function (n, itemprob = 0.5, classprob = 1, fit = NULL)
 #' @importFrom stats rmultinom runif
 #' @importFrom igraph V
 #' @export
-simulate_lcm_tree <- function (n, itemprob, mytree, pi_mat, h_pau,balanced=TRUE)
+simulate_lcm_tree <- function (n, itemprob, mytree, pi_mat, h_pau,balanced=TRUE,ratio=4)
 {
   # a few quick calculations:
   K <- nrow(itemprob)
@@ -153,8 +155,8 @@ simulate_lcm_tree <- function (n, itemprob, mytree, pi_mat, h_pau,balanced=TRUE)
   N_sim <- rep(1:pL,each=2) #at least two observations per leaf node.
   prob_vec <- rep(1/pL,pL)
   if (!balanced){
-      prob_vec <- rep(c(1,4), c(floor(pL/2),pL-floor(pL/2))) # currently 1:4 ratio.
-      prob_vec <- prob_vec/sum(prob_vec)
+      prob_vec <- rep(c(1,ratio), c(floor(pL/2),pL-floor(pL/2))) # currently 1:4 ratio.
+      prob_vec <- sample(prob_vec/sum(prob_vec))
     }
   N_sim <- c(N_sim,sample(1:pL,size=n-2*pL,prob=prob_vec,replace=TRUE)) # even leafs.
   N_sim <- as.integer(table(sort(N_sim)))
