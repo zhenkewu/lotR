@@ -26,6 +26,8 @@ other layouts such as \code{"rectangular"} can run, but currently has issues.}
 
 \item{heatmap_width}{default is \code{1}; see \code{gheatmap} from \code{ggtree}.}
 
+\item{add_scale}{logical; add a scale for the branch lengths; default to \code{FALSE}}
+
 \item{...}{Not used.}
 }
 \value{

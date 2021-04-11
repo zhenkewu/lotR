@@ -8,6 +8,7 @@ if(getRversion() >= "2.15.1") utils::globalVariables(c("Group","Group_nm","name"
 #' @param colnames_offset_y default is `0`; see `gheatmap` from `ggtree`.
 #' @param heatmap_width default is `1`; see `gheatmap` from `ggtree`.
 #' @param font_size default is `4`; see `gheatmap` from `ggtree`
+#' @param add_scale logical; add a scale for the branch lengths; default to `FALSE`
 #' @param ... Not used.
 #' @return A plot showing the groups discovered by MOReTreeS on the original
 #' leaf_ids tree.

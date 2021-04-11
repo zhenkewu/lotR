@@ -15,7 +15,7 @@
 #' \item{`ELBO_track`}{numeric vector containing the values of the objective function
 #' (ELBO) at the end of every iteration}
 #' }
-#' @importFrom graphics barplot image
+#' @importFrom graphics barplot image abline
 #' @family internal VI functions
 #' @export
 fit_lcm_tree <- function(dsgn,
