@@ -81,8 +81,12 @@ design_tree <- function(Y,leaf_ids,mytree,weighted_edge=FALSE,Z_obs = NULL){ # b
   if(!setequal(unique(leaf_ids), leaves))
   {stop("[lotR] Not all `leaf_ids` are leaves of tree")}
 
+  nodes0 <- nodes
   # Re-order nodes to have internal nodes first, then leaves: <------- ordered nodes.
   nodes <- c(nodes[!(nodes %in% leaves)], leaves)
+
+
+
 
   # Get levels for specifying groups of hyperparameters
   if (is.null(igraph::V(mytree)$levels)) {
@@ -217,10 +221,13 @@ design_tree <- function(Y,leaf_ids,mytree,weighted_edge=FALSE,Z_obs = NULL){ # b
   }
 
   # print(subject_id_list)
+  mytree <- permute(mytree,match(nodes,nodes0))
   make_list(Y,A,A_leaves,rootnode,
             leaf_ids,leaf_ids_units,leaf_ids_nodes,
             ancestors,edge_lengths,h_pau, # h_pau is used in fitting, so it can be that h_pau are 1s but the edge lengths are weighted.
-            levels,v_units,subject_id_list,Z_obs,ord)
+            levels,v_units,subject_id_list,Z_obs,ord,mytree)
+  #NB: by now, the node ids have already been reordered; it is only that the tree
+  # itself has not ordered the ids in the tree.
 }
 
 

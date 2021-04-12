@@ -273,6 +273,7 @@ lcm_tree <- function(Y,leaf_ids,mytree,# may have unordered nodes.
     return(res)
   }
 
+  mytree <- dsgn$mytree
   res <- make_list(mod,mod_restarts,mytree,dsgn, # is mytree redundant, check dsgn.
                    prob_est,ad_hoc_est,prob_est_indiv)
 
