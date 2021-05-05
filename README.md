@@ -26,9 +26,19 @@ please cite the following preprint:
 Installation
 --------------
 ```r
+# install bioconductor package `ggtree` for visualizing results:
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("ggtree")
+
 install.packages("devtools",repos="https://cloud.r-project.org")
 devtools::install_github("zhenkewu/lotR")
 ```
+
+
+
+
 <div id='id-section2'/>
 
 Overview
