@@ -2,9 +2,6 @@
 
 An R package for Latent Class Models for Observations Organized by Tree Structure (lotR)
 
-# zhenkewu badges:
-# [![Travis CI Build Status](https://travis-ci.org/zhenkewu/lotR.svg?branch=master)](https://travis-ci.org/zhenkewu/lotR)
-
 **Maintainer**: Zhenke Wu, zhenkewu@umich.edu
 
 
