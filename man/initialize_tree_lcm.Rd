@@ -59,7 +59,8 @@ for leaf and non-leaf nodes. The levels are pre-specified, not estimated.}
 \item{hyperparams}{the list of hyperparameters, \code{tau_1} and \code{tau_2} -
 these are initial specifications of the hyperparameters - they are updated by
 \code{tau_1_t}, \code{tau_2_t}; \code{psi}, \code{g_psi}, \code{phi}, \code{g_phi} (these
-are not hyperparameters, but are updated with the same schedule as \code{tau_1_t} and \code{tau_2_t}).}
+are not hyperparameters, but are updated in the same function as \code{tau_1_t} and \code{tau_2_t}),
+but more frequently.}
 
 \item{hyper_fixed}{a list of fixed hyperparameters, such as those
 in the Beta priors for \code{rho}, e.g., \code{list(a=c(1,1,99),b=c(1,1,1))},

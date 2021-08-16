@@ -6,7 +6,7 @@
 #     mu_gamma, mu_alpha, sigma_gamma, Sigma_alpha
 # 2. hyperparameters:
 #    - psi, phi, g_psi, g_phi - these are actually local variational parameters
-#      but they are updated with the same schedule as tau_1 and tau_2.
+#      but they are updated in the same function as tau_1 and tau_2, but more frequently.
 #    - (tau_1, tau_2) - pre-specified hyperparameters - not fixed.
 # 3. hyperfixed: constants, e.g., number of classes K; for
 #        rho_l - beta(a_l,b_l), the (a_l,b_l) are fixed.
@@ -59,7 +59,8 @@
 #' @param hyperparams the list of hyperparameters, `tau_1` and `tau_2` -
 #' these are initial specifications of the hyperparameters - they are updated by
 #'  `tau_1_t`, `tau_2_t`; `psi`, `g_psi`, `phi`, `g_phi` (these
-#' are not hyperparameters, but are updated with the same schedule as `tau_1_t` and `tau_2_t`).
+#' are not hyperparameters, but are updated in the same function as `tau_1_t` and `tau_2_t`),
+#' but more frequently.
 #' @param hyper_fixed a list of fixed hyperparameters, such as those
 #' in the Beta priors for `rho`, e.g., `list(a=c(1,1,99),b=c(1,1,1))`,
 #' `K`, number of classes.
@@ -327,7 +328,8 @@ initialize_tree_lcm <- function(Y,A,Z_obs,
 
   ## initialize for the local variational parameters psi and phi; they are
   # termed hyperparameter here, not because they are hyperparameters, but because
-  # they are updated with the same schedule as the hypeparameteters, tau_1_t and tau_2_t.
+  # they are updated in the same function as as the hypeparameteters, tau_1_t and tau_2_t.
+  # but more frequently.
   # NB: currently this is following moretrees, with the local variational parameters updated
   #     by something close to real update.
 

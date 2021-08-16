@@ -53,8 +53,15 @@ if \code{E(mytree)$weight} is \code{NULL}
 the edge length from u to its parent (if u is a root node, then the value is 1).
 This vector by default is all \code{1}s. If \code{weighted_edge=TRUE}, \code{h_pau}
 is set to \code{E(mytree)$weight}, the input edge weights.
-\item \code{v_units} a vector of length equal to the total number of rows in \code{Y};
-each element is an integer between \verb{1 and }pL\verb{, indicating which leaf does the observation belong to. \\item }subject_id_list\verb{a list of length}p\verb{; each element is a vector of subject ids that are in the leaf descendants of node }u\verb{(internal or leaf node) \\item}ord\verb{the permutation to order the original rows to produce the final ordering of the rows of}Y`.
+\item \code{v_units} (redundant - identical to \code{leaf_ids})
+a vector of length equal to the total number of rows in \code{Y};
+each element is an integer between \code{1} and \code{pL},
+indicating which leaf does the observation belong to.
+\item \code{subject_id_list} a list of length \code{p}; each element is a vector of
+subject ids
+that are in the leaf descendants of node \code{u} (internal or leaf node)
+\item \code{ord} the permutation to order the original rows to produce the final
+ordering of the rows of \code{Y}.
 }
 }
 \description{

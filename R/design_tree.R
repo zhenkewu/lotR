@@ -47,8 +47,9 @@
 #' the edge length from u to its parent (if u is a root node, then the value is 1).
 #' This vector by default is all `1`s. If `weighted_edge=TRUE`, `h_pau`
 #' is set to `E(mytree)$weight`, the input edge weights.
-#' \item `v_units` a vector of length equal to the total number of rows in `Y`;
-#' each element is an integer between `1 and `pL`,
+#' \item `v_units` (redundant - identical to `leaf_ids`)
+#' a vector of length equal to the total number of rows in `Y`;
+#' each element is an integer between `1` and `pL`,
 #' indicating which leaf does the observation belong to.
 #' \item `subject_id_list` a list of length `p`; each element is a vector of
 #' subject ids
@@ -59,7 +60,9 @@
 #' @export
 #' @import igraph
 #'
-design_tree <- function(Y,leaf_ids,mytree,weighted_edge=FALSE,Z_obs = NULL){ # by default, not weighted tree.
+design_tree <- function(Y,leaf_ids,mytree,weighted_edge=FALSE,Z_obs = NULL){
+  # by default, not weighted tree.
+
   # warning("using hard-coded info\n")
   # Y        <- dat_mge[!is.na(match_ind),ind_EL] # these are not ordered yet.
   # leaf_ids <- dat_mge[!is.na(match_ind),"ct_MLST"]
