@@ -19,7 +19,7 @@ update_rmat_partial(
 )
 }
 \arguments{
-\item{unknown_ids}{a vector of integers representing subject ids with unkonwn class memberships}
+\item{unknown_ids}{a vector of integers representing subject ids with unknown class memberships}
 
 \item{psi, g_psi, phi, g_phi}{local variational parameters}
 

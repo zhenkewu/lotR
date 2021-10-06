@@ -2,7 +2,7 @@
 % Please edit documentation in R/simulate.R
 \name{rmse_bias_AB}
 \alias{rmse_bias_AB}
-\title{Get optimal column permutation of a matrix B to match the matrix A}
+\title{calculate root mean squared errors and biases}
 \usage{
 rmse_bias_AB(A, B)
 }
@@ -10,20 +10,19 @@ rmse_bias_AB(A, B)
 \item{A}{a matrix (e.g., truth)}
 
 \item{B}{another matrix (e.g., estimated); A and B must have the same dimensions;
-B's columns may be permutated to best match those of A.}
+B's columns must have already been permuted to best match those of A.}
 }
 \value{
 a list
 \describe{
 \item{rmse_total}{root mean squared error for all entries}
 \item{rmse_marg}{root mean squared error for all entries by column of A}
-\item{frac_bias}{root mean squared error for all entries}
-\item{frac_bias_marg}{root mean squared error for all entries by column of A}
+\item{frac_bias}{percent bias averaged over all entries}
+\item{frac_bias_marg}{ percent bias by column of A}
 }
 }
 \description{
-Useful in simulations where the posterior sampling relabels the classes,
-which is equivalent and cannot be told apart by the likelihood only.
+used for comparing truth and estimates
 }
 \examples{
 

@@ -49,7 +49,7 @@ update_vi_params(
 )
 }
 \arguments{
-\item{Y, A, leaf_ids_units, leaf_ids_nodes, ancestors, cardanc, v_units, h_pau, levels, subject_id_list}{outputs from
+\item{Y, A, Z_obs, leaf_ids_units, leaf_ids_nodes, ancestors, cardanc, v_units, h_pau, levels, subject_id_list}{outputs from
 \code{\link[=design_tree]{design_tree()}}, which reorders the nodes by internal and leaf nodes; the observations are also
 ordered from low- to high-indexed leaf nodes.}
 
@@ -59,7 +59,7 @@ ordered from low- to high-indexed leaf nodes.}
 
 \item{psi, g_psi, phi, g_phi, tau_1, tau_2, shared_tau}{parameters updated by \code{update_hyperparams()}}
 
-\item{a, b, K, s_u_zeroset, s_u_oneset, Z_obs}{fixed hyperparameters not to be updated.}
+\item{a, b, K, s_u_zeroset, s_u_oneset}{fixed hyperparameters not to be updated.}
 }
 \description{
 Used by \code{\link[=fit_lcm_tree]{fit_lcm_tree()}}, which also invoke \code{\link[=update_hyperparams]{update_hyperparams()}}

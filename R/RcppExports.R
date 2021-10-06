@@ -161,7 +161,7 @@ update_rmat <- function(psi, g_psi, phi, g_phi, X, E_beta, E_eta, E_beta_sq, E_e
 #'
 #' This function updates the N by K matrix \code{rmat} in the package
 #'
-#' @param unknown_ids a vector of integers representing subject ids with unkonwn class memberships
+#' @param unknown_ids a vector of integers representing subject ids with unknown class memberships
 #' @param psi,g_psi,phi,g_phi local variational parameters
 #' @param X transformed data: 2Y-1
 #' @param E_beta,E_eta,E_beta_sq,E_eta_sq moment updates produced by \code{\link{get_moments_cpp}}

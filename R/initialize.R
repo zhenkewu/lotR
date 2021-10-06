@@ -143,7 +143,7 @@ initialize_tree_lcm <- function(Y,A,Z_obs,
       tmp          <- sapply(mod$classprob,function(s) min(max(s,0.01),0.99))
       tau          <- (tmp/sum(tmp))
       eta_map[v,]  <- logit(prob2stick(tau)[-length(tau)])
-      beta_map[v,,] <- logit(pmin(pmax(mod$itemprob,0.01),0.99))
+      beta_map[v,,] <- logit(pmin(pmax(t(mod$itemprob),0.01),0.99))
       # cat("node ",v," initialized as:\n")
       # barplot(tau,main=v)
       # image(t(mod$itemprob),main=v)
@@ -474,17 +474,13 @@ initialize_tree_lcm <- function(Y,A,Z_obs,
       v_units_curr       <- unlist(mapply(rep,leaf_ids_nodes[[u]],unlist(lapply(leaf_list_tmp,length))))
       if (shared_tau){ # SHARED TAU:
         for (j in 1:J){
-          for (k in 1:K){
             vi_params$sigma_gamma[u,j,] <- 1/(2*colSums(vi_params$rmat[units,,drop=FALSE] *
                                                           hyperparams$g_psi[v_units_curr,j,])+1/(vi_params$tau_2_t[u]*h_pau[u])) # <-- zero h_pau?
-          }
         }
       } else{ # DISTINCT TAU:
         for (j in 1:J){
-          for (k in 1:K){
             vi_params$sigma_gamma[u,j,] <- 1/(2*colSums(vi_params$rmat[units,,drop=FALSE] *
                                                           hyperparams$g_psi[v_units_curr,j,])+1/(vi_params$tau_2_t[[u]][j,]*h_pau[u])) # <-- zero h_pau?
-          }
         }
       }
     }
