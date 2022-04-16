@@ -10,7 +10,7 @@ please cite the following preprint:
 
 |       | Citation     | Paper Link
 | -------------  | -------------  | -------------  |
-| Bayesian tree-integrative LCM    | Li M, Park D, Aziz M, Liu CM, Price L, Wu Z (2021+). Integrating Sample Similarity Information into Latent Class Models: A Tree-Structured Shrinkage Approach. Working Paper.   |[Link](https://zhenkewu.com/papers/tree_lcm)| 
+| Bayesian tree-integrative LCM    | Li M, Park D, Aziz M, Liu CM, Price L, Wu Z (2021). Integrating Sample Similarity Information into Latent Class Analysis: A Tree-Structured Shrinkage Approach. *Biometrics*.   |[Link](https://onlinelibrary.wiley.com/doi/abs/10.1111/biom.13580)| 
 
 
 ## Table of content
